@@ -17,7 +17,7 @@ export default async function WaitingRoom() {
     .single();
 
   if (profile?.status === "approved") {
-    redirect("/admin");
+    redirect("/admin/dashboard");
   }
 
   return (

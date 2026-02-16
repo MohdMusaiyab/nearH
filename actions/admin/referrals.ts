@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 import { Database } from "@/types/database.types";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { Hospital } from "@/types";
+import { SuperadminReferral } from "../superadmin/referrals";
 
 type ReferralRow = Database["public"]["Tables"]["referrals"]["Row"];
 type ReferralInsert = Database["public"]["Tables"]["referrals"]["Insert"];
@@ -164,5 +165,56 @@ export async function searchHospitals(params: {
     success: true,
     message: "Hospitals found",
     data: data as unknown as SearchResult[],
+  };
+}
+
+//Accessible to both Admin and Superadmin,
+export type SharedReferralDetail =
+  Database["public"]["Tables"]["referrals"]["Row"] & {
+    from_hospital: {
+      id: string;
+      name: string;
+      location: { city: string; state: string } | null;
+    } | null;
+    to_hospital: {
+      id: string;
+      name: string;
+      location: { city: string; state: string } | null;
+    } | null;
+    specialty: { specialty_name: string } | null;
+  };
+export async function getReferralById(
+  id: string,
+): Promise<ActionResponse<SharedReferralDetail>> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("referrals")
+    .select(
+      `
+      *,
+      from_hospital:hospitals!referrals_from_hospital_id_fkey(
+        id,
+        name,
+        location:locations(city, state)
+      ),
+      to_hospital:hospitals!referrals_to_hospital_id_fkey(
+        id,
+        name,
+        location:locations(city, state)
+      ),
+      specialty:specialties_list(specialty_name)
+    `,
+    )
+    .eq("id", id)
+    .single();
+
+  if (error)
+    return { success: false, message: "Referral not found", data: null };
+
+  return {
+    success: true,
+    message: "Referral details retrieved",
+    data: data as unknown as SharedReferralDetail,
   };
 }

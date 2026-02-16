@@ -73,7 +73,19 @@ export async function proxy(request: NextRequest) {
     const dest = profile?.role === "superadmin" ? "/superadmin" : "/admin";
     return NextResponse.redirect(new URL(dest, request.url));
   }
+  // --- NEW LOGIC FOR SHARED ROUTES ---
+  if (pathname.startsWith("/shared")) {
+    if (!user) {
+      return NextResponse.redirect(new URL("/auth/login", request.url));
+    }
 
+    const isAuthorized =
+      profile?.role === "admin" || profile?.role === "superadmin";
+    if (!isAuthorized || profile?.status !== "approved") {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
+    return response;
+  }
   if (pathname.startsWith("/superadmin") && profile?.role !== "superadmin") {
     return NextResponse.redirect(new URL("/", request.url));
   }

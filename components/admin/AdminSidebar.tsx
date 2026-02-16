@@ -26,7 +26,7 @@ const AdminSidebar = () => {
     { name: "Beds & ICU", href: "/admin/inventory", icon: BedDouble },
     { name: "Blood Bank", href: "/admin/blood-bank", icon: Droplets },
     { name: "Referrals", href: "/admin/referrals", icon: ArrowLeftRight },
-    { name: "Hospital Profile", href: "/admin/settings", icon: Settings },
+    { name: "Hospital Profile", href: "/admin/profile", icon: Settings },
   ];
 
   const NavLink = ({ item }: { item: (typeof navItems)[0] }) => {

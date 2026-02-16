@@ -68,7 +68,12 @@ export async function updateInventory(
 ): Promise<ActionResponse<InventoryRow>> {
   const supabase = await createClient();
   const hospitalId = await getAdminHospitalId(supabase);
-
+  console.log(
+    "Updating inventory with payload:",
+    payload,
+    "for hospital ID:",
+    hospitalId,
+  ); // Debug log
   if (!hospitalId)
     return { success: false, message: "Unauthorized", data: null };
 
@@ -118,21 +123,56 @@ export async function updateBloodStock(
 export async function initializeBloodBank(): Promise<ActionResponse<null>> {
   const supabase = await createClient();
   const hospitalId = await getAdminHospitalId(supabase);
-  if (!hospitalId)
-    return { success: false, message: "Unauthorized", data: null };
 
-  const groups = ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"];
-  const rows = groups.map((group) => ({
+  if (!hospitalId) {
+    return { success: false, message: "Unauthorized", data: null };
+  }
+
+  const allGroups = ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"];
+
+  // 1. Fetch groups that already exist for this hospital
+  const { data: existingRows, error: fetchError } = await supabase
+    .from("blood_bank")
+    .select("blood_group")
+    .eq("hospital_id", hospitalId);
+
+  if (fetchError) {
+    return { success: false, message: fetchError.message, data: null };
+  }
+
+  // 2. Filter out groups that already exist in the DB
+  const existingGroups = existingRows?.map((r) => r.blood_group) || [];
+  const missingGroups = allGroups.filter((g) => !existingGroups.includes(g));
+
+  // 3. If no groups are missing, just return success
+  if (missingGroups.length === 0) {
+    return {
+      success: true,
+      message: "Blood bank already fully initialized",
+      data: null,
+    };
+  }
+
+  // 4. Prepare only the missing rows
+  const rowsToInsert = missingGroups.map((group) => ({
     hospital_id: hospitalId,
     blood_group: group,
     units_available: 0,
   }));
 
-  const { error } = await supabase
+  // 5. Use insert (not upsert) since we've pre-filtered
+  const { error: insertError } = await supabase
     .from("blood_bank")
-    .upsert(rows, { onConflict: "hospital_id, blood_group" });
+    .insert(rowsToInsert);
 
-  if (error) return { success: false, message: error.message, data: null };
+  if (insertError) {
+    return { success: false, message: insertError.message, data: null };
+  }
+
   revalidatePath("/admin");
-  return { success: true, message: "Blood bank initialized", data: null };
+  return {
+    success: true,
+    message: `Initialized ${missingGroups.length} new blood groups`,
+    data: null,
+  };
 }

@@ -20,7 +20,7 @@ type Priority = Database["public"]["Enums"]["priority_level"];
 type Status = Database["public"]["Enums"]["referral_status"];
 interface Props {
   referral: SharedReferralDetail;
-  userRole: "user" | "admin" | "superadmin"; // Matches the profile role type
+  userRole: "user" | "admin" | "superadmin";
 }
 export default function ReferralDetailView({ referral, userRole }: Props) {
   const router = useRouter();
@@ -40,7 +40,7 @@ export default function ReferralDetailView({ referral, userRole }: Props) {
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
-      {/* Top Navigation */}
+      {}
       <button
         onClick={() => router.back()}
         className="flex items-center gap-2 text-slate-500 hover:text-slate-900 font-bold transition-all"
@@ -49,7 +49,7 @@ export default function ReferralDetailView({ referral, userRole }: Props) {
       </button>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Patient Clinical Info - Main Section */}
+        {}
         <div className="lg:col-span-8 space-y-6">
           <section className="bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-sm">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
@@ -109,7 +109,7 @@ export default function ReferralDetailView({ referral, userRole }: Props) {
           </section>
         </div>
 
-        {/* Handshake Details - Sidebar */}
+        {}
         <div className="lg:col-span-4 space-y-6">
           <HospitalBriefCard
             title="Sending Facility"

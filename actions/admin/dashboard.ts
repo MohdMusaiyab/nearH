@@ -176,3 +176,34 @@ export async function initializeBloodBank(): Promise<ActionResponse<null>> {
     data: null,
   };
 }
+
+export async function updateAvailability(
+  payload: Partial<
+    Pick<
+      InventoryRow,
+      "available_beds" | "icu_beds_available" | "ventilators_available"
+    >
+  >,
+): Promise<ActionResponse<InventoryRow>> {
+  const supabase = await createClient();
+  const hospitalId = await getAdminHospitalId(supabase);
+
+  if (!hospitalId) {
+    return { success: false, message: "Unauthorized", data: null };
+  }
+
+  const { data, error } = await supabase
+    .from("hospital_inventory")
+    .update({ ...payload, last_updated: new Date().toISOString() })
+    .eq("hospital_id", hospitalId)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Error updating availability:", error);
+    return { success: false, message: error.message, data: null };
+  }
+
+  revalidatePath("/admin");
+  return { success: true, message: "Availability updated", data };
+}

@@ -1,7 +1,11 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { Database } from "@/types/database.types";
-
+import { redis } from "@/lib/redis";
+type Profile = {
+  role: Database["public"]["Enums"]["user_role"] | null;
+  status: Database["public"]["Enums"]["approval_status"] | null;
+};
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({
     request: {
@@ -37,14 +41,41 @@ export async function proxy(request: NextRequest) {
   } = await supabase.auth.getUser();
   const { pathname } = request.nextUrl;
 
-  let profile = null;
+  let profile: Profile | null = null;
   if (user) {
-    const { data } = await supabase
-      .from("profiles")
-      .select("role, status")
-      .eq("id", user.id)
-      .single();
-    profile = data;
+    const cacheKey = `user:profile:${user.id}`;
+
+    try {
+      // 1. Check Redis for the profile
+      const cached = await redis.get<Profile>(cacheKey);
+
+      if (cached) {
+        profile = cached;
+      } else {
+        // 2. Cache Miss: Hit DB (Selecting only what middleware needs to save space)
+        const { data } = await supabase
+          .from("profiles")
+          .select("role, status")
+          .eq("id", user.id)
+          .single();
+
+        profile = data;
+
+        // 3. Backfill Redis (TTL 1 hour)
+        if (profile) {
+          // Note: Middleware doesn't wait for .set() to keep the page load instant
+          redis.set(cacheKey, profile, { ex: 3600 }).catch(console.error);
+        }
+      }
+    } catch (e) {
+      // 4. Failover: If Redis fails, use standard DB fetch
+      const { data } = await supabase
+        .from("profiles")
+        .select("role, status")
+        .eq("id", user.id)
+        .single();
+      profile = data;
+    }
   }
 
   if (pathname.startsWith("/_next") || pathname.includes("/api/")) {

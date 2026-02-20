@@ -1,19 +1,9 @@
 import { getDashboardData } from "@/actions/admin/dashboard";
 import RealtimeDashboard from "@/components/admin/RealtimeDashboard";
-import { createClient } from "@/lib/supabase/server";
 
 export default async function AdminDashboardPage() {
   const { data } = await getDashboardData();
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("associated_hospital_id")
-    .eq("id", user?.id || "")
-    .single();
+  
 
   return (
     <div className="space-y-8">
@@ -29,7 +19,7 @@ export default async function AdminDashboardPage() {
       <RealtimeDashboard
         initialInventory={data?.inventory || null}
         initialBloodBank={data?.bloodBank || []}
-        hospitalId={profile?.associated_hospital_id || ""}
+        hospitalId={data?.inventory?.hospital_id || ""}
       />
     </div>
   );

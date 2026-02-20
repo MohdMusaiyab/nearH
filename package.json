@@ -13,6 +13,7 @@
     "@mrjasonroy/cache-components-cache-handler": "^16.1.6",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.95.3",
+    "@upstash/redis": "^1.36.2",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "ioredis": "^5.9.3",

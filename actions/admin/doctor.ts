@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { ActionResponse } from "@/types/response";
 import { revalidatePath } from "next/cache";
 import { Database } from "@/types/database.types";
-import { SupabaseClient } from "@supabase/supabase-js";
+import { getAuthenticatedProfile } from "@/utils/authCache";
 
 type DoctorRow = Database["public"]["Tables"]["doctors"]["Row"];
 type DoctorInsert = Database["public"]["Tables"]["doctors"]["Insert"];
@@ -14,19 +14,25 @@ export type DoctorWithSpecialty = DoctorRow & {
   specialties_list: Pick<SpecialtyRow, "id" | "specialty_name"> | null;
 };
 
-async function getAdminHospitalId(supabase: SupabaseClient<Database>) {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return null;
+async function getValidatedAdminHospitalId(): Promise<{
+  hospitalId: string | null;
+  error?: string;
+}> {
+  const profile = await getAuthenticatedProfile();
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("associated_hospital_id")
-    .eq("id", user.id)
-    .single();
+  if (!profile)
+    return { hospitalId: null, error: "Unauthorized - Not logged in" };
+  if (profile.role !== "admin")
+    return { hospitalId: null, error: "Unauthorized - Admin only" };
+  if (profile.status !== "approved")
+    return { hospitalId: null, error: "Account pending approval" };
+  if (!profile.associated_hospital_id)
+    return {
+      hospitalId: null,
+      error: "No hospital associated with this account",
+    };
 
-  return profile?.associated_hospital_id || null;
+  return { hospitalId: profile.associated_hospital_id };
 }
 
 export async function getHospitalDoctors(params: {
@@ -36,17 +42,11 @@ export async function getHospitalDoctors(params: {
 }): Promise<
   ActionResponse<{ doctors: DoctorWithSpecialty[]; totalCount: number }>
 > {
+  const { hospitalId, error: authError } = await getValidatedAdminHospitalId();
+  if (!hospitalId)
+    return { success: false, message: authError || "Unauthorized", data: null };
+
   const supabase = await createClient();
-  const hospitalId = await getAdminHospitalId(supabase);
-
-  if (!hospitalId) {
-    return {
-      success: false,
-      message: "Unauthorized or Hospital not linked",
-      data: null,
-    };
-  }
-
   const from = (params.page - 1) * params.pageSize;
   const to = from + params.pageSize - 1;
 
@@ -84,16 +84,11 @@ export async function getHospitalDoctors(params: {
 export async function createDoctor(
   payload: Omit<DoctorInsert, "hospital_id">,
 ): Promise<ActionResponse<DoctorRow>> {
-  const supabase = await createClient();
-  const hospitalId = await getAdminHospitalId(supabase);
+  const { hospitalId, error: authError } = await getValidatedAdminHospitalId();
+  if (!hospitalId)
+    return { success: false, message: authError || "Unauthorized", data: null };
 
-  if (!hospitalId) {
-    return {
-      success: false,
-      message: "Unauthorized: No hospital linked.",
-      data: null,
-    };
-  }
+  const supabase = await createClient();
 
   const { data, error } = await supabase
     .from("doctors")
@@ -111,17 +106,16 @@ export async function updateDoctor(
   id: string,
   payload: Partial<DoctorInsert>,
 ): Promise<ActionResponse<DoctorRow>> {
-  const supabase = await createClient();
-  const hospitalId = await getAdminHospitalId(supabase);
-
+  const { hospitalId, error: authError } = await getValidatedAdminHospitalId();
   if (!hospitalId)
-    return { success: false, message: "Unauthorized", data: null };
+    return { success: false, message: authError || "Unauthorized", data: null };
+
+  const supabase = await createClient();
 
   const { data, error } = await supabase
     .from("doctors")
     .update({ ...payload, updated_at: new Date().toISOString() })
     .match({ id, hospital_id: hospitalId })
-
     .select()
     .single();
 
@@ -137,11 +131,11 @@ export async function updateDoctor(
 }
 
 export async function deleteDoctor(id: string): Promise<ActionResponse<null>> {
-  const supabase = await createClient();
-  const hospitalId = await getAdminHospitalId(supabase);
-
+  const { hospitalId, error: authError } = await getValidatedAdminHospitalId();
   if (!hospitalId)
-    return { success: false, message: "Unauthorized", data: null };
+    return { success: false, message: authError || "Unauthorized", data: null };
+
+  const supabase = await createClient();
 
   const { error } = await supabase
     .from("doctors")

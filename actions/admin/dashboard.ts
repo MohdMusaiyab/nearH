@@ -4,28 +4,33 @@ import { createClient } from "@/lib/supabase/server";
 import { ActionResponse } from "@/types/response";
 import { revalidatePath } from "next/cache";
 import { Database } from "@/types/database.types";
-import { SupabaseClient } from "@supabase/supabase-js";
+import { getAuthenticatedProfile } from "@/utils/authCache";
 
 type InventoryRow = Database["public"]["Tables"]["hospital_inventory"]["Row"];
 type InventoryUpdate =
   Database["public"]["Tables"]["hospital_inventory"]["Update"];
 type BloodBankRow = Database["public"]["Tables"]["blood_bank"]["Row"];
 
-async function getAdminHospitalId(
-  supabase: SupabaseClient<Database>,
-): Promise<string | null> {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return null;
+async function getValidatedAdminHospitalId(): Promise<{
+  hospitalId: string | null;
+  error?: string;
+}> {
+  const profile = await getAuthenticatedProfile();
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("associated_hospital_id")
-    .eq("id", user.id)
-    .single();
+  if (!profile)
+    return { hospitalId: null, error: "Unauthorized - Not logged in" };
+  if (profile.role !== "admin")
+    return { hospitalId: null, error: "Unauthorized - Admin only" };
+  if (profile.status !== "approved")
+    return { hospitalId: null, error: "Account pending approval" };
+  if (!profile.associated_hospital_id) {
+    return {
+      hospitalId: null,
+      error: "No hospital associated with this account. Contact Superadmin.",
+    };
+  }
 
-  return profile?.associated_hospital_id || null;
+  return { hospitalId: profile.associated_hospital_id };
 }
 
 export async function getDashboardData(): Promise<
@@ -34,71 +39,78 @@ export async function getDashboardData(): Promise<
     bloodBank: BloodBankRow[];
   }>
 > {
-  const supabase = await createClient();
-  const hospitalId = await getAdminHospitalId(supabase);
-
+  const { hospitalId, error: authError } = await getValidatedAdminHospitalId();
   if (!hospitalId)
-    return { success: false, message: "Unauthorized", data: null };
+    return { success: false, message: authError || "Unauthorized", data: null };
 
-  const [inventoryRes, bloodRes] = await Promise.all([
-    supabase
-      .from("hospital_inventory")
-      .select("*")
-      .eq("hospital_id", hospitalId)
-      .single(),
-    supabase
-      .from("blood_bank")
-      .select("*")
-      .eq("hospital_id", hospitalId)
-      .order("blood_group"),
-  ]);
+  const supabase = await createClient();
 
-  return {
-    success: true,
-    message: "Data fetched",
-    data: {
-      inventory: inventoryRes.data,
-      bloodBank: bloodRes.data || [],
-    },
-  };
+  try {
+    const [inventoryRes, bloodRes] = await Promise.all([
+      supabase
+        .from("hospital_inventory")
+        .select("*")
+        .eq("hospital_id", hospitalId)
+        .maybeSingle(),
+      supabase
+        .from("blood_bank")
+        .select("*")
+        .eq("hospital_id", hospitalId)
+        .order("blood_group"),
+    ]);
+
+    return {
+      success: true,
+      message: "Dashboard data synced",
+      data: {
+        inventory: inventoryRes.data || null,
+        bloodBank: bloodRes.data || [],
+      },
+    };
+  } catch (error) {
+    console.error("Dashboard Fetch Error:", error);
+    return {
+      success: false,
+      message: "Failed to fetch dashboard data",
+      data: null,
+    };
+  }
 }
 
 export async function updateInventory(
   payload: InventoryUpdate,
 ): Promise<ActionResponse<InventoryRow>> {
-  const supabase = await createClient();
-  const hospitalId = await getAdminHospitalId(supabase);
-  console.log(
-    "Updating inventory with payload:",
-    payload,
-    "for hospital ID:",
-    hospitalId,
-  ); // Debug log
+  const { hospitalId, error: authError } = await getValidatedAdminHospitalId();
   if (!hospitalId)
-    return { success: false, message: "Unauthorized", data: null };
+    return { success: false, message: authError || "Unauthorized", data: null };
+
+  const supabase = await createClient();
 
   const { data, error } = await supabase
     .from("hospital_inventory")
-    .update({ ...payload, last_updated: new Date().toISOString() })
+    .update({
+      ...payload,
+      last_updated: new Date().toISOString(),
+    })
     .eq("hospital_id", hospitalId)
     .select()
     .single();
 
   if (error) return { success: false, message: error.message, data: null };
 
-  revalidatePath("/admin");
-  return { success: true, message: "Inventory updated", data };
+  revalidatePath("/admin/dashboard");
+  return { success: true, message: "Inventory updated successfully", data };
 }
 
 export async function updateBloodStock(
   bloodGroup: string,
   units: number,
 ): Promise<ActionResponse<BloodBankRow>> {
-  const supabase = await createClient();
-  const hospitalId = await getAdminHospitalId(supabase);
-
+  const { hospitalId, error: authError } = await getValidatedAdminHospitalId();
   if (!hospitalId)
-    return { success: false, message: "Unauthorized", data: null };
+    return { success: false, message: authError || "Unauthorized", data: null };
+
+  const supabase = await createClient();
 
   const { data, error } = await supabase
     .from("blood_bank")
@@ -116,63 +128,54 @@ export async function updateBloodStock(
 
   if (error) return { success: false, message: error.message, data: null };
 
-  revalidatePath("/admin");
+  revalidatePath("/admin/dashboard");
   return { success: true, message: `${bloodGroup} stock updated`, data };
 }
 
 export async function initializeBloodBank(): Promise<ActionResponse<null>> {
+  const { hospitalId, error: authError } = await getValidatedAdminHospitalId();
+  if (!hospitalId)
+    return { success: false, message: authError || "Unauthorized", data: null };
+
   const supabase = await createClient();
-  const hospitalId = await getAdminHospitalId(supabase);
-
-  if (!hospitalId) {
-    return { success: false, message: "Unauthorized", data: null };
-  }
-
   const allGroups = ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"];
 
-  // 1. Fetch groups that already exist for this hospital
   const { data: existingRows, error: fetchError } = await supabase
     .from("blood_bank")
     .select("blood_group")
     .eq("hospital_id", hospitalId);
 
-  if (fetchError) {
+  if (fetchError)
     return { success: false, message: fetchError.message, data: null };
-  }
 
-  // 2. Filter out groups that already exist in the DB
   const existingGroups = existingRows?.map((r) => r.blood_group) || [];
   const missingGroups = allGroups.filter((g) => !existingGroups.includes(g));
 
-  // 3. If no groups are missing, just return success
   if (missingGroups.length === 0) {
     return {
       success: true,
-      message: "Blood bank already fully initialized",
+      message: "Blood bank already initialized",
       data: null,
     };
   }
 
-  // 4. Prepare only the missing rows
   const rowsToInsert = missingGroups.map((group) => ({
     hospital_id: hospitalId,
     blood_group: group,
     units_available: 0,
   }));
 
-  // 5. Use insert (not upsert) since we've pre-filtered
   const { error: insertError } = await supabase
     .from("blood_bank")
     .insert(rowsToInsert);
 
-  if (insertError) {
+  if (insertError)
     return { success: false, message: insertError.message, data: null };
-  }
 
-  revalidatePath("/admin");
+  revalidatePath("/admin/dashboard");
   return {
     success: true,
-    message: `Initialized ${missingGroups.length} new blood groups`,
+    message: `Initialized ${missingGroups.length} blood groups`,
     data: null,
   };
 }
@@ -185,25 +188,24 @@ export async function updateAvailability(
     >
   >,
 ): Promise<ActionResponse<InventoryRow>> {
-  const supabase = await createClient();
-  const hospitalId = await getAdminHospitalId(supabase);
+  const { hospitalId, error: authError } = await getValidatedAdminHospitalId();
+  if (!hospitalId)
+    return { success: false, message: authError || "Unauthorized", data: null };
 
-  if (!hospitalId) {
-    return { success: false, message: "Unauthorized", data: null };
-  }
+  const supabase = await createClient();
 
   const { data, error } = await supabase
     .from("hospital_inventory")
-    .update({ ...payload, last_updated: new Date().toISOString() })
+    .update({
+      ...payload,
+      last_updated: new Date().toISOString(),
+    })
     .eq("hospital_id", hospitalId)
     .select()
     .single();
 
-  if (error) {
-    console.error("Error updating availability:", error);
-    return { success: false, message: error.message, data: null };
-  }
+  if (error) return { success: false, message: error.message, data: null };
 
-  revalidatePath("/admin");
-  return { success: true, message: "Availability updated", data };
+  revalidatePath("/admin/dashboard");
+  return { success: true, message: "Real-time availability updated", data };
 }

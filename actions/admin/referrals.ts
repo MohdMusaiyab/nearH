@@ -4,9 +4,8 @@ import { createClient } from "@/lib/supabase/server";
 import { ActionResponse } from "@/types/response";
 import { revalidatePath } from "next/cache";
 import { Database } from "@/types/database.types";
-import { SupabaseClient } from "@supabase/supabase-js";
 import { Hospital } from "@/types";
-import { SuperadminReferral } from "../superadmin/referrals";
+import { getAuthenticatedProfile } from "@/utils/authCache";
 
 type ReferralRow = Database["public"]["Tables"]["referrals"]["Row"];
 type ReferralInsert = Database["public"]["Tables"]["referrals"]["Insert"];
@@ -18,38 +17,48 @@ export interface ReferralWithDetails extends ReferralRow {
   direction: "inbound" | "outbound";
 }
 
-async function getAdminContext(supabase: SupabaseClient<Database>) {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return null;
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("associated_hospital_id, id")
-    .eq("id", user.id)
-    .single();
-
-  return profile;
+async function getValidatedAdminContext(): Promise<{
+  hospitalId: string | null;
+  userId: string | null;
+  error?: string;
+}> {
+  const profile = await getAuthenticatedProfile();
+  if (!profile)
+    return {
+      hospitalId: null,
+      userId: null,
+      error: "Unauthorized - Please log in",
+    };
+  if (profile.role !== "admin" || profile.status !== "approved") {
+    return {
+      hospitalId: null,
+      userId: null,
+      error: "Unauthorized - Approved Admin access only",
+    };
+  }
+  return { hospitalId: profile.associated_hospital_id, userId: profile.id };
 }
 
 export async function sendReferral(
   payload: Omit<ReferralInsert, "from_hospital_id" | "referred_by_admin_id">,
 ): Promise<ActionResponse<ReferralRow>> {
-  const supabase = await createClient();
-  const context = await getAdminContext(supabase);
+  const {
+    hospitalId,
+    userId,
+    error: authError,
+  } = await getValidatedAdminContext();
+  if (!hospitalId || !userId)
+    return { success: false, message: authError || "Unauthorized", data: null };
 
-  if (!context?.associated_hospital_id) {
-    return { success: false, message: "Unauthorized", data: null };
-  }
+  const supabase = await createClient();
 
   const { data, error } = await supabase
     .from("referrals")
     .insert([
       {
         ...payload,
-        from_hospital_id: context.associated_hospital_id,
-        referred_by_admin_id: context.id,
+        from_hospital_id: hospitalId,
+        referred_by_admin_id: userId,
       },
     ])
     .select()
@@ -64,11 +73,12 @@ export async function sendReferral(
 export async function getAllHospitalReferrals(): Promise<
   ActionResponse<ReferralWithDetails[]>
 > {
-  const supabase = await createClient();
-  const context = await getAdminContext(supabase);
-  const hId = context?.associated_hospital_id;
+  const { hospitalId, error: authError } = await getValidatedAdminContext();
+  if (!hospitalId)
+    return { success: false, message: authError || "Unauthorized", data: null };
 
-  if (!hId) return { success: false, message: "Unauthorized", data: null };
+  const supabase = await createClient();
+
   const { data, error } = await supabase
     .from("referrals")
     .select(
@@ -79,21 +89,15 @@ export async function getAllHospitalReferrals(): Promise<
       specialty:specialties_list(specialty_name)
     `,
     )
-    .or(`from_hospital_id.eq.${hId},to_hospital_id.eq.${hId}`)
+    .or(`from_hospital_id.eq.${hospitalId},to_hospital_id.eq.${hospitalId}`)
     .order("created_at", { ascending: false });
 
   if (error) return { success: false, message: error.message, data: null };
 
-  const formattedData: ReferralWithDetails[] = (
-    data as unknown as (ReferralRow & {
-      from_hospital: { name: string; official_phone: string } | null;
-      to_hospital: { name: string; official_phone: string } | null;
-      specialty: { specialty_name: string } | null;
-    })[]
-  ).map((ref) => ({
+  const formattedData: ReferralWithDetails[] = (data || []).map((ref) => ({
     ...ref,
-    direction: ref.from_hospital_id === hId ? "outbound" : "inbound",
-  }));
+    direction: ref.from_hospital_id === hospitalId ? "outbound" : "inbound",
+  })) as ReferralWithDetails[];
 
   return { success: true, message: "Referrals fetched", data: formattedData };
 }
@@ -103,11 +107,11 @@ export async function updateReferralStatus(
   status: Database["public"]["Enums"]["referral_status"],
   rejectionReason?: string,
 ): Promise<ActionResponse<ReferralRow>> {
-  const supabase = await createClient();
-  const context = await getAdminContext(supabase);
-  const hId = context?.associated_hospital_id;
+  const { hospitalId, error: authError } = await getValidatedAdminContext();
+  if (!hospitalId)
+    return { success: false, message: authError || "Unauthorized", data: null };
 
-  if (!hId) return { success: false, message: "Unauthorized", data: null };
+  const supabase = await createClient();
 
   const { data, error } = await supabase
     .from("referrals")
@@ -117,7 +121,7 @@ export async function updateReferralStatus(
       updated_at: new Date().toISOString(),
     })
     .eq("id", referralId)
-    .eq("to_hospital_id", hId)
+    .eq("to_hospital_id", hospitalId)
     .select()
     .single();
 
@@ -138,6 +142,7 @@ export interface SearchResult extends Hospital {
     icu_beds_available: number;
   } | null;
 }
+
 export async function searchHospitals(params: {
   cityId?: string;
   specialtyId?: string;
@@ -164,11 +169,10 @@ export async function searchHospitals(params: {
   return {
     success: true,
     message: "Hospitals found",
-    data: data as unknown as SearchResult[],
+    data: (data || []) as unknown as SearchResult[],
   };
 }
 
-//Accessible to both Admin and Superadmin,
 export type SharedReferralDetail =
   Database["public"]["Tables"]["referrals"]["Row"] & {
     from_hospital: {
@@ -183,6 +187,7 @@ export type SharedReferralDetail =
     } | null;
     specialty: { specialty_name: string } | null;
   };
+
 export async function getReferralById(
   id: string,
 ): Promise<ActionResponse<SharedReferralDetail>> {

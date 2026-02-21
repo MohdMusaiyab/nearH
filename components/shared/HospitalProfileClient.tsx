@@ -13,6 +13,7 @@ import { TabNavigation } from "./TabNavigation";
 import { OverviewTab } from "./OverviewTab";
 import { DoctorsTab } from "./DoctorsTab";
 import { ServicesTab } from "../superadmin/ServicesTab";
+import { ServicesTab as Services } from "./ServicesTab";
 import { BloodBankTab } from "./BloodBankTab";
 import { ReferralsTab } from "./ReferralsTab";
 import { AdminManagement } from "./AdminManagement";
@@ -76,7 +77,10 @@ export default function HospitalProfileClient({
           )}
 
           {activeTab === "services" && (
-            <ServicesTab specialties={hospital.specialties} />
+            <Services
+              services={hospital.services}
+              specialties={hospital.specialties}
+            />
           )}
 
           {activeTab === "blood-bank" && (

@@ -1,4 +1,3 @@
-// app/superadmin/hospitals/[id]/SuperAdminHospitalClient.tsx
 "use client";
 
 import { useState } from "react";

@@ -208,7 +208,7 @@ export default function ExploreClient({
         {hospitals.map((hospital) => (
           <Link
             key={hospital.id}
-            href={`/superadmin/hospitals/${hospital.id}`}
+            href={`/explore/hospitals/${hospital.id}`}
             className="group bg-white border border-slate-200 rounded-[3rem] p-8 space-y-6 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500"
           >
             <div className="flex justify-between items-start">

@@ -1,5 +1,4 @@
 "use server";
-
 import { createClient } from "@/lib/supabase/server";
 import { ActionResponse } from "@/types/response";
 import {
@@ -8,7 +7,7 @@ import {
   PrivateHospitalProfile,
   SuperAdminHospitalProfile,
 } from "@/types/hospital";
-
+import { getAuthenticatedProfile } from "@/utils/authCache";
 export async function getHospitalProfile(
   hospitalId: string,
 ): Promise<
@@ -16,93 +15,61 @@ export async function getHospitalProfile(
     PublicHospitalProfile | PrivateHospitalProfile | SuperAdminHospitalProfile
   >
 > {
+  if (!hospitalId) {
+    return { success: false, message: "Hospital ID is required", data: null };
+  }
   const supabase = await createClient();
-
   try {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
+    const viewerProfile = await getAuthenticatedProfile();
+    const isOwner = viewerProfile?.associated_hospital_id === hospitalId;
+    const isSuperAdmin = viewerProfile?.role === "superadmin";
+    const canViewPrivate = isOwner || isSuperAdmin;
     const { data: hospital, error: hospitalError } = await supabase
       .from("hospitals")
       .select(
         `
-        *,
-        location:locations(
-          city,
-          state
-        ),
-        hospital_inventory(
-          available_beds,
-          icu_beds_available,
-          ventilators_available,
-          total_beds,
-          icu_beds_total,
-          ventilators_total,
-          last_updated
-        ),
-        hospital_images(
-          image_url,
-          is_primary
-        ),
-        doctors(
-          id,
-          name,
-          experience_years,
-          status,
-          is_available,
-          room_number,
-          availability_schedule,
-          specialty:specialties_list(
-            id,
-            specialty_name
-          )
-        ),
-        blood_bank(
-          blood_group,
-          units_available,
-          last_updated
-        )
-      `,
+    *,
+    location:locations(city, state),
+    hospital_inventory(
+      available_beds, icu_beds_available, ventilators_available,
+      total_beds, icu_beds_total, ventilators_total, last_updated
+    ),
+    hospital_images(image_url, is_primary),
+    doctors(
+      id, name, experience_years, status, is_available, room_number,
+      availability_schedule,
+      specialty:specialties_list(id, specialty_name)
+    ),
+    blood_bank(blood_group, units_available, last_updated),
+    hospital_services(
+      service_id,
+      services_list(
+        id,
+        service_name,
+        description
+      )
+    )
+  `,
       )
       .eq("id", hospitalId)
       .maybeSingle();
-
-    if (hospitalError) {
-      console.error("Error fetching hospital:", hospitalError);
+    if (hospitalError || !hospital) {
       return {
         success: false,
-        message: "Failed to fetch hospital data",
+        message: hospitalError?.message || "Hospital not found",
         data: null,
       };
     }
-
-    if (!hospital) {
-      return {
-        success: false,
-        message: "Hospital not found",
-        data: null,
-      };
-    }
-
-    const typedHospital = hospital as unknown as HospitalWithRelations;
-
-    let isOwner = false;
-    let isSuperAdmin = false;
-
-    if (user) {
-      const { data: viewer } = await supabase
-        .from("profiles")
-        .select("role, associated_hospital_id")
-        .eq("id", user.id)
-        .maybeSingle();
-
-      isOwner = viewer?.associated_hospital_id === hospitalId;
-      isSuperAdmin = viewer?.role === "superadmin";
-    }
-
-    const canViewPrivate = isOwner || isSuperAdmin;
-
+    const typedHospital = hospital as unknown as HospitalWithRelations & {
+      hospital_services: {
+        service_id: string;
+        services_list: {
+          id: string;
+          service_name: string;
+          description: string | null;
+        } | null;
+      }[];
+    };
     const specialties = Array.from(
       new Set(
         typedHospital.doctors
@@ -110,17 +77,19 @@ export async function getHospitalProfile(
           .filter((name): name is string => !!name) ?? [],
       ),
     );
-
+    const services =
+      typedHospital.hospital_services
+        ?.map((hs) => hs.services_list?.service_name)
+        .filter((name): name is string => !!name) ?? [];
     const primaryImage =
       typedHospital.hospital_images?.find((img) => img.is_primary)?.image_url ??
       typedHospital.hospital_images?.[0]?.image_url ??
       null;
-
     const publicProfile: PublicHospitalProfile = {
       id: typedHospital.id,
       name: typedHospital.name,
-      is_verified: typedHospital.is_verified ?? false,
-      has_ayushman_bharat: typedHospital.has_ayushman_bharat ?? false,
+      is_verified: !!typedHospital.is_verified,
+      has_ayushman_bharat: !!typedHospital.has_ayushman_bharat,
       trauma_level: typedHospital.trauma_level,
       location: typedHospital.location,
       inventory: {
@@ -138,9 +107,10 @@ export async function getHospitalProfile(
           specialty: d.specialty?.specialty_name ?? null,
           experience_years: d.experience_years ?? 0,
           status: d.status,
-          is_available: d.is_available ?? true,
+          is_available: !!d.is_available,
         })) ?? [],
       specialties,
+      services,
       blood_bank:
         typedHospital.blood_bank?.map((b) => ({
           blood_group: b.blood_group,
@@ -148,7 +118,6 @@ export async function getHospitalProfile(
         })) ?? [],
       primary_image: primaryImage,
     };
-
     if (!canViewPrivate) {
       return {
         success: true,
@@ -156,14 +125,13 @@ export async function getHospitalProfile(
         data: publicProfile,
       };
     }
-
     const privateProfile: PrivateHospitalProfile = {
       ...publicProfile,
       official_email: typedHospital.official_email,
       official_phone: typedHospital.official_phone,
       website_url: typedHospital.website_url,
       emergency_contact: typedHospital.emergency_contact,
-      is_active: typedHospital.is_active ?? true,
+      is_active: !!typedHospital.is_active,
       created_at: typedHospital.created_at ?? new Date().toISOString(),
       updated_at: typedHospital.updated_at ?? new Date().toISOString(),
       doctors:
@@ -193,128 +161,90 @@ export async function getHospitalProfile(
         last_updated: typedHospital.hospital_inventory?.last_updated ?? null,
       },
     };
-
     if (isOwner) {
-      const { data: fromReferrals } = await supabase
-        .from("referrals")
-        .select(
-          `
-          id,
-          patient_name,
-          priority,
-          status,
-          created_at,
-          to_hospital:hospitals!to_hospital_id(
-            id,
-            name
+      const [fromRes, toRes] = await Promise.all([
+        supabase
+          .from("referrals")
+          .select(
+            "id, patient_name, priority, status, created_at, to_hospital:hospitals!to_hospital_id(id, name)",
           )
-        `,
-        )
-        .eq("from_hospital_id", hospitalId)
-        .order("created_at", { ascending: false })
-        .limit(10);
-
-      const { data: toReferrals } = await supabase
-        .from("referrals")
-        .select(
-          `
-          id,
-          patient_name,
-          priority,
-          status,
-          created_at,
-          from_hospital:hospitals!from_hospital_id(
-            id,
-            name
+          .eq("from_hospital_id", hospitalId)
+          .order("created_at", { ascending: false })
+          .limit(10),
+        supabase
+          .from("referrals")
+          .select(
+            "id, patient_name, priority, status, created_at, from_hospital:hospitals!from_hospital_id(id, name)",
           )
-        `,
-        )
-        .eq("to_hospital_id", hospitalId)
-        .order("created_at", { ascending: false })
-        .limit(10);
-
-      privateProfile.referrals_as_from = (fromReferrals ?? []).map((r) => ({
-        id: r.id,
-        patient_name: r.patient_name,
-        priority: r.priority,
-        status: r.status,
-        created_at: r.created_at,
+          .eq("to_hospital_id", hospitalId)
+          .order("created_at", { ascending: false })
+          .limit(10),
+      ]);
+      privateProfile.referrals_as_from = (fromRes.data ?? []).map((r) => ({
+        ...r,
         to_hospital: r.to_hospital as { id: string; name: string },
       }));
-
-      privateProfile.referrals_as_to = (toReferrals ?? []).map((r) => ({
-        id: r.id,
-        patient_name: r.patient_name,
-        priority: r.priority,
-        status: r.status,
-        created_at: r.created_at,
+      privateProfile.referrals_as_to = (toRes.data ?? []).map((r) => ({
+        ...r,
         from_hospital: r.from_hospital as { id: string; name: string },
       }));
     }
-
     if (isSuperAdmin) {
-      const { data: admins } = await supabase
-        .from("profiles")
-        .select(
-          `
-          id,
-          full_name,
-          email:users!inner(email),
-          status,
-          created_at
-        `,
-        )
-        .eq("associated_hospital_id", hospitalId);
-
-      const { data: referralMetrics } = await supabase
-        .from("referrals")
-        .select("status")
-        .or(
-          `from_hospital_id.eq.${hospitalId},to_hospital_id.eq.${hospitalId}`,
-        );
-
-      const totalReferrals = referralMetrics?.length ?? 0;
-      const completedReferrals =
-        referralMetrics?.filter((r) => r.status === "Completed").length ?? 0;
-      const pendingReferrals =
-        referralMetrics?.filter((r) => r.status === "Pending").length ?? 0;
-
+      const [adminRes, metricsRes] = await Promise.all([
+        supabase
+          .from("profiles")
+          .select("id, full_name, status, created_at")
+          .eq("associated_hospital_id", hospitalId),
+        supabase
+          .from("referrals")
+          .select("status")
+          .or(
+            `from_hospital_id.eq.${hospitalId},to_hospital_id.eq.${hospitalId}`,
+          ),
+      ]);
+      const adminsWithEmail = await Promise.all(
+        (adminRes.data ?? []).map(async (admin) => {
+          const { data: userData } = await supabase.auth.admin.getUserById(
+            admin.id,
+          );
+          return {
+            id: admin.id,
+            full_name: admin.full_name,
+            email: userData?.user?.email ?? "Email not available",
+            status: admin.status,
+            created_at: admin.created_at,
+          };
+        }),
+      );
       const superAdminProfile: SuperAdminHospitalProfile = {
         ...privateProfile,
-        admins: (admins ?? []).map((a) => ({
-          id: a.id,
-          full_name: a.full_name,
-          email: (a.email as unknown as { email: string }).email,
-          status: a.status,
-          created_at: a.created_at,
-        })),
+        admins: adminsWithEmail,
         system_metrics: {
-          total_referrals: totalReferrals,
-          completed_referrals: completedReferrals,
-          pending_referrals: pendingReferrals,
+          total_referrals: metricsRes.data?.length ?? 0,
+          completed_referrals:
+            metricsRes.data?.filter((r) => r.status === "Completed").length ??
+            0,
+          pending_referrals:
+            metricsRes.data?.filter((r) => r.status === "Pending").length ?? 0,
           average_response_time: null,
         },
       };
-
       return {
         success: true,
         message: "Superadmin profile retrieved",
         data: superAdminProfile,
       };
     }
-
     return {
       success: true,
       message: "Private profile retrieved",
       data: privateProfile,
     };
-  } catch (error) {
-    console.error("Unexpected error in getHospitalProfile:", error);
-    return {
-      success: false,
-      message:
-        error instanceof Error ? error.message : "An unexpected error occurred",
-      data: null,
-    };
+  } catch (error: unknown) {
+    const msg =
+      error instanceof Error
+        ? error.message
+        : "Critical error fetching profile";
+    return { success: false, message: msg, data: null };
   }
 }

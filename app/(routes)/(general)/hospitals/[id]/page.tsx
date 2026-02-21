@@ -1,4 +1,3 @@
-// app/hospital/[id]/page.tsx
 import { createClient } from "@/lib/supabase/server";
 import { getHospitalProfile } from "@/actions/shared/getHospitalbyId";
 import HospitalProfileClient from "@/components/shared/HospitalProfileClient";

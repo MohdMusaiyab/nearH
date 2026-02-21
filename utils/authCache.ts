@@ -96,8 +96,12 @@ export async function getAuthenticatedProfile(): Promise<Profile | null> {
 
     // 4. Backfill Redis (don't await)
     console.log("🔄 Backfilling Redis cache...");
+    const profileToCache = {
+      ...profile,
+      associated_hospital_id: profile.associated_hospital_id ?? null, // Force null, never undefined
+    };
     redis
-      .set(cacheKey, profile, { ex: 3600 })
+      .set(cacheKey, profileToCache, { ex: 3600 })
       .then(() => console.log("✅ Redis backfill complete"))
       .catch((e) => console.log("❌ Redis backfill failed:", e));
 

@@ -2,16 +2,16 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Navigation } from "@/components/general/NavigationBar";
 import "./globals.css";
-import { Footer } from "@/components/general/Footer";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+import  {Footer}  from "@/components/general/Footer";
+import { Inter, Plus_Jakarta_Sans } from "next/font/google";
+const inter = Inter({
   subsets: ["latin"],
+  variable: "--font-inter",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
+  variable: "--font-plus-jakarta",
 });
 
 export const metadata: Metadata = {
@@ -37,22 +37,13 @@ export default function RootLayout({
     <>
       <html lang="en">
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
+          className={`${inter.variable} ${plusJakarta.variable} antialiased min-h-screen flex flex-col`}
         >
           <Navigation />
           <main className="flex-1">{children}</main>
-
-          {/* Optional Footer - can add later */}
-          <footer className="border-t border-slate-100 py-6 mt-auto">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <p className="text-sm text-slate-400 text-center">
-                © {new Date().getFullYear()} NearH. All rights reserved.
-              </p>
-            </div>
-          </footer>
         </body>
       </html>
-      <Footer/>
+      <Footer />
     </>
   );
 }

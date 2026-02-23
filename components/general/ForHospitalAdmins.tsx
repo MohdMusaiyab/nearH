@@ -1,263 +1,217 @@
-// components/home/ForHospitalAdmins.tsx
 "use client";
 
-import Link from "next/link";
+import React from "react";
 import {
-  Shield,
-  TrendingUp,
-  Users,
-  Clock,
-  BellRing,
-  BarChart3,
-  ArrowRight,
+  LayoutDashboard,
+  UserPlus,
+  History,
+  BarChart,
+  Smartphone,
+  Zap,
   CheckCircle2,
-  CalendarClock,
-  Ambulance,
-  Stethoscope,
-  Building2,
-  HeartPulse,
-  Sparkles,
-  ChevronRight,
+  ArrowRight,
+  ShieldCheck,
+  Globe,
 } from "lucide-react";
+import { motion } from "framer-motion";
+import Link from "next/link";
+
+const adminFeatures = [
+  {
+    title: "One-Tap Inventory",
+    desc: "Update ICU and bed counts in seconds. Syncs instantly across the network.",
+    icon: Zap,
+  },
+  {
+    title: "Digital Referrals",
+    desc: "Receive and manage patient transfers with full digital history.",
+    icon: UserPlus,
+  },
+  {
+    title: "Usage Analytics",
+    desc: "Monitor peak demand times to optimize staff allocation.",
+    icon: BarChart,
+  },
+  {
+    title: "Staff Audit Trail",
+    desc: "Keep a secure log of all inventory updates for compliance.",
+    icon: History,
+  },
+];
 
 export function ForHospitalAdmins() {
-  const benefits = [
-    {
-      icon: TrendingUp,
-      title: "Increase Visibility",
-      description:
-        "Get discovered by patients actively searching for care in your area.",
-    },
-    {
-      icon: Clock,
-      title: "Real-time Updates",
-      description:
-        "Update bed availability instantly. No phone calls, no delays.",
-    },
-    {
-      icon: Users,
-      title: "Direct Referrals",
-      description:
-        "Receive patient referrals directly from other hospitals in the network.",
-    },
-    {
-      icon: BellRing,
-      title: "Emergency Alerts",
-      description:
-        "Get notified when patients need your specialized care urgently.",
-    },
-    {
-      icon: BarChart3,
-      title: "Analytics Dashboard",
-      description:
-        "Track occupancy trends, peak hours, and patient demographics.",
-    },
-    {
-      icon: Shield,
-      title: "Verified Badge",
-      description: "Build trust with patients through our verification system.",
-    },
-  ];
-
-  const stats = [
-    { label: "Active Hospitals", value: "500+", icon: Building2 },
-    { label: "Daily Searches", value: "10k+", icon: TrendingUp },
-    { label: "Avg Response Time", value: "< 5min", icon: Clock },
-    { label: "Successful Referrals", value: "2.5k+", icon: HeartPulse },
-  ];
-
   return (
-    <section className="py-24 bg-gradient-to-br from-indigo-900 via-indigo-800 to-purple-900 text-white relative overflow-hidden">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 bg-grid-white/[0.05] bg-[size:50px_50px]" />
-      <div className="absolute inset-0 bg-gradient-to-t from-indigo-900/50 to-transparent" />
+    <section className="relative py-24 bg-white overflow-hidden">
+      {/* Subtle Background Pattern - Very faint grid */}
+      <div className="absolute inset-0 z-0 opacity-[0.03] [mask-image:linear-gradient(to_bottom,white,transparent,white)]">
+        <svg className="h-full w-full" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern
+              id="admin-grid"
+              width="60"
+              height="60"
+              patternUnits="userSpaceOnUse"
+            >
+              <path
+                d="M 60 0 L 0 0 0 60"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1"
+              />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#admin-grid)" />
+        </svg>
+      </div>
 
-      {/* Animated Orbs */}
-      <div className="absolute top-20 left-10 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl" />
-      <div className="absolute bottom-20 right-10 w-96 h-96 bg-indigo-500/20 rounded-full blur-3xl" />
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+          {/* Left: Content */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-50 border border-slate-100 text-slate-500 font-bold text-[10px] uppercase tracking-[0.2em] mb-8">
+              <Globe size={14} className="text-accent" /> Hospital Management
+              Suite
+            </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full mb-6 border border-white/20">
-            <Building2 className="w-4 h-4" />
-            <span className="text-sm font-medium">
-              For Hospital Administrators
-            </span>
-          </div>
-          <h2 className="text-5xl lg:text-6xl font-black mb-6 tracking-tight">
-            Join the{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-amber-400">
-              Healthcare Network
-            </span>
-          </h2>
-          <p className="text-xl text-indigo-200 leading-relaxed">
-            Stop wasting time on phone calls. Update availability in real-time
-            and receive direct referrals from other hospitals.
-          </p>
-        </div>
+            <h2 className="text-4xl lg:text-6xl font-heading font-bold text-heading leading-[1.1] mb-6">
+              Manage your facility <br />
+              <span className="text-accent/80">in real-time.</span>
+            </h2>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-20">
-          {stats.map((stat) => {
-            const Icon = stat.icon;
-            return (
-              <div
-                key={stat.label}
-                className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 text-center hover:bg-white/10 transition-all group"
-              >
-                <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                  <Icon className="w-6 h-6" />
+            <p className="text-body text-lg mb-10 max-w-lg leading-relaxed">
+              Move beyond manual tracking. Our admin suite integrates with your
+              existing workflow to provide transparency to those who need it
+              most.
+            </p>
+
+            <div className="grid sm:grid-cols-2 gap-6 mb-12">
+              {adminFeatures.map((f, i) => (
+                <div key={i} className="flex gap-4">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-accent/5 flex items-center justify-center text-accent">
+                    <f.icon size={20} />
+                  </div>
+                  <div>
+                    <h4 className="text-heading font-bold text-sm mb-1">
+                      {f.title}
+                    </h4>
+                    <p className="text-muted text-xs leading-relaxed">
+                      {f.desc}
+                    </p>
+                  </div>
                 </div>
-                <div className="text-3xl font-black mb-1">{stat.value}</div>
-                <div className="text-sm text-indigo-300">{stat.label}</div>
-              </div>
-            );
-          })}
-        </div>
+              ))}
+            </div>
 
-        {/* Benefits Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-          {benefits.map((benefit) => {
-            const Icon = benefit.icon;
-            return (
-              <div
-                key={benefit.title}
-                className="bg-white/5 backdrop-blur-sm rounded-3xl p-8 border border-white/10 hover:bg-white/10 transition-all group"
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Link
+                href="/admin/signup"
+                className="px-8 py-4 bg-heading text-white rounded-2xl font-bold shadow-lg shadow-slate-200 hover:bg-slate-800 transition-all flex items-center justify-center gap-2"
               >
-                <div className="w-14 h-14 bg-gradient-to-br from-indigo-400 to-purple-400 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                  <Icon className="w-7 h-7 text-white" />
-                </div>
-                <h3 className="text-xl font-black mb-3">{benefit.title}</h3>
-                <p className="text-indigo-200 text-sm leading-relaxed">
-                  {benefit.description}
-                </p>
-              </div>
-            );
-          })}
-        </div>
+                Get Admin Access <ArrowRight size={18} />
+              </Link>
+              <button className="px-8 py-4 bg-white border border-border text-heading rounded-2xl font-bold hover:bg-slate-50 transition-all">
+                Learn More
+              </button>
+            </div>
+          </motion.div>
 
-        {/* Testimonial */}
-        <div className="max-w-4xl mx-auto mb-16">
-          <div className="bg-gradient-to-r from-indigo-600/50 to-purple-600/50 backdrop-blur-sm rounded-3xl p-8 border border-white/20">
-            <div className="flex items-start gap-6">
-              <div className="flex-shrink-0">
-                <div className="w-16 h-16 bg-gradient-to-br from-amber-300 to-amber-400 rounded-2xl flex items-center justify-center">
-                  <span className="text-2xl font-black text-indigo-900">
-                    DR
+          {/* Right: Clean Dashboard Interface */}
+          <div className="relative">
+            {/* Soft Glow Backgrounds */}
+            <div className="absolute -top-10 -right-10 w-64 h-64 bg-accent/5 blur-[100px] rounded-full" />
+            <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-blue-500/5 blur-[100px] rounded-full" />
+
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              className="relative bg-white rounded-[2.5rem] border border-slate-200 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.08)] overflow-hidden"
+            >
+              {/* Mockup Top Bar */}
+              <div className="px-8 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center text-white font-black text-xs">
+                    H
+                  </div>
+                  <span className="text-xs font-bold text-heading">
+                    Control Panel
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-success animate-pulse" />
+                  <span className="text-[10px] font-bold text-success uppercase">
+                    System Active
                   </span>
                 </div>
               </div>
-              <div>
-                <p className="text-lg italic mb-4 text-indigo-100">
-                  "We've reduced our incoming phone calls by 70% since joining
-                  NearH. Patients now check availability online first, and
-                  referrals come directly through the platform. It's transformed
-                  our admission process."
-                </p>
-                <div className="flex items-center gap-4">
-                  <div>
-                    <p className="font-black">Dr. Rajesh Kumar</p>
-                    <p className="text-sm text-indigo-300">
-                      Medical Director, City Hospital
+
+              {/* Mockup Stats */}
+              <div className="p-8 space-y-6">
+                <div className="space-y-4">
+                  <div className="flex justify-between items-end">
+                    <div>
+                      <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">
+                        ICU Bed Occupancy
+                      </p>
+                      <p className="text-3xl font-black text-heading">82%</p>
+                    </div>
+                    <div className="text-right text-xs font-bold text-error">
+                      - 4 Units Available
+                    </div>
+                  </div>
+                  <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      whileInView={{ width: "82%" }}
+                      transition={{ duration: 1, delay: 0.5 }}
+                      className="h-full bg-accent rounded-full"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                    <p className="text-[10px] font-bold text-muted uppercase mb-2">
+                      Total Referrals
+                    </p>
+                    <p className="text-xl font-bold text-heading">124</p>
+                  </div>
+                  <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                    <p className="text-[10px] font-bold text-muted uppercase mb-2">
+                      Wait Time
+                    </p>
+                    <p className="text-xl font-bold text-heading">
+                      08<span className="text-xs ml-1">min</span>
                     </p>
                   </div>
-                  <div className="flex items-center gap-1 text-amber-300">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <Sparkles key={star} className="w-4 h-4 fill-amber-300" />
+                </div>
+
+                {/* Activity Mockup */}
+                <div className="pt-4 border-t border-slate-100">
+                  <p className="text-[10px] font-bold text-muted uppercase mb-4">
+                    Live Activity
+                  </p>
+                  <div className="space-y-4">
+                    {[1, 2].map((i) => (
+                      <div key={i} className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-success/10 flex items-center justify-center text-success">
+                          <CheckCircle2 size={14} />
+                        </div>
+                        <p className="text-[11px] font-medium text-body">
+                          Inventory data synced with main server
+                        </p>
+                        <span className="ml-auto text-[10px] text-muted font-mono">
+                          14:0{i}
+                        </span>
+                      </div>
                     ))}
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-
-        {/* CTA Cards */}
-        <div className="grid md:grid-cols-2 gap-6">
-          {/* For New Hospitals */}
-          <div className="bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-3xl p-8 border border-white/20 hover:scale-[1.02] transition-all">
-            <Building2 className="w-12 h-12 mb-6" />
-            <h3 className="text-2xl font-black mb-3">New to NearH?</h3>
-            <p className="text-indigo-200 mb-6">
-              List your hospital on our network and start reaching patients
-              today.
-            </p>
-            <ul className="space-y-3 mb-8">
-              {[
-                "Free 30-day trial",
-                "No credit card required",
-                "Setup in under 10 minutes",
-                "Dedicated onboarding specialist",
-              ].map((item) => (
-                <li key={item} className="flex items-center gap-2 text-sm">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0" />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-            <Link
-              href="/auth/signup?type=hospital"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-white text-indigo-600 rounded-xl font-black text-sm hover:bg-indigo-50 transition-all group"
-            >
-              List Your Hospital
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </Link>
-          </div>
-
-          {/* For Existing Admins */}
-          <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-3xl p-8 border border-white/20 hover:scale-[1.02] transition-all">
-            <Stethoscope className="w-12 h-12 mb-6" />
-            <h3 className="text-2xl font-black mb-3">Already Registered?</h3>
-            <p className="text-purple-200 mb-6">
-              Access your dashboard to update inventory, manage referrals, and
-              view analytics.
-            </p>
-            <div className="space-y-4 mb-8">
-              <div className="flex items-center gap-3 text-sm">
-                <CalendarClock className="w-5 h-5 text-purple-300" />
-                <span>Last updated: Today at 10:23 AM</span>
-              </div>
-              <div className="flex items-center gap-3 text-sm">
-                <BellRing className="w-5 h-5 text-purple-300" />
-                <span>3 new referral requests</span>
-              </div>
-            </div>
-            <div className="flex gap-3">
-              <Link
-                href="/admin"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-white text-purple-600 rounded-xl font-black text-sm hover:bg-purple-50 transition-all group flex-1 justify-center"
-              >
-                Go to Dashboard
-                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </Link>
-              <Link
-                href="/admin/referrals"
-                className="px-6 py-3 bg-purple-400 text-white rounded-xl font-black text-sm hover:bg-purple-300 transition-all"
-              >
-                View Referrals
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        {/* Trust Badges */}
-        <div className="mt-16 flex flex-wrap items-center justify-center gap-8 pt-8 border-t border-white/20">
-          <div className="flex items-center gap-2 text-indigo-300">
-            <Shield className="w-5 h-5" />
-            <span className="text-sm">HIPAA Compliant</span>
-          </div>
-          <div className="flex items-center gap-2 text-indigo-300">
-            <CheckCircle2 className="w-5 h-5" />
-            <span className="text-sm">Verified by Medical Council</span>
-          </div>
-          <div className="flex items-center gap-2 text-indigo-300">
-            <Users className="w-5 h-5" />
-            <span className="text-sm">Trusted by 500+ Hospitals</span>
-          </div>
-          <div className="flex items-center gap-2 text-indigo-300">
-            <Clock className="w-5 h-5" />
-            <span className="text-sm">24/7 Support</span>
+            </motion.div>
           </div>
         </div>
       </div>

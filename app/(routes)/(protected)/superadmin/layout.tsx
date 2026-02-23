@@ -1,5 +1,5 @@
 import React from "react";
-import SuperAdminSidebar from "@/components/SuperAdminSidebar";
+import SuperAdminSidebar from "@/components/superadmin/SuperAdminSidebar";
 
 export default function SuperAdminLayout({
   children,
@@ -7,7 +7,11 @@ export default function SuperAdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen bg-slate-50">
+    /*
+      pt-20 lg:pt-24 — pushes the entire layout body below the fixed global Navigation.
+      The sidebar uses sticky top-24 so it also starts cleanly below the nav on desktop.
+    */
+    <div className="flex flex-col lg:flex-row min-h-screen bg-slate-50 pt-20 lg:pt-24">
       <SuperAdminSidebar />
 
       <main className="flex-1 w-full max-w-full overflow-x-hidden">

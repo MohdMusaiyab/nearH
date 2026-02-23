@@ -1,8 +1,10 @@
 "use server";
+
 import { createClient } from "@/lib/supabase/server";
 import { ActionResponse } from "@/types/response";
 import { ExploreHospital } from "@/types/explore";
 import { Database } from "@/types/database.types";
+
 interface ExploreParams {
   page: number;
   query?: string;
@@ -10,15 +12,18 @@ interface ExploreParams {
   specialtyId?: string;
   serviceId?: string;
 }
+
+// Define the shape of the inventory specifically to handle both cases
+type InventoryData = {
+  available_beds: number;
+  icu_beds_available: number;
+  ventilators_available: number;
+};
+
 type RawJoinResult = Database["public"]["Tables"]["hospitals"]["Row"] & {
   location: { city: string; state: string } | null;
-  hospital_inventory:
-    | {
-        available_beds: number;
-        icu_beds_available: number;
-        ventilators_available: number;
-      }[]
-    | null;
+  // Use a union type to handle Supabase's inconsistent return of unique joins
+  hospital_inventory: InventoryData | InventoryData[] | null;
   hospital_images: { image_url: string }[] | null;
   doctors: {
     specialty_id: string;
@@ -29,6 +34,7 @@ type RawJoinResult = Database["public"]["Tables"]["hospitals"]["Row"] & {
     services_list: { service_name: string } | null;
   }[];
 };
+
 export async function getExploreHospitals({
   page,
   query,
@@ -42,6 +48,7 @@ export async function getExploreHospitals({
   const pageSize = 20;
   const from = (page - 1) * pageSize;
   const to = from + pageSize - 1;
+
   try {
     let supabaseQuery = supabase.from("hospitals").select(
       `
@@ -60,8 +67,11 @@ export async function getExploreHospitals({
       `,
       { count: "exact" },
     );
+
     if (query) supabaseQuery = supabaseQuery.ilike("name", `%${query}%`);
     if (locationId) supabaseQuery = supabaseQuery.eq("location_id", locationId);
+
+    // Filtering nested relationships
     if (specialtyId) {
       supabaseQuery = supabaseQuery.filter(
         "doctors.specialty_id",
@@ -76,17 +86,30 @@ export async function getExploreHospitals({
         serviceId,
       );
     }
+
     const { data, error, count } = await supabaseQuery
       .eq("is_active", true)
       .order("is_verified", { ascending: false })
       .order("name", { ascending: true })
       .range(from, to);
+
     if (error) throw new Error(error.message);
+
     const rawData = (data ?? []) as unknown as RawJoinResult[];
+
     const hospitals: ExploreHospital[] = rawData.map((h) => {
-      const inv = h.hospital_inventory?.[0] ?? null;
+      /**
+       * VVIP FIX: Robust check for inventory.
+       * If it's an array, take the first element.
+       * If it's an object, use it directly.
+       */
+      const inv = Array.isArray(h.hospital_inventory)
+        ? h.hospital_inventory[0]
+        : h.hospital_inventory;
+
       const img =
         h.hospital_images?.find((i) => i.image_url)?.image_url ?? null;
+
       const specialties = Array.from(
         new Set(
           h.doctors
@@ -94,10 +117,12 @@ export async function getExploreHospitals({
             .filter((n): n is string => !!n) ?? [],
         ),
       );
+
       const services =
         h.hospital_services
           ?.map((s) => s.services_list?.service_name)
           .filter((n): n is string => !!n) ?? [];
+
       return {
         id: h.id,
         name: h.name,
@@ -115,6 +140,7 @@ export async function getExploreHospitals({
         services,
       };
     });
+
     return {
       success: true,
       message: "Hospitals retrieved successfully",
@@ -127,10 +153,6 @@ export async function getExploreHospitals({
     const msg =
       err instanceof Error ? err.message : "Failed to load exploration data";
     console.error(`[ExploreHospitals Error]: ${msg}`);
-    return {
-      success: false,
-      message: msg,
-      data: null,
-    };
+    return { success: false, message: msg, data: null };
   }
 }

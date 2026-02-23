@@ -1,188 +1,215 @@
-// components/home/WhyNearH.tsx
 "use client";
 
+import React from "react";
 import {
   AlertCircle,
-  CheckCircle,
+  CheckCircle2,
   Search,
-  BarChart3,
+  Zap,
   PhoneCall,
   Clock,
   Heart,
-  TrendingUp,
   Users,
   ArrowRight,
-  Star,
+  Activity,
+  ShieldCheck,
+  TrendingDown,
 } from "lucide-react";
+import { motion } from "framer-motion";
 import Link from "next/link";
 
 export function WhyNearH() {
   return (
-    <section className="py-20 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Problem Statement */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 bg-rose-50 px-4 py-2 rounded-full mb-6">
-            <AlertCircle className="w-4 h-4 text-rose-500" />
-            <span className="text-sm font-medium text-rose-700">
-              The Reality
-            </span>
+    <section className="relative py-24 bg-white overflow-hidden">
+      {/* Background Decor: Suble Medical SVGs */}
+      <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none">
+        <svg
+          className="absolute top-0 left-0 w-full h-full"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <defs>
+            <pattern
+              id="grid"
+              width="40"
+              height="40"
+              patternUnits="userSpaceOnUse"
+            >
+              <path
+                d="M 40 0 L 0 0 0 40"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1"
+              />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#grid)" />
+        </svg>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
+        {/* Header: High Impact */}
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-16 gap-6">
+          <div className="max-w-2xl">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-error/10 text-error font-bold text-xs uppercase tracking-tighter mb-4"
+            >
+              <AlertCircle size={14} />
+              The Emergency Gap
+            </motion.div>
+            <h2 className="text-4xl lg:text-6xl font-heading font-bold text-heading leading-[1.1]">
+              In emergencies, <br />
+              <span className="text-accent underline decoration-error/30">
+                minutes are milestones.
+              </span>
+            </h2>
           </div>
-          <h2 className="text-4xl lg:text-5xl font-black text-slate-900 mb-6">
-            During a medical emergency,{" "}
-            <span className="text-rose-500">every minute counts</span>
-          </h2>
-          <p className="text-xl text-slate-600 leading-relaxed">
-            But finding an available hospital bed shouldn't be one of them. We
-            built NearH to solve one problem:{" "}
-            <span className="font-bold text-indigo-600">
-              real-time hospital availability, for everyone.
-            </span>
+          <p className="text-body text-lg max-w-sm font-medium border-l-4 border-accent pl-6">
+            We replace frantic phone calls with verified data, giving you the
+            clarity to act fast.
           </p>
         </div>
 
-        {/* 3-Step Solution */}
-        <div className="grid md:grid-cols-3 gap-8 mb-20">
-          {steps.map((step, index) => {
-            const Icon = step.icon;
-            return (
-              <div key={step.title} className="relative">
-                {/* Connector Line */}
-                {index < 2 && (
-                  <div className="hidden md:block absolute top-16 left-[60%] w-full h-0.5 bg-gradient-to-r from-indigo-200 to-transparent" />
-                )}
+        {/* The Comparison Bento Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-24">
+          {/* Left: The Problem (4 Columns) */}
+          <motion.div
+            whileHover={{ y: -5 }}
+            className="md:col-span-5 bg-slate-50 rounded-[2rem] p-8 border border-slate-200"
+          >
+            <div className="flex items-center gap-3 mb-8 text-slate-400">
+              <div className="p-2 bg-white rounded-lg shadow-sm">
+                <TrendingDown size={24} />
+              </div>
+              <span className="font-bold uppercase text-sm tracking-widest">
+                Traditional Way
+              </span>
+            </div>
+            <ul className="space-y-6">
+              {beforeItems.map((item, i) => (
+                <li
+                  key={i}
+                  className="flex items-center gap-4 text-slate-500 opacity-70"
+                >
+                  <div className="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center flex-shrink-0 text-[10px] font-bold">
+                    ✕
+                  </div>
+                  <span className="text-base font-medium line-through">
+                    {item}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </motion.div>
 
-                <div className="text-center relative">
-                  <div className="w-16 h-16 bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-6 relative">
-                    <span className="absolute -top-2 -right-2 w-6 h-6 bg-indigo-600 text-white rounded-full text-sm font-bold flex items-center justify-center">
-                      {index + 1}
+          {/* Right: The NearH Solution (7 Columns) */}
+          <motion.div
+            whileHover={{ y: -5 }}
+            className="md:col-span-7 bg-heading rounded-[2rem] p-8 lg:p-10 text-white relative overflow-hidden shadow-2xl"
+          >
+            {/* Decorative SVG Wave */}
+            <div className="absolute top-0 right-0 w-1/2 h-full opacity-10 pointer-events-none">
+              <Activity
+                size={300}
+                className="translate-x-1/4 -translate-y-1/4"
+              />
+            </div>
+
+            <div className="relative z-10">
+              <div className="flex items-center gap-3 mb-8">
+                <div className="p-2 bg-accent rounded-lg">
+                  <ShieldCheck size={24} className="text-white" />
+                </div>
+                <span className="font-bold uppercase text-sm tracking-widest text-blue-200">
+                  The NearH Standard
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {afterItems.map((item, i) => (
+                  <div
+                    key={i}
+                    className="flex flex-col gap-2 p-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
+                  >
+                    <CheckCircle2 size={20} className="text-success" />
+                    <span className="text-sm lg:text-base font-semibold leading-tight">
+                      {item}
                     </span>
-                    <Icon className="w-8 h-8 text-indigo-600" />
                   </div>
-                  <h3 className="text-xl font-black text-slate-900 mb-3">
-                    {step.title}
-                  </h3>
-                  <p className="text-slate-600">{step.description}</p>
-                </div>
+                ))}
               </div>
-            );
-          })}
+            </div>
+          </motion.div>
         </div>
 
-        {/* Before vs After Comparison */}
-        <div className="grid lg:grid-cols-2 gap-8 mb-20">
-          {/* Before Card */}
-          <div className="bg-rose-50/50 rounded-3xl p-8 border border-rose-100">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-rose-100 rounded-xl flex items-center justify-center">
-                <AlertCircle className="w-5 h-5 text-rose-600" />
+        {/* Interactive Steps */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 mb-24">
+          {steps.map((step, idx) => (
+            <div key={idx} className="relative group text-center sm:text-left">
+              <div className="mb-6 inline-flex p-4 rounded-2xl bg-badge-bg text-accent group-hover:bg-accent group-hover:text-white transition-all duration-300">
+                <step.icon size={32} />
               </div>
-              <h3 className="text-2xl font-black text-rose-900">
-                Before NearH
+              <h3 className="text-xl font-heading font-bold text-heading mb-2">
+                {step.title}
               </h3>
+              <p className="text-muted text-sm leading-relaxed">
+                {step.description}
+              </p>
+              {idx !== 2 && (
+                <div className="hidden sm:block absolute top-8 left-full w-full border-t-2 border-dashed border-border -z-10" />
+              )}
             </div>
-            <ul className="space-y-4">
-              {beforeItems.map((item) => (
-                <li key={item} className="flex items-start gap-3">
-                  <span className="text-rose-400 text-xl">❌</span>
-                  <span className="text-slate-700">{item}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+          ))}
+        </div>
 
-          {/* After Card */}
-          <div className="bg-emerald-50/50 rounded-3xl p-8 border border-emerald-100">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center">
-                <CheckCircle className="w-5 h-5 text-emerald-600" />
-              </div>
-              <h3 className="text-2xl font-black text-emerald-900">
-                With NearH
-              </h3>
-            </div>
-            <ul className="space-y-4">
-              {afterItems.map((item) => (
-                <li key={item} className="flex items-start gap-3">
-                  <span className="text-emerald-400 text-xl">✅</span>
-                  <span className="text-slate-700">{item}</span>
-                </li>
-              ))}
-            </ul>
+        {/* Impact Stats Section */}
+        <div className="rounded-[3rem] bg-accent p-8 lg:p-16 relative overflow-hidden shadow-3xl shadow-blue-500/20">
+          <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20" />
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative z-10">
+            {impactStats.map((stat, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.1 }}
+                className="flex flex-col items-center text-center text-white"
+              >
+                <div className="mb-4 p-3 bg-white/20 rounded-xl backdrop-blur-md">
+                  <stat.icon size={28} />
+                </div>
+                <div className="text-5xl lg:text-6xl font-black mb-1 tracking-tighter">
+                  {stat.value}
+                </div>
+                <div className="font-bold text-blue-100 uppercase text-xs tracking-[0.2em]">
+                  {stat.label}
+                </div>
+                <div className="text-white/60 text-xs mt-2 italic">
+                  {stat.subtext}
+                </div>
+              </motion.div>
+            ))}
           </div>
         </div>
 
-        {/* Impact Stats */}
-        <div className="bg-gradient-to-br from-indigo-600 to-indigo-700 rounded-3xl p-10 mb-20 text-white">
-          <h3 className="text-3xl font-black text-center mb-12">
-            ✨ The Difference We're Making
+        {/* Final CTA */}
+        <div className="mt-24 text-center">
+          <h3 className="text-3xl lg:text-5xl font-heading font-bold text-heading mb-6">
+            Ready to secure a life?
           </h3>
-
-          <div className="grid md:grid-cols-3 gap-8 mb-12">
-            {impactStats.map((stat) => {
-              const Icon = stat.icon;
-              return (
-                <div key={stat.label} className="text-center">
-                  <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-4 backdrop-blur-sm">
-                    <Icon className="w-8 h-8 text-white" />
-                  </div>
-                  <div className="text-4xl font-black mb-2">{stat.value}</div>
-                  <div className="text-indigo-100 font-medium">
-                    {stat.label}
-                  </div>
-                  <div className="text-sm text-indigo-200 mt-1">
-                    {stat.subtext}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Testimonial */}
-          <div className="max-w-3xl mx-auto bg-white/10 rounded-2xl p-6 backdrop-blur-sm">
-            <div className="flex items-start gap-4">
-              <div className="flex-shrink-0">
-                <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
-                  <Star className="w-6 h-6 text-amber-300 fill-amber-300" />
-                </div>
-              </div>
-              <div>
-                <p className="text-lg italic mb-3">
-                  "Found an ICU bed in 5 minutes during an emergency. This
-                  platform saved my father."
-                </p>
-                <div className="flex items-center gap-2">
-                  <span className="font-bold">— Priya S.</span>
-                  <span className="text-indigo-200">•</span>
-                  <span className="text-indigo-200">Bengaluru</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Mission Statement */}
-        <div className="text-center max-w-4xl mx-auto">
-          <h3 className="text-3xl font-black text-slate-900 mb-6">
-            Healthcare should be accessible, not a scavenger hunt
-          </h3>
-          <p className="text-lg text-slate-600 mb-8 leading-relaxed">
-            We're on a mission to make every hospital bed visible, every blood
-            unit countable, and every emergency manageable. Join us in building
-            a healthier, more connected India.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               href="/auth/signup"
-              className="px-8 py-4 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-200"
+              className="w-full sm:w-auto px-10 py-5 bg-accent text-white rounded-2xl font-bold shadow-xl shadow-blue-500/30 hover:-translate-y-1 transition-all flex items-center justify-center gap-2"
             >
-              Join the Network
+              Join the Network <ArrowRight size={20} />
             </Link>
             <Link
-              href="/about"
-              className="px-8 py-4 bg-white text-indigo-600 rounded-xl font-bold border-2 border-indigo-200 hover:bg-indigo-50 transition-colors"
+              href="/about-us"
+              className="w-full sm:w-auto px-10 py-5 bg-white text-heading border-2 border-border rounded-2xl font-bold hover:bg-slate-50 transition-all flex items-center justify-center"
             >
-              Learn More About Us
+              View Hospitals
             </Link>
           </div>
         </div>
@@ -191,61 +218,55 @@ export function WhyNearH() {
   );
 }
 
-// Data
 const steps = [
   {
     icon: Search,
-    title: "Search",
-    description:
-      "Find hospitals by location, specialty, or emergency care needs in seconds.",
+    title: "Locate",
+    description: "Filter by ICU, ventilators, or blood type in real-time.",
   },
   {
-    icon: BarChart3,
-    title: "Compare",
-    description:
-      "Check real-time bed availability, ICU units, and blood bank status side-by-side.",
+    icon: Zap,
+    title: "Verify",
+    description: "Our systems sync with hospital HMS every 5 minutes.",
   },
   {
     icon: PhoneCall,
-    title: "Connect",
-    description:
-      "Get instant contact details and directions to your chosen hospital.",
+    title: "Navigate",
+    description: "Direct emergency routing and pre-arrival contact.",
   },
 ];
 
 const beforeItems = [
-  "Calling hospital by hospital, wasting precious minutes",
-  "Outdated information leading to false hope",
-  "No way to compare options quickly",
-  "Stress and uncertainty for families",
-  "Arriving at hospitals with no beds available",
+  "Endless phone calls during crisis",
+  "Outdated data and false hope",
+  "Zero transparency on pricing",
+  "Wasted travel to 'Full' hospitals",
 ];
 
 const afterItems = [
-  "See all hospital availability at a single glance",
-  "Real-time data updated every 5 minutes",
-  "Easy comparison of beds, ICU, and blood banks",
-  "Peace of mind with verified information",
-  "Direct contact and navigation to available beds",
+  "One-tap real-time directory",
+  "Data synced every 5 minutes",
+  "Verified bed availability counts",
+  "Emergency navigation routes",
 ];
 
 const impactStats = [
   {
     icon: Users,
     value: "10k+",
-    label: "Patients Connected",
-    subtext: "To available beds",
+    label: "Lives Guided",
+    subtext: "To critical care",
   },
   {
     icon: Heart,
     value: "500+",
-    label: "Hospitals Partnered",
-    subtext: "Across India",
+    label: "Hospitals",
+    subtext: "Verified partners",
   },
   {
     icon: Clock,
-    value: "15min",
-    label: "Avg Time to Find Bed",
-    subtext: "Down from 2+ hours",
+    value: "12m",
+    label: "Response",
+    subtext: "Time reduced by 85%",
   },
 ];

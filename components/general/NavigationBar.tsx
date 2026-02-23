@@ -1,457 +1,407 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { User as SupabaseUser } from "@supabase/supabase-js";
+import { User } from "@supabase/supabase-js";
+import { Database } from "@/types/database.types";
 import {
-  Menu,
-  X,
   Hospital,
   LogOut,
   LayoutDashboard,
-  User,
   ChevronDown,
-  Shield,
-  Stethoscope,
-  Clock,
-  CheckCircle,
-  XCircle,
+  Search,
+  Activity,
+  User as UserIcon,
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
-interface UserProfile {
-  id: string;
-  role: "user" | "admin" | "superadmin" | null;
-  status: "pending" | "approved" | "rejected" | null;
+type Profile = Database["public"]["Tables"]["profiles"]["Row"];
+interface ExtendedProfile extends Profile {
   hospitalName?: string;
 }
 
 export function Navigation() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [user, setUser] = useState<SupabaseUser | null>(null);
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isScrolled, setIsScrolled] = useState<boolean>(false);
+  const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [profile, setProfile] = useState<ExtendedProfile | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
   const pathname = usePathname();
   const router = useRouter();
   const supabase = createClient();
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    async function getUser() {
-      try {
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
-        setUser(user);
+    const handleScroll = () => setIsScrolled(window.scrollY > 40);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
-        if (user) {
-          const { data: profile } = await supabase
-            .from("profiles")
-            .select("role, status, associated_hospital_id")
-            .eq("id", user.id)
-            .single();
-
-          if (profile) {
-            // If admin, fetch hospital name
-            let hospitalName;
-            if (profile.role === "admin" && profile.associated_hospital_id) {
-              const { data: hospital } = await supabase
-                .from("hospitals")
-                .select("name")
-                .eq("id", profile.associated_hospital_id)
-                .single();
-              hospitalName = hospital?.name;
-            }
-
-            setProfile({
-              id: user.id,
-              role: profile.role,
-              status: profile.status,
-              hospitalName,
-            });
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching user:", error);
-      } finally {
-        setIsLoading(false);
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target as Node)
+      ) {
+        setDropdownOpen(false);
       }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    document.body.style.overflow = isOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
+    async function syncAuth() {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (session) {
+        setUser(session.user);
+        try {
+          const res = await fetch("/api/auth/me");
+          if (res.ok) {
+            const data: ExtendedProfile = await res.json();
+            setProfile(data);
+          }
+        } catch (e) {
+          console.error("Auth Sync Error:", e);
+        }
+      }
+      setIsLoading(false);
     }
+    syncAuth();
+  }, [supabase.auth]);
 
-    getUser();
-
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(() => {
-      getUser();
-    });
-
-    return () => subscription.unsubscribe();
-  }, [supabase]);
-
-  const handleSignOut = async () => {
+  const handleSignOut = async (): Promise<void> => {
     await supabase.auth.signOut();
+    setIsOpen(false);
+    setDropdownOpen(false);
     router.push("/");
     router.refresh();
   };
 
-  const getDashboardLink = () => {
-    if (!profile) return null;
+  const navLinks = [
+    { href: "/explore", label: "Find Care", icon: Search },
+    { href: "/about-us", label: "Our Mission", icon: Activity },
+  ];
 
-    if (profile.role === "superadmin") return "/superadmin";
-    if (profile.role === "admin" && profile.status === "approved")
-      return "/admin";
-    return null;
-  };
+  if (profile?.role === "admin" && profile?.status === "approved") {
+    navLinks.push({
+      href: "/shared/inventory",
+      label: "Inventory",
+      icon: LayoutDashboard,
+    });
+  }
 
-  const getNavLinks = () => {
-    const links = [
-      { href: "/explore", label: "Find Hospitals" },
-      { href: "/about", label: "About" },
-      { href: "/contact", label: "Contact" },
-    ];
+  const navBg = isScrolled
+    ? "bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-sm"
+    : "bg-transparent";
 
-    // Add hospital-specific links for approved admins
-    if (profile?.role === "admin" && profile.status === "approved") {
-      links.push({ href: "/shared/inventory", label: "Inventory" });
-      links.push({ href: "/shared/doctors", label: "Doctors" });
-    }
-
-    return links;
-  };
-
-  const getStatusBadge = () => {
-    if (!profile?.status) return null;
-
-    const statusConfig = {
-      pending: {
-        icon: Clock,
-        text: "Pending Approval",
-        bg: "bg-amber-50",
-        textColor: "text-amber-700",
-        border: "border-amber-200",
-      },
-      approved: {
-        icon: CheckCircle,
-        text: "Approved",
-        bg: "bg-emerald-50",
-        textColor: "text-emerald-700",
-        border: "border-emerald-200",
-      },
-      rejected: {
-        icon: XCircle,
-        text: "Rejected",
-        bg: "bg-rose-50",
-        textColor: "text-rose-700",
-        border: "border-rose-200",
-      },
-    };
-
-    const config = statusConfig[profile.status];
-    const Icon = config.icon;
-
-    return (
-      <span
-        className={`inline-flex items-center gap-1.5 px-3 py-1.5 ${config.bg} ${config.textColor} rounded-full text-xs font-medium border ${config.border}`}
+  return (
+    <>
+      <nav
+        className={`fixed top-0 left-0 w-full z-[100] transition-all duration-500 h-20 lg:h-24 flex items-center ${navBg}`}
       >
-        <Icon className="w-3.5 h-3.5" />
-        {config.text}
-      </span>
-    );
-  };
+        <div className="w-full px-4 lg:px-0">
+          <div className="flex justify-between items-center">
+            {/* LEFT: Logo & Nav Links */}
+            <div className="flex items-center ">
+              <Link
+                href="/"
+                className="flex items-center gap-3 group lg:w-64 lg:pl-5 lg:flex-shrink-0"
+              >
+                <div className="w-10 h-10 bg-heading rounded-xl flex items-center justify-center shadow-lg shadow-heading/20 group-hover:scale-105 transition-transform duration-200">
+                  <Hospital size={20} className="text-white" />
+                </div>
+                <span className="text-2xl font-black tracking-tighter text-heading">
+                  Near
+                  <span className="text-accent underline decoration-heading decoration-[3px] underline-offset-4">
+                    H
+                  </span>
+                </span>
+              </Link>
 
-  const getRoleBadge = () => {
-    if (!profile?.role) return null;
+              <div className="hidden lg:flex items-center gap-8">
+                {navLinks.map((link) => {
+                  const isActive = pathname === link.href;
+                  return (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className="relative text-sm font-bold tracking-wide transition-colors duration-200 py-1 text-heading/70 hover:text-heading group"
+                    >
+                      {link.label}
+                      <span
+                        className={`absolute bottom-0 left-0 h-[2px] bg-heading rounded-full transition-all duration-300 ${
+                          isActive ? "w-full" : "w-0 group-hover:w-full"
+                        }`}
+                      />
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
 
-    const roleConfig = {
-      superadmin: {
-        icon: Shield,
-        text: "Super Admin",
-        bg: "bg-purple-50",
-        textColor: "text-purple-700",
-        border: "border-purple-200",
-      },
-      admin: {
-        icon: Stethoscope,
-        text: "Hospital Admin",
-        bg: "bg-blue-50",
-        textColor: "text-blue-700",
-        border: "border-blue-200",
-      },
-      user: null,
-    };
+            {/* RIGHT: Desktop Auth */}
+            <div className="hidden lg:flex items-center px-6">
+              {!isLoading &&
+                (user ? (
+                  /* ── Account Dropdown ── */
+                  <div
+                    className="relative"
+                    ref={dropdownRef}
+                    onMouseEnter={() => setDropdownOpen(true)}
+                    onMouseLeave={() => setDropdownOpen(false)}
+                  >
+                    <button
+                      onClick={() => setDropdownOpen((v) => !v)}
+                      className="flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-sm text-heading hover:bg-slate-100 transition-colors duration-200"
+                    >
+                      <div className="w-7 h-7 rounded-lg bg-heading/10 flex items-center justify-center">
+                        <UserIcon size={14} className="text-heading" />
+                      </div>
+                      <span>Account</span>
+                      <ChevronDown
+                        size={14}
+                        className={`transition-transform duration-200 ${dropdownOpen ? "rotate-180" : ""}`}
+                      />
+                    </button>
 
-    if (profile.role === "user") return null;
+                    <AnimatePresence>
+                      {dropdownOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 6, scale: 0.97 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: 6, scale: 0.97 }}
+                          transition={{ duration: 0.15, ease: "easeOut" }}
+                          className="absolute left-1/2 -translate-x-1/2 mt-2 w-60 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden"
+                          style={{ transformOrigin: "top center" }}
+                        >
+                          {/* User info */}
+                          <div className="px-5 py-4 bg-slate-50 border-b border-slate-100">
+                            <p className="text-xs font-bold text-heading truncate">
+                              {user.email}
+                            </p>
+                            {profile?.hospitalName && (
+                              <p className="text-[11px] text-accent font-semibold mt-0.5 truncate">
+                                {profile.hospitalName}
+                              </p>
+                            )}
+                          </div>
 
-    const config = roleConfig[profile.role];
-    if (!config) return null;
+                          {/* Links */}
+                          <div className="py-2">
+                            <Link
+                              href="/admin"
+                              onClick={() => setDropdownOpen(false)}
+                              className="flex items-center gap-3 px-5 py-3 text-sm font-semibold text-heading hover:bg-slate-50 transition-colors"
+                            >
+                              <LayoutDashboard
+                                size={15}
+                                className="text-accent"
+                              />
+                              Dashboard
+                            </Link>
+                            <button
+                              onClick={handleSignOut}
+                              className="w-full flex items-center gap-3 px-5 py-3 text-sm font-semibold text-error hover:bg-red-50 transition-colors text-left"
+                            >
+                              <LogOut size={15} />
+                              Logout
+                            </button>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                ) : (
+                  <Link
+                    href="/auth/login"
+                    className="text-sm font-black px-6 py-2.5 rounded-xl border-2 border-heading text-heading hover:bg-heading hover:text-white transition-all duration-200"
+                  >
+                    PARTNER LOGIN
+                  </Link>
+                ))}
+            </div>
 
-    const Icon = config.icon;
-
-    return (
-      <span
-        className={`inline-flex items-center gap-1.5 px-3 py-1.5 ${config.bg} ${config.textColor} rounded-full text-xs font-medium border ${config.border}`}
-      >
-        <Icon className="w-3.5 h-3.5" />
-        {config.text}
-      </span>
-    );
-  };
-
-  const isActive = (href: string) => pathname === href;
-
-  if (isLoading) {
-    return (
-      <nav className="bg-white border-b border-slate-200 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Logo />
-            <div className="w-24 h-9 bg-slate-100 rounded-xl animate-pulse" />
+            {/* MOBILE: Animated Hamburger */}
+            <button
+              onClick={() => setIsOpen((v) => !v)}
+              className="lg:hidden relative w-10 h-10 flex flex-col items-center justify-center gap-[6px] group"
+              aria-label="Toggle menu"
+            >
+              <span
+                className={`block h-[2.5px] bg-heading rounded-full transition-all duration-300 ${
+                  isOpen ? "w-6 rotate-45 translate-y-[8.5px]" : "w-6"
+                }`}
+              />
+              <span
+                className={`block h-[2.5px] bg-heading rounded-full transition-all duration-300 ${
+                  isOpen ? "opacity-0 w-0" : "w-4"
+                }`}
+              />
+              <span
+                className={`block h-[2.5px] bg-heading rounded-full transition-all duration-300 ${
+                  isOpen ? "w-6 -rotate-45 -translate-y-[8.5px]" : "w-5"
+                }`}
+              />
+            </button>
           </div>
         </div>
       </nav>
-    );
-  }
 
-  return (
-    <nav className="bg-white border-b border-slate-200 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <Logo />
+      {/* MOBILE DRAWER */}
+      <AnimatePresence>
+        {isOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[105] lg:hidden"
+              onClick={() => setIsOpen(false)}
+            />
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-1">
-            {getNavLinks().map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-                  isActive(link.href)
-                    ? "bg-indigo-50 text-indigo-700"
-                    : "text-slate-600 hover:bg-slate-50 hover:text-indigo-600"
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </div>
-
-          {/* Desktop Auth Section */}
-          <div className="hidden md:flex items-center gap-3">
-            {user ? (
-              <div className="flex items-center gap-2">
-                {/* Status Badge - Only show if not approved */}
-                {profile?.status && profile.status !== "approved" && (
-                  <div className="mr-1">{getStatusBadge()}</div>
-                )}
-
-                {/* Role Badge */}
-                {profile?.role &&
-                  profile.role !== "user" &&
-                  profile.status === "approved" && (
-                    <div className="mr-1">{getRoleBadge()}</div>
-                  )}
-
-                {/* Dashboard Link */}
-                {getDashboardLink() && (
-                  <Link
-                    href={getDashboardLink()!}
-                    className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors shadow-sm shadow-indigo-200"
+            {/* Drawer panel */}
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 28, stiffness: 300 }}
+              className="fixed top-0 right-0 h-full w-[min(320px,90vw)] bg-white z-[110] lg:hidden flex flex-col shadow-2xl"
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 bg-heading rounded-lg flex items-center justify-center">
+                    <Hospital size={16} className="text-white" />
+                  </div>
+                  <span className="text-xl font-black text-heading">NearH</span>
+                </div>
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center text-heading hover:bg-slate-200 transition-colors"
+                  aria-label="Close menu"
+                >
+                  {/* Inline X icon */}
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
                   >
-                    <LayoutDashboard className="w-4 h-4" />
-                    Dashboard
-                  </Link>
-                )}
+                    <path d="M18 6L6 18M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
 
-                {/* User Menu Dropdown */}
-                <div className="relative group">
-                  <button className="flex items-center gap-2 px-3 py-2 text-slate-600 hover:text-indigo-600 transition-colors rounded-xl hover:bg-slate-50">
-                    <div className="w-8 h-8 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center">
-                      <User className="w-4 h-4 text-indigo-600" />
-                    </div>
-                    <ChevronDown className="w-4 h-4 text-slate-400 group-hover:text-indigo-400" />
-                  </button>
+              {/* Nav Links */}
+              <div className="flex flex-col px-4 py-6 gap-1">
+                {navLinks.map((link, i) => {
+                  const isActive = pathname === link.href;
+                  const Icon = link.icon;
+                  return (
+                    <motion.div
+                      key={link.href}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.05 + 0.1 }}
+                    >
+                      <Link
+                        href={link.href}
+                        onClick={() => setIsOpen(false)}
+                        className={`flex items-center gap-3 px-4 py-3.5 rounded-xl font-bold text-base transition-colors ${
+                          isActive
+                            ? "bg-heading text-white"
+                            : "text-heading hover:bg-slate-50"
+                        }`}
+                      >
+                        <Icon
+                          size={18}
+                          className={isActive ? "text-white" : "text-accent"}
+                        />
+                        {link.label}
+                      </Link>
+                    </motion.div>
+                  );
+                })}
+              </div>
 
-                  {/* Dropdown Menu */}
-                  <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-slate-200 py-2 hidden group-hover:block">
+              {/* User info (if logged in) */}
+              {user && (
+                <div className="px-4 mb-4">
+                  <div className="rounded-xl bg-slate-50 border border-slate-100 overflow-hidden">
                     <div className="px-4 py-3 border-b border-slate-100">
-                      <p className="text-xs text-slate-500 mb-1">
-                        Signed in as
-                      </p>
-                      <p className="text-sm font-semibold text-slate-900 truncate">
+                      <p className="text-xs font-bold text-heading truncate">
                         {user.email}
                       </p>
                       {profile?.hospitalName && (
-                        <p className="text-xs text-indigo-600 mt-1.5 font-medium">
+                        <p className="text-[11px] text-accent font-semibold mt-0.5">
                           {profile.hospitalName}
                         </p>
                       )}
-
-                      {/* Mobile-style badges in dropdown for desktop */}
-                      <div className="flex flex-wrap gap-1.5 mt-3">
-                        {profile?.status &&
-                          profile.status !== "approved" &&
-                          getStatusBadge()}
-                        {profile?.role &&
-                          profile.role !== "user" &&
-                          profile.status === "approved" &&
-                          getRoleBadge()}
-                      </div>
                     </div>
+                    <Link
+                      href="/admin"
+                      onClick={() => setIsOpen(false)}
+                      className="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-heading hover:bg-slate-100 transition-colors"
+                    >
+                      <LayoutDashboard size={15} className="text-accent" />{" "}
+                      Dashboard
+                    </Link>
                     <button
                       onClick={handleSignOut}
-                      className="w-full px-4 py-3 text-left text-sm text-rose-600 hover:bg-rose-50 flex items-center gap-2 transition-colors rounded-b-2xl"
+                      className="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-error hover:bg-red-50 transition-colors text-left border-t border-slate-100"
                     >
-                      <LogOut className="w-4 h-4" />
-                      Sign Out
+                      <LogOut size={15} /> Logout
                     </button>
                   </div>
                 </div>
-              </div>
-            ) : (
-              <div className="flex items-center gap-2">
-                <Link
-                  href="/auth/login"
-                  className="px-5 py-2.5 text-indigo-600 font-medium text-sm hover:text-indigo-700 transition-colors rounded-xl hover:bg-indigo-50"
-                >
-                  Login
-                </Link>
-                <Link
-                  href="/auth/signup"
-                  className="px-5 py-2.5 bg-indigo-600 text-white rounded-xl font-medium text-sm hover:bg-indigo-700 transition-colors shadow-sm shadow-indigo-200"
-                >
-                  Sign Up
-                </Link>
-                <span className="text-xs text-slate-400 ml-1 italic bg-slate-50 px-3 py-1.5 rounded-full">
-                  For hospitals only
-                </span>
-              </div>
-            )}
-          </div>
+              )}
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2.5 text-slate-600 hover:text-indigo-600 hover:bg-slate-50 rounded-xl transition-colors"
-            aria-label="Toggle menu"
-          >
-            {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
-        </div>
-
-        {/* Mobile Menu */}
-        {isOpen && (
-          <div className="md:hidden py-4 border-t border-slate-100">
-            <div className="flex flex-col space-y-1">
-              {getNavLinks().map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setIsOpen(false)}
-                  className={`px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
-                    isActive(link.href)
-                      ? "bg-indigo-50 text-indigo-700"
-                      : "text-slate-600 hover:bg-slate-50 hover:text-indigo-600"
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              ))}
-
-              {/* Mobile Auth Section */}
-              <div className="pt-4 mt-2 border-t border-slate-100">
-                {user ? (
-                  <div className="space-y-3 px-2">
-                    <div className="bg-slate-50 p-4 rounded-xl">
-                      <p className="text-xs text-slate-500 mb-1">
-                        Signed in as
-                      </p>
-                      <p className="text-sm font-semibold text-slate-900 break-all">
-                        {user.email}
-                      </p>
-
-                      {/* Mobile Badges */}
-                      <div className="flex flex-wrap gap-2 mt-3">
-                        {profile?.status &&
-                          profile.status !== "approved" &&
-                          getStatusBadge()}
-                        {profile?.role &&
-                          profile.role !== "user" &&
-                          profile.status === "approved" &&
-                          getRoleBadge()}
-                      </div>
-
-                      {profile?.hospitalName && (
-                        <p className="text-xs text-indigo-600 mt-3 font-medium">
-                          {profile.hospitalName}
-                        </p>
-                      )}
-                    </div>
-
-                    {getDashboardLink() && (
-                      <Link
-                        href={getDashboardLink()!}
-                        onClick={() => setIsOpen(false)}
-                        className="flex items-center gap-2 w-full px-4 py-3.5 bg-indigo-600 text-white rounded-xl font-medium text-sm hover:bg-indigo-700 transition-colors shadow-sm shadow-indigo-200"
-                      >
-                        <LayoutDashboard className="w-4 h-4" />
-                        Go to Dashboard
-                      </Link>
-                    )}
-
-                    <button
-                      onClick={() => {
-                        handleSignOut();
-                        setIsOpen(false);
-                      }}
-                      className="flex items-center gap-2 w-full px-4 py-3.5 bg-rose-50 text-rose-600 rounded-xl font-medium text-sm hover:bg-rose-100 transition-colors"
-                    >
-                      <LogOut className="w-4 h-4" />
-                      Sign Out
-                    </button>
-                  </div>
-                ) : (
-                  <div className="space-y-3 px-2">
-                    <Link
-                      href="/auth/login"
-                      onClick={() => setIsOpen(false)}
-                      className="block w-full px-4 py-3.5 text-center text-indigo-600 font-medium text-sm border-2 border-indigo-100 rounded-xl hover:bg-indigo-50 transition-colors"
-                    >
-                      Login
-                    </Link>
-                    <Link
-                      href="/auth/signup"
-                      onClick={() => setIsOpen(false)}
-                      className="block w-full px-4 py-3.5 text-center bg-indigo-600 text-white rounded-xl font-medium text-sm hover:bg-indigo-700 transition-colors shadow-sm shadow-indigo-200"
-                    >
-                      Sign Up
-                    </Link>
-                    <p className="text-xs text-slate-400 text-center pt-2 italic">
-                      Hospital administrators only
-                    </p>
-                  </div>
+              {/* Bottom CTA */}
+              <div className="mt-auto px-4 py-6 border-t border-slate-100">
+                {user ? null : (
+                  <Link
+                    href="/auth/signup"
+                    onClick={() => setIsOpen(false)}
+                    className="block w-full py-4 bg-heading text-white text-center font-bold rounded-xl hover:opacity-90 transition-opacity"
+                  >
+                    Register Hospital
+                  </Link>
+                )}
+                {!user && (
+                  <Link
+                    href="/auth/login"
+                    onClick={() => setIsOpen(false)}
+                    className="block w-full py-4 text-heading text-center font-bold border-2 border-heading rounded-xl mt-3 hover:bg-heading hover:text-white transition-all"
+                  >
+                    Partner Login
+                  </Link>
                 )}
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </>
         )}
-      </div>
-    </nav>
-  );
-}
-
-// Logo Component
-function Logo() {
-  return (
-    <Link href="/" className="flex items-center gap-2.5 group">
-      <div className="w-9 h-9 bg-gradient-to-br from-indigo-600 to-indigo-700 rounded-xl flex items-center justify-center shadow-md shadow-indigo-200 group-hover:shadow-lg group-hover:shadow-indigo-300 transition-all">
-        <Hospital className="w-5 h-5 text-white" />
-      </div>
-      <span className="text-xl font-black bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
-        Near<span className="text-indigo-600">H</span>
-      </span>
-    </Link>
+      </AnimatePresence>
+    </>
   );
 }

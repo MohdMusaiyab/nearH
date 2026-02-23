@@ -7,7 +7,7 @@ import { HeroSection } from "../shared/HeroSection";
 import { ContactInfo } from "../shared/ContactInfo";
 import { OverviewTab } from "../shared/OverviewTab";
 import { DoctorsTab } from "../shared/DoctorsTab";
-import { ServicesTab } from "./ServicesTab";
+import { ServicesTab } from "../shared/ServicesTab";
 import { BloodBankTab } from "../shared/BloodBankTab";
 import {
   Shield,
@@ -28,9 +28,9 @@ import {
 interface Admin {
   id: string;
   full_name: string | null;
-  email: string | null;  // Make nullable
-  status: string | null;  // Make nullable
-  created_at: string | null;  // Make nullable
+  email: string | null; // Make nullable
+  status: string | null; // Make nullable
+  created_at: string | null; // Make nullable
 }
 
 interface Props {
@@ -347,7 +347,10 @@ export default function SuperAdminHospitalClient({ hospital, admins }: Props) {
           )}
 
           {activeTab === "services" && (
-            <ServicesTab specialties={hospital.specialties} />
+            <ServicesTab
+              services={hospital.services}
+              specialties={hospital.specialties}
+            />
           )}
 
           {activeTab === "blood-bank" && (
@@ -387,7 +390,10 @@ export default function SuperAdminHospitalClient({ hospital, admins }: Props) {
                       </span>
                     </div>
                     <p className="text-xs text-slate-400 mt-2">
-                      Since {admin.created_at ? new Date(admin.created_at).toLocaleDateString() : "Unknown"}
+                      Since{" "}
+                      {admin.created_at
+                        ? new Date(admin.created_at).toLocaleDateString()
+                        : "Unknown"}
                     </p>
                   </div>
                 ))}

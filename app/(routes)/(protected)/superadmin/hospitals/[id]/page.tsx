@@ -4,6 +4,7 @@ import { getHospitalAdmins } from "@/actions/superadmin/hospitals";
 import SuperAdminHospitalClient from "@/components/superadmin/SuperAdminHospitalClient";
 import { redirect } from "next/navigation";
 import { Metadata } from "next";
+import Link from "next/link";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -60,12 +61,12 @@ export default async function SuperAdminHospitalPage({ params }: PageProps) {
           <h1 className="text-2xl font-black text-slate-900 mb-2">
             Hospital Not Found
           </h1>
-          <a
+          <Link
             href="/superadmin/hospitals"
             className="inline-block px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold text-sm"
           >
             Back to Hospitals
-          </a>
+          </Link>
         </div>
       </div>
     );
@@ -75,12 +76,10 @@ export default async function SuperAdminHospitalPage({ params }: PageProps) {
   const adminsResult = await getHospitalAdmins(id);
 
   // Fix: Provide default empty array even if data is null
-  const admins = adminsResult.success && adminsResult.data ? adminsResult.data : [];
+  const admins =
+    adminsResult.success && adminsResult.data ? adminsResult.data : [];
 
   return (
-    <SuperAdminHospitalClient
-      hospital={hospitalResult.data}
-      admins={admins}
-    />
+    <SuperAdminHospitalClient hospital={hospitalResult.data} admins={admins} />
   );
 }

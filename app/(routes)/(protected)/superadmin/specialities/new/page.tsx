@@ -2,19 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { addLocation } from "@/actions/superadmin/locations";
-import {
-  MapPin,
-  ArrowLeft,
-  Loader2,
-  PlusCircle,
-  Lightbulb,
-  Globe,
-} from "lucide-react";
+import { addSpecialty } from "@/actions/superadmin/speciality";
+import { ArrowLeft, Loader2, Save, Award, Lightbulb } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 
-export default function NewLocationPage() {
+export default function NewSpecialtyPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -23,18 +16,20 @@ export default function NewLocationPage() {
     setIsLoading(true);
 
     const formData = new FormData(event.currentTarget);
-    const city = (formData.get("city") as string).trim();
-    const state = (formData.get("state") as string).trim();
+    const specialty_name = (formData.get("specialty_name") as string).trim();
 
-    const result = await addLocation({ city, state });
+    if (!specialty_name) {
+      toast.error("Specialty name cannot be empty.");
+      setIsLoading(false);
+      return;
+    }
 
+    const result = await addSpecialty({ specialty_name });
     if (result.success) {
-      toast.success(`${city} added successfully`, {
-        description: `Now available in the hospital registration dropdown.`,
-      });
-      router.push("/superadmin/locations");
+      toast.success(`"${specialty_name}" added to specialties`);
+      router.push("/superadmin/specialties");
     } else {
-      toast.error("Failed to add location", { description: result.message });
+      toast.error("Failed to add specialty", { description: result.message });
       setIsLoading(false);
     }
   }
@@ -45,22 +40,22 @@ export default function NewLocationPage() {
         {/* ── Page header ── */}
         <div className="flex items-center gap-4">
           <Link
-            href="/superadmin/locations"
+            href="/superadmin/specialties"
             className="w-9 h-9 rounded-xl border border-[var(--color-border)] bg-white flex items-center justify-center text-[var(--color-muted)] hover:text-[var(--color-heading)] hover:border-[var(--color-accent)]/40 hover:bg-[var(--color-badge-bg)] transition-all flex-shrink-0"
-            aria-label="Back to locations"
+            aria-label="Back to specialties"
           >
             <ArrowLeft size={17} />
           </Link>
           <div className="flex items-center gap-3">
             <div className="w-11 h-11 rounded-2xl bg-[var(--color-accent)] flex items-center justify-center shadow-lg shadow-[var(--color-accent)]/25 flex-shrink-0">
-              <MapPin size={20} className="text-white" />
+              <Award size={20} className="text-white" />
             </div>
             <div>
               <h1 className="text-2xl font-black text-[var(--color-heading)] tracking-tight leading-none">
-                Add Location
+                Add Specialty
               </h1>
               <p className="text-sm text-[var(--color-muted)] mt-0.5">
-                Expand the hospital network to a new city
+                Add a new clinical specialty to the master catalog
               </p>
             </div>
           </div>
@@ -73,55 +68,31 @@ export default function NewLocationPage() {
         <div className="bg-white rounded-2xl border border-[var(--color-border)] overflow-hidden">
           {/* Card header strip */}
           <div className="px-6 py-4 border-b border-[var(--color-border)] bg-[var(--color-badge-bg)]/50 flex items-center gap-3">
-            <Globe size={15} className="text-[var(--color-accent)]" />
+            <Award size={15} className="text-[var(--color-accent)]" />
             <span className="text-xs font-bold text-[var(--color-muted)] uppercase tracking-widest">
-              Location Details
+              Specialty Details
             </span>
           </div>
 
           <form onSubmit={handleSubmit} className="p-6 space-y-5">
-            {/* City */}
             <div className="space-y-1.5">
               <label
-                htmlFor="city"
+                htmlFor="specialty_name"
                 className="text-xs font-bold text-[var(--color-heading)] uppercase tracking-widest block"
               >
-                City Name <span className="text-[var(--color-error)]">*</span>
-              </label>
-              <div className="relative">
-                <MapPin
-                  size={15}
-                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--color-muted)]"
-                />
-                <input
-                  id="city"
-                  name="city"
-                  required
-                  placeholder="e.g. Pune"
-                  className="w-full pl-10 pr-4 py-3 bg-[var(--color-badge-bg)] border border-[var(--color-border)] rounded-xl text-sm font-semibold text-[var(--color-heading)] placeholder:text-[var(--color-muted)] placeholder:font-normal outline-none focus:bg-white focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent)]/10 transition-all"
-                />
-              </div>
-            </div>
-
-            {/* State */}
-            <div className="space-y-1.5">
-              <label
-                htmlFor="state"
-                className="text-xs font-bold text-[var(--color-heading)] uppercase tracking-widest block"
-              >
-                State / Province{" "}
+                Specialty Name{" "}
                 <span className="text-[var(--color-error)]">*</span>
               </label>
               <div className="relative">
-                <Globe
+                <Award
                   size={15}
                   className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--color-muted)]"
                 />
                 <input
-                  id="state"
-                  name="state"
+                  id="specialty_name"
+                  name="specialty_name"
                   required
-                  placeholder="e.g. Maharashtra"
+                  placeholder="e.g. Oncology, Orthopedics, Neurology"
                   className="w-full pl-10 pr-4 py-3 bg-[var(--color-badge-bg)] border border-[var(--color-border)] rounded-xl text-sm font-semibold text-[var(--color-heading)] placeholder:text-[var(--color-muted)] placeholder:font-normal outline-none focus:bg-white focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent)]/10 transition-all"
                 />
               </div>
@@ -141,14 +112,14 @@ export default function NewLocationPage() {
                   </>
                 ) : (
                   <>
-                    <PlusCircle size={16} />
-                    Save Location
+                    <Save size={16} />
+                    Save Specialty
                   </>
                 )}
               </button>
 
               <Link
-                href="/superadmin/locations"
+                href="/superadmin/specialties"
                 className="px-5 py-3 border border-[var(--color-border)] rounded-xl text-sm font-bold text-[var(--color-body)] hover:bg-[var(--color-badge-bg)] hover:border-[var(--color-accent)]/30 hover:text-[var(--color-heading)] transition-all"
               >
                 Cancel
@@ -163,12 +134,16 @@ export default function NewLocationPage() {
             <Lightbulb size={15} className="text-[var(--color-accent)]" />
           </div>
           <p className="text-sm text-[var(--color-body)] leading-relaxed">
-            Adding a location makes it immediately available in the{" "}
+            Specialties appear in the{" "}
             <span className="font-bold text-[var(--color-heading)]">
-              Hospital Registration
+              Hospital Profile
             </span>{" "}
-            dropdown. Ensure the spelling is correct — hospitals will be grouped
-            and filtered by these cities.
+            and the{" "}
+            <span className="font-bold text-[var(--color-heading)]">
+              Explore
+            </span>{" "}
+            directory filters. Use standard clinical terminology so hospitals
+            and patients can find them easily.
           </p>
         </div>
       </div>

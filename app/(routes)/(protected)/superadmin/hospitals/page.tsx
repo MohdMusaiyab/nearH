@@ -1,8 +1,10 @@
 import { getExploreHospitals } from "@/actions/shared/getAllHospitals";
 import { getExploreFilters } from "@/actions/shared/filter";
 import ExploreClient from "@/components/shared/ExploreClient";
+import { getAuthenticatedProfile } from "@/utils/authCache";
 
 export default async function Page() {
+  const profile = await getAuthenticatedProfile();
   const [hospitalsRes, filtersRes] = await Promise.all([
     getExploreHospitals({ page: 1 }),
     getExploreFilters(),
@@ -10,6 +12,7 @@ export default async function Page() {
 
   return (
     <ExploreClient
+      profile={profile}
       initialData={hospitalsRes.data?.hospitals ?? []}
       totalCount={hospitalsRes.data?.totalCount ?? 0}
       filters={

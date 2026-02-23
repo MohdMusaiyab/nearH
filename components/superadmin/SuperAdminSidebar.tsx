@@ -23,7 +23,7 @@ const navGroups = [
   {
     group: "Overview",
     items: [
-      { name: "Dashboard", href: "/superadmin", icon: LayoutDashboard },
+      { name: "Dashboard", href: "/superadmin/dashboard", icon: LayoutDashboard },
       { name: "Approvals", href: "/superadmin/approvals", icon: UserCheck },
     ],
   },
@@ -38,6 +38,11 @@ const navGroups = [
         href: "/superadmin/specialities",
         icon: Sparkles,
       },
+      {
+        name:"Referrals",
+        href:"/superadmin/referrals",
+        icon: ShieldCheck,
+      }
     ],
   },
 ];

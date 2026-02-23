@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Toaster } from "sonner";
 import { Navigation } from "@/components/general/NavigationBar";
 import "./globals.css";
 import  {Footer}  from "@/components/general/Footer";
@@ -39,6 +39,7 @@ export default function RootLayout({
         <body
           className={`${inter.variable} ${plusJakarta.variable} antialiased min-h-screen flex flex-col`}
         >
+          <Toaster />
           <Navigation />
           <main className="flex-1">{children}</main>
         </body>

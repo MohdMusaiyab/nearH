@@ -9,19 +9,91 @@ import {
 } from "@/lib/validations/auth";
 import { signup } from "@/actions/auth";
 import { useRouter } from "next/navigation";
+import {
+  User,
+  Mail,
+  Lock,
+  Phone,
+  Building2,
+  MapPin,
+  ShieldCheck,
+  ArrowRight,
+  Eye,
+  EyeOff,
+  AlertCircle,
+  CheckCircle2,
+  ChevronDown,
+} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface Props {
   locations: { id: string; city: string; state: string }[];
 }
 
+const steps = ["Admin Credentials", "Hospital Details"];
+
+function InputField({
+  label,
+  error,
+  icon: Icon,
+  hint,
+  children,
+}: {
+  label: string;
+  error?: string;
+  icon?: React.ElementType;
+  hint?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="space-y-1.5">
+      <label className="text-[10px] font-bold text-[var(--color-heading)] uppercase tracking-widest block">
+        {label}
+      </label>
+      <div className="relative group">
+        {Icon && (
+          <Icon
+            size={15}
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--color-muted)] group-focus-within:text-[var(--color-accent)] transition-colors pointer-events-none z-10"
+          />
+        )}
+        {children}
+      </div>
+      <AnimatePresence>
+        {error && (
+          <motion.p
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            className="text-xs text-[var(--color-error)] font-semibold pl-1 flex items-center gap-1"
+          >
+            <AlertCircle size={10} />
+            {error}
+          </motion.p>
+        )}
+      </AnimatePresence>
+      {hint && !error && (
+        <p className="text-[10px] text-[var(--color-muted)] pl-1">{hint}</p>
+      )}
+    </div>
+  );
+}
+
+const inputCls = (hasIcon = true) =>
+  `w-full ${hasIcon ? "pl-11" : "pl-4"} pr-4 py-3 bg-[var(--color-badge-bg)] border border-[var(--color-border)] rounded-xl text-sm font-semibold text-[var(--color-heading)] placeholder:text-[var(--color-muted)] placeholder:font-normal outline-none focus:bg-white focus:border-[var(--color-accent)] focus:ring-4 focus:ring-[var(--color-accent)]/10 transition-all`;
+
 export default function RegistrationForm({ locations }: Props) {
   const [isLoading, setIsLoading] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [step, setStep] = useState(0);
   const router = useRouter();
 
   const {
     register,
     handleSubmit,
+    trigger,
     formState: { errors },
   } = useForm<AdminSignupInput>({
     resolver: zodResolver(AdminSignupSchema),
@@ -39,10 +111,21 @@ export default function RegistrationForm({ locations }: Props) {
     },
   });
 
+  const step1Fields: (keyof AdminSignupInput)[] = [
+    "full_name",
+    "email",
+    "password",
+    "confirmPassword",
+  ];
+
+  const handleNext = async () => {
+    const valid = await trigger(step1Fields);
+    if (valid) setStep(1);
+  };
+
   const onSubmit = async (data: AdminSignupInput) => {
     setIsLoading(true);
     setServerError(null);
-
     try {
       const result = await signup(data);
       if (result.success) {
@@ -52,216 +135,300 @@ export default function RegistrationForm({ locations }: Props) {
         setServerError(result.message);
       }
     } catch (err) {
-      setServerError("A critical network error occurred." + err);
+      setServerError("A network error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {Object.keys(errors).length > 0 && (
-        <div className="p-3 text-xs bg-orange-50 border border-orange-200 text-orange-800 rounded">
-          Please fix the highlighted errors below to continue.
-        </div>
-      )}
-
-      {serverError && (
-        <div className="p-4 bg-red-100 border-l-4 border-red-500 text-red-700 font-medium">
-          {serverError}
-        </div>
-      )}
-
-      <div className="p-6 bg-white border border-slate-200 rounded-xl shadow-sm space-y-4">
-        <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
-          <span className="bg-blue-600 text-white w-6 h-6 rounded-full text-xs flex items-center justify-center">
-            1
-          </span>
-          Admin Credentials
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="md:col-span-2">
-            <label className="text-sm font-semibold text-slate-700">
-              Full Name
-            </label>
-            <input
-              {...register("full_name")}
-              className="w-full px-4 py-2 mt-1 border border-slate-300 rounded-lg bg-white text-slate-900 focus:ring-2 focus:ring-blue-500 outline-none"
-              placeholder="John Doe"
-            />
-            {errors.full_name && (
-              <p className="text-red-500 text-xs mt-1">
-                {errors.full_name.message}
-              </p>
+    <div className="w-full">
+      {/* Step indicator */}
+      <div className="flex items-center gap-0 mb-7">
+        {steps.map((s, i) => (
+          <div key={s} className="flex items-center flex-1">
+            <button
+              type="button"
+              onClick={() => i < step && setStep(i)}
+              className="flex items-center gap-2 group"
+            >
+              <div
+                className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black transition-all ${
+                  i < step
+                    ? "bg-[var(--color-success)] text-white"
+                    : i === step
+                      ? "bg-[var(--color-accent)] text-white shadow-md shadow-[var(--color-accent)]/30"
+                      : "bg-[var(--color-badge-bg)] text-[var(--color-muted)] border border-[var(--color-border)]"
+                }`}
+              >
+                {i < step ? <CheckCircle2 size={12} /> : i + 1}
+              </div>
+              <span
+                className={`text-[10px] font-bold uppercase tracking-widest hidden sm:block transition-colors ${
+                  i === step
+                    ? "text-[var(--color-accent)]"
+                    : i < step
+                      ? "text-[var(--color-success)]"
+                      : "text-[var(--color-muted)]"
+                }`}
+              >
+                {s}
+              </span>
+            </button>
+            {i < steps.length - 1 && (
+              <div className="flex-1 mx-3 h-px bg-[var(--color-border)] relative overflow-hidden">
+                <motion.div
+                  className="absolute inset-y-0 left-0 bg-[var(--color-accent)]"
+                  animate={{ width: step > i ? "100%" : "0%" }}
+                  transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                />
+              </div>
             )}
           </div>
-          <div>
-            <label className="text-sm font-semibold text-slate-700">
-              Login Email
-            </label>
-            <input
-              {...register("email")}
-              type="email"
-              className="w-full px-4 py-2 mt-1 border border-slate-300 rounded-lg bg-white text-slate-900 focus:ring-2 focus:ring-blue-500 outline-none"
-              placeholder="admin@hospital.com"
-            />
-            {errors.email && (
-              <p className="text-red-500 text-xs mt-1">
-                {errors.email.message}
-              </p>
-            )}
-          </div>
-          <div>
-            <label className="text-sm font-semibold text-slate-700">
-              Login Password
-            </label>
-            <input
-              {...register("password")}
-              type="password"
-              className="w-full px-4 py-2 mt-1 border border-slate-300 rounded-lg bg-white text-slate-900 focus:ring-2 focus:ring-blue-500 outline-none"
-            />
-            {errors.password && (
-              <p className="text-red-500 text-xs mt-1">
-                {errors.password.message}
-              </p>
-            )}
-          </div>
-          <div className="md:col-span-2">
-            <label className="text-sm font-semibold text-slate-700">
-              Confirm Password
-            </label>
-            <input
-              {...register("confirmPassword")}
-              type="password"
-              className="w-full px-4 py-2 mt-1 border border-slate-300 rounded-lg bg-white text-slate-900 focus:ring-2 focus:ring-blue-500 outline-none"
-            />
-            {errors.confirmPassword && (
-              <p className="text-red-500 text-xs mt-1">
-                {errors.confirmPassword.message}
-              </p>
-            )}
-          </div>
-        </div>
+        ))}
       </div>
 
-      <div className="p-6 bg-white border border-slate-200 rounded-xl shadow-sm space-y-4">
-        <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
-          <span className="bg-blue-600 text-white w-6 h-6 rounded-full text-xs flex items-center justify-center">
-            2
-          </span>
-          Hospital Details
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="md:col-span-2">
-            <label className="text-sm font-semibold text-slate-700">
-              Hospital Legal Name
-            </label>
-            <input
-              {...register("hospital_name")}
-              className="w-full px-4 py-2 mt-1 border border-slate-300 rounded-lg bg-white text-slate-900 focus:ring-2 focus:ring-blue-500 outline-none"
+      {/* Server error */}
+      <AnimatePresence>
+        {serverError && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className="flex items-start gap-3 px-4 py-3 bg-red-50 border border-red-200 rounded-2xl mb-5"
+          >
+            <AlertCircle
+              size={14}
+              className="text-[var(--color-error)] flex-shrink-0 mt-0.5"
             />
-            {errors.hospital_name && (
-              <p className="text-red-500 text-xs mt-1">
-                {errors.hospital_name.message}
-              </p>
-            )}
-          </div>
+            <p className="text-sm text-[var(--color-error)] font-medium">
+              {serverError}
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-          <div>
-            <label className="text-sm font-semibold text-slate-700">
-              Official Public Email
-            </label>
-            <input
-              {...register("official_email")}
-              className="w-full px-4 py-2 mt-1 border border-slate-300 rounded-lg bg-white text-slate-900 focus:ring-2 focus:ring-blue-500 outline-none"
-              placeholder="contact@hospital.com"
-            />
-            {errors.official_email && (
-              <p className="text-red-500 text-xs mt-1">
-                {errors.official_email.message}
-              </p>
-            )}
-          </div>
-          <div>
-            <label className="text-sm font-semibold text-slate-700">
-              Official Phone
-            </label>
-            <input
-              {...register("official_phone")}
-              className="w-full px-4 py-2 mt-1 border border-slate-300 rounded-lg bg-white text-slate-900 focus:ring-2 focus:ring-blue-500 outline-none"
-            />
-            {errors.official_phone && (
-              <p className="text-red-500 text-xs mt-1">
-                {errors.official_phone.message}
-              </p>
-            )}
-          </div>
-
-          <div>
-            <label className="text-sm font-semibold text-slate-700 text-black">
-              Operating City
-            </label>
-            <select
-              {...register("location_id")}
-              className="w-full px-4 py-2 mt-1 border border-slate-300 rounded-lg bg-white text-slate-900 focus:ring-2 focus:ring-blue-400 outline-none appearance-none"
-              style={{ color: "black" }}
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <AnimatePresence mode="wait">
+          {step === 0 && (
+            <motion.div
+              key="step1"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              className="space-y-4"
             >
-              <option value="" className="text-slate-400">
-                Select city
-              </option>
-              {locations.map((loc) => (
-                <option key={loc.id} value={loc.id} className="text-black">
-                  {loc.city}, {loc.state}
-                </option>
-              ))}
-            </select>
-            {errors.location_id && (
-              <p className="text-red-500 text-xs mt-1">
-                {errors.location_id.message}
-              </p>
-            )}
-          </div>
+              <InputField
+                label="Full Name"
+                error={errors.full_name?.message}
+                icon={User}
+              >
+                <input
+                  {...register("full_name")}
+                  className={inputCls()}
+                  placeholder="Dr. Rajesh Kumar"
+                />
+              </InputField>
 
-          <div>
-            <label className="text-sm font-semibold text-slate-700">
-              Emergency Contact (24/7)
-            </label>
-            <input
-              {...register("emergency_contact")}
-              placeholder="10-digit mobile"
-              className="w-full px-4 py-2 mt-1 border border-slate-300 rounded-lg bg-white text-slate-900 focus:ring-2 focus:ring-blue-500 outline-none"
-            />
-            {errors.emergency_contact && (
-              <p className="text-red-500 text-xs mt-1">
-                {errors.emergency_contact.message}
-              </p>
-            )}
-          </div>
+              <InputField
+                label="Login Email"
+                error={errors.email?.message}
+                icon={Mail}
+              >
+                <input
+                  {...register("email")}
+                  type="email"
+                  className={inputCls()}
+                  placeholder="admin@hospital.com"
+                />
+              </InputField>
 
-          <div className="md:col-span-2 flex items-center p-4 bg-blue-50 rounded-lg border border-blue-100">
-            <input
-              {...register("has_ayushman_bharat")}
-              id="ayushman"
-              type="checkbox"
-              className="h-5 w-5 text-blue-600 rounded"
-            />
-            <label
-              htmlFor="ayushman"
-              className="ml-3 text-sm font-semibold text-blue-900"
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <InputField
+                  label="Password"
+                  error={errors.password?.message}
+                  icon={Lock}
+                >
+                  <input
+                    {...register("password")}
+                    type={showPassword ? "text" : "password"}
+                    className={`${inputCls()} pr-12`}
+                    placeholder="••••••••"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((v) => !v)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--color-muted)] hover:text-[var(--color-heading)] transition-colors"
+                  >
+                    {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                  </button>
+                </InputField>
+
+                <InputField
+                  label="Confirm Password"
+                  error={errors.confirmPassword?.message}
+                  icon={Lock}
+                >
+                  <input
+                    {...register("confirmPassword")}
+                    type={showConfirm ? "text" : "password"}
+                    className={`${inputCls()} pr-12`}
+                    placeholder="••••••••"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirm((v) => !v)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--color-muted)] hover:text-[var(--color-heading)] transition-colors"
+                  >
+                    {showConfirm ? <EyeOff size={15} /> : <Eye size={15} />}
+                  </button>
+                </InputField>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleNext}
+                className="w-full flex items-center justify-center gap-2.5 py-3.5 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-white text-sm font-black rounded-xl shadow-lg shadow-[var(--color-accent)]/30 active:scale-[0.98] transition-all mt-2"
+              >
+                Continue to Hospital Details
+                <ArrowRight size={16} />
+              </button>
+            </motion.div>
+          )}
+
+          {step === 1 && (
+            <motion.div
+              key="step2"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              className="space-y-4"
             >
-              Empanelled under Ayushman Bharat (PM-JAY)
-            </label>
-          </div>
-        </div>
-      </div>
+              <InputField
+                label="Hospital Legal Name"
+                error={errors.hospital_name?.message}
+                icon={Building2}
+              >
+                <input
+                  {...register("hospital_name")}
+                  className={inputCls()}
+                  placeholder="Apollo Hospitals Ltd."
+                />
+              </InputField>
 
-      <button
-        type="submit"
-        disabled={isLoading}
-        className="w-full flex justify-center py-4 rounded-xl shadow-lg text-lg font-bold text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.98] transition-all disabled:bg-slate-400"
-      >
-        {isLoading ? "Creating Your Account..." : "Register Hospital"}
-      </button>
-    </form>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <InputField
+                  label="Official Public Email"
+                  error={errors.official_email?.message}
+                  icon={Mail}
+                >
+                  <input
+                    {...register("official_email")}
+                    className={inputCls()}
+                    placeholder="contact@hospital.com"
+                  />
+                </InputField>
+
+                <InputField
+                  label="Official Phone"
+                  error={errors.official_phone?.message}
+                  icon={Phone}
+                >
+                  <input
+                    {...register("official_phone")}
+                    className={inputCls()}
+                    placeholder="+91 98765 43210"
+                  />
+                </InputField>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <InputField
+                  label="Operating City"
+                  error={errors.location_id?.message}
+                  icon={MapPin}
+                >
+                  <select
+                    {...register("location_id")}
+                    className={`${inputCls()} pr-10 appearance-none`}
+                  >
+                    <option value="">Select city</option>
+                    {locations.map((loc) => (
+                      <option key={loc.id} value={loc.id}>
+                        {loc.city}, {loc.state}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown
+                    size={14}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--color-muted)] pointer-events-none"
+                  />
+                </InputField>
+
+                <InputField
+                  label="Emergency Contact (24/7)"
+                  error={errors.emergency_contact?.message}
+                  icon={Phone}
+                  hint="10-digit mobile number"
+                >
+                  <input
+                    {...register("emergency_contact")}
+                    className={inputCls()}
+                    placeholder="9876543210"
+                  />
+                </InputField>
+              </div>
+
+              {/* Ayushman Bharat toggle */}
+              <label className="flex items-center gap-3 p-4 rounded-xl bg-[var(--color-badge-bg)] border border-[var(--color-border)] cursor-pointer hover:border-[var(--color-accent)] transition-colors group">
+                <input
+                  {...register("has_ayushman_bharat")}
+                  id="ayushman"
+                  type="checkbox"
+                  className="w-5 h-5 rounded accent-[var(--color-accent)] cursor-pointer"
+                />
+                <div>
+                  <p className="text-sm font-bold text-[var(--color-heading)] group-hover:text-[var(--color-accent)] transition-colors">
+                    Ayushman Bharat (PM-JAY) Empanelled
+                  </p>
+                  <p className="text-[10px] text-[var(--color-muted)] mt-0.5">
+                    Check if your hospital is registered under the scheme
+                  </p>
+                </div>
+              </label>
+
+              <div className="flex gap-3 mt-2">
+                <button
+                  type="button"
+                  onClick={() => setStep(0)}
+                  className="flex-1 py-3.5 rounded-xl border border-[var(--color-border)] text-sm font-bold text-[var(--color-heading)] hover:bg-[var(--color-badge-bg)] active:scale-[0.98] transition-all"
+                >
+                  Back
+                </button>
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="flex-[2] flex items-center justify-center gap-2.5 py-3.5 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-white text-sm font-black rounded-xl shadow-lg shadow-[var(--color-accent)]/30 disabled:opacity-60 disabled:cursor-not-allowed active:scale-[0.98] transition-all"
+                >
+                  {isLoading ? (
+                    <>
+                      <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      Registering…
+                    </>
+                  ) : (
+                    <>
+                      Register Hospital
+                      <ArrowRight size={16} />
+                    </>
+                  )}
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </form>
+    </div>
   );
 }

@@ -4,6 +4,8 @@ import { LoginSchema, AdminSignupSchema } from "@/lib/validations/auth";
 import { ActionResponse } from "@/types/response";
 import { revalidatePath } from "next/cache";
 import { invalidateUserCache } from "@/utils/authCache";
+import { redirect } from "next/navigation";
+import { redis } from "@/lib/redis";
 export async function login(formData: unknown): Promise<ActionResponse<null>> {
   const validatedFields = LoginSchema.safeParse(formData);
   if (!validatedFields.success) {
@@ -26,7 +28,7 @@ export async function login(formData: unknown): Promise<ActionResponse<null>> {
     return { success: false, message: errorMessage, data: null };
   }
   await invalidateUserCache(data.user.id);
-  revalidatePath("/", "layout");
+  revalidatePath("/admin/dashboard", "layout");
   return { success: true, message: "Logged in successfully", data: null };
 }
 export async function signup(formData: unknown): Promise<ActionResponse<null>> {
@@ -103,4 +105,85 @@ export async function signup(formData: unknown): Promise<ActionResponse<null>> {
         : "An unexpected error occurred during signup.";
     return { success: false, message: msg, data: null };
   }
+}
+
+export async function requestPasswordReset(
+  email: string,
+): Promise<ActionResponse<null>> {
+  const supabase = await createClient();
+
+  const redirectTo = `${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/callback?next=/auth/reset-password`;
+
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo,
+  });
+
+  if (error) {
+    return {
+      success: false,
+      message: error.message,
+      data: null,
+    };
+  }
+
+  return {
+    success: true,
+    message: "Password reset link sent to your email.",
+    data: null,
+  };
+}
+
+export async function updateUserPassword(
+  password: string,
+): Promise<ActionResponse<null>> {
+  const supabase = await createClient();
+
+  const { error } = await supabase.auth.updateUser({
+    password: password,
+  });
+
+  if (error) {
+    return {
+      success: false,
+      message: error.message,
+      data: null,
+    };
+  }
+
+  await supabase.auth.signOut();
+
+  return {
+    success: true,
+    message: "Password updated successfully.",
+    data: null,
+  };
+}
+
+export async function logoutAction() {
+  const supabase = await createClient();
+
+  // 1. Get user ID before we kill the session
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  // 2. Terminate Supabase Session (Clears Auth Cookies)
+  await supabase.auth.signOut();
+
+  // 3. WIPE REDIS CACHE
+  // This ensures the Middleware doesn't see the "Pending" or "Approved" cache
+  if (user?.id) {
+    const cacheKey = `user:profile:${user.id}`;
+    await redis.del(cacheKey);
+  }
+
+  /**
+   * 4. BUST NEXT.JS CACHE
+   * revalidatePath('/', 'layout') tells Next.js that the
+   * entire UI (including Navigation) is now stale.
+   */
+  revalidatePath("/", "layout");
+
+  // 5. Hard Redirect
+  redirect("/auth/login");
 }

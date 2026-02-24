@@ -2,10 +2,12 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { Database } from "@/types/database.types";
 import { redis } from "@/lib/redis";
+
 type Profile = {
   role: Database["public"]["Enums"]["user_role"] | null;
   status: Database["public"]["Enums"]["approval_status"] | null;
 };
+
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({
     request: {
@@ -25,9 +27,9 @@ export async function proxy(request: NextRequest) {
           cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value),
           );
-          response = NextResponse.next({
-            request,
-          });
+
+          response = NextResponse.next({ request });
+
           cookiesToSet.forEach(({ name, value, options }) =>
             response.cookies.set(name, value, options),
           );
@@ -39,20 +41,28 @@ export async function proxy(request: NextRequest) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const { pathname } = request.nextUrl;
+
+  const { pathname, searchParams } = request.nextUrl;
+
+  // ✅ Detect recovery flow from Supabase email link
+  const isRecoveryFlow = searchParams.get("type") === "recovery";
+
+  // 🚨 If in recovery mode → only allow reset-password page
+  if (isRecoveryFlow && pathname !== "/auth/reset-password") {
+    return NextResponse.redirect(new URL("/auth/reset-password", request.url));
+  }
 
   let profile: Profile | null = null;
+
   if (user) {
     const cacheKey = `user:profile:${user.id}`;
 
     try {
-      // 1. Check Redis for the profile
       const cached = await redis.get<Profile>(cacheKey);
 
       if (cached) {
         profile = cached;
       } else {
-        // 2. Cache Miss: Hit DB (Selecting only what middleware needs to save space)
         const { data } = await supabase
           .from("profiles")
           .select("role, status")
@@ -61,14 +71,11 @@ export async function proxy(request: NextRequest) {
 
         profile = data;
 
-        // 3. Backfill Redis (TTL 1 hour)
         if (profile) {
-          // Note: Middleware doesn't wait for .set() to keep the page load instant
           redis.set(cacheKey, profile, { ex: 3600 }).catch(console.error);
         }
       }
-    } catch (e) {
-      // 4. Failover: If Redis fails, use standard DB fetch
+    } catch {
       const { data } = await supabase
         .from("profiles")
         .select("role, status")
@@ -78,17 +85,21 @@ export async function proxy(request: NextRequest) {
     }
   }
 
+  // Skip static & API
   if (pathname.startsWith("/_next") || pathname.includes("/api/")) {
     return response;
   }
 
+  // ✅ Auth routes redirect if already logged in
   if (user && pathname.startsWith("/auth")) {
     if (pathname === "/auth/waiting-room") return response;
+    if (pathname === "/auth/reset-password") return response;
 
     const dest = profile?.role === "superadmin" ? "/superadmin" : "/admin";
     return NextResponse.redirect(new URL(dest, request.url));
   }
 
+  // Pending users
   if (user && profile?.status === "pending") {
     if (pathname !== "/auth/waiting-room") {
       return NextResponse.redirect(new URL("/auth/waiting-room", request.url));
@@ -96,6 +107,7 @@ export async function proxy(request: NextRequest) {
     return response;
   }
 
+  // Approved user shouldn’t see waiting room
   if (
     user &&
     profile?.status === "approved" &&
@@ -104,7 +116,8 @@ export async function proxy(request: NextRequest) {
     const dest = profile?.role === "superadmin" ? "/superadmin" : "/admin";
     return NextResponse.redirect(new URL(dest, request.url));
   }
-  // --- NEW LOGIC FOR SHARED ROUTES ---
+
+  // Shared routes
   if (pathname.startsWith("/shared")) {
     if (!user) {
       return NextResponse.redirect(new URL("/auth/login", request.url));
@@ -112,21 +125,27 @@ export async function proxy(request: NextRequest) {
 
     const isAuthorized =
       profile?.role === "admin" || profile?.role === "superadmin";
+
     if (!isAuthorized || profile?.status !== "approved") {
       return NextResponse.redirect(new URL("/", request.url));
     }
+
     return response;
   }
+
+  // Superadmin guard
   if (pathname.startsWith("/superadmin") && profile?.role !== "superadmin") {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
+  // Admin guard
   if (pathname.startsWith("/admin")) {
     if (profile?.role !== "admin" || profile?.status !== "approved") {
       return NextResponse.redirect(new URL("/", request.url));
     }
   }
 
+  // Unauthenticated protection
   if (
     !user &&
     (pathname.startsWith("/admin") || pathname.startsWith("/superadmin"))

@@ -17,13 +17,18 @@ import {
   AlignJustify,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { logoutAction } from "@/actions/auth";
 
 /* ─── Nav config ─────────────────────────────────────────── */
 const navGroups = [
   {
     group: "Overview",
     items: [
-      { name: "Dashboard", href: "/superadmin/dashboard", icon: LayoutDashboard },
+      {
+        name: "Dashboard",
+        href: "/superadmin/dashboard",
+        icon: LayoutDashboard,
+      },
       { name: "Approvals", href: "/superadmin/approvals", icon: UserCheck },
     ],
   },
@@ -39,10 +44,10 @@ const navGroups = [
         icon: Sparkles,
       },
       {
-        name:"Referrals",
-        href:"/superadmin/referrals",
+        name: "Referrals",
+        href: "/superadmin/referrals",
         icon: ShieldCheck,
-      }
+      },
     ],
   },
 ];
@@ -168,8 +173,11 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
         <div className="mx-2 h-px bg-[var(--color-border)] mb-3" />
 
         {/* Sign out */}
-        <form action="/auth/logout" method="POST">
-          <button className="flex items-center gap-3 w-full px-3 py-2.5 text-[var(--color-muted)] hover:text-[var(--color-error)] hover:bg-red-50 rounded-xl transition-all duration-200 group">
+        <form action={logoutAction}>
+          <button
+            type="submit"
+            className="flex items-center gap-3 w-full px-3 py-2.5 text-[var(--color-muted)] hover:text-[var(--color-error)] hover:bg-red-50 rounded-xl transition-all duration-200 group"
+          >
             <div className="w-8 h-8 rounded-lg bg-[var(--color-badge-bg)] group-hover:bg-red-100 flex items-center justify-center transition-colors flex-shrink-0">
               <LogOut
                 size={15}

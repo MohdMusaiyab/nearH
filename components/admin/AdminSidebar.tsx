@@ -17,23 +17,24 @@ import {
   X,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { logoutAction } from "@/actions/auth";
 
 /* ─── Nav config ─────────────────────────────────────────── */
 const navGroups = [
   {
     group: "Operations",
     items: [
-      { name: "Overview",         href: "/admin",            icon: LayoutDashboard },
-      { name: "Doctors & OPD",    href: "/admin/doctors",    icon: Stethoscope     },
-      { name: "Beds & ICU",       href: "/admin/inventory",  icon: BedDouble       },
-      { name: "Blood Bank",       href: "/admin/blood-bank", icon: Droplets        },
-      { name: "Referrals",        href: "/admin/referrals",  icon: ArrowLeftRight  },
+      { name: "Overview", href: "/admin", icon: LayoutDashboard },
+      { name: "Doctors & OPD", href: "/admin/doctors", icon: Stethoscope },
+      { name: "Beds & ICU", href: "/admin/inventory", icon: BedDouble },
+      { name: "Blood Bank", href: "/admin/blood-bank", icon: Droplets },
+      { name: "Referrals", href: "/admin/referrals", icon: ArrowLeftRight },
     ],
   },
   {
     group: "Settings",
     items: [
-      { name: "Hospital Profile", href: "/admin/profile",    icon: Settings        },
+      { name: "Hospital Profile", href: "/admin/profile", icon: Settings },
     ],
   },
 ];
@@ -41,7 +42,15 @@ const navGroups = [
 /* ─── Single nav link ─────────────────────────────────────── */
 type NavItemDef = { name: string; href: string; icon: React.ElementType };
 
-function NavLink({ item, index, onClick }: { item: NavItemDef; index: number; onClick?: () => void }) {
+function NavLink({
+  item,
+  index,
+  onClick,
+}: {
+  item: NavItemDef;
+  index: number;
+  onClick?: () => void;
+}) {
   const pathname = usePathname();
   const isActive = pathname === item.href;
   const Icon = item.icon;
@@ -50,7 +59,11 @@ function NavLink({ item, index, onClick }: { item: NavItemDef; index: number; on
     <motion.div
       initial={{ opacity: 0, x: -10 }}
       animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: index * 0.04 + 0.08, duration: 0.22, ease: "easeOut" }}
+      transition={{
+        delay: index * 0.04 + 0.08,
+        duration: 0.22,
+        ease: "easeOut",
+      }}
     >
       <Link
         href={item.href}
@@ -69,20 +82,28 @@ function NavLink({ item, index, onClick }: { item: NavItemDef; index: number; on
           />
         )}
 
-        <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors duration-200 ${
-          isActive
-            ? "bg-white/20"
-            : "bg-[var(--color-badge-bg)] group-hover:bg-[var(--color-border)]"
-        }`}>
+        <div
+          className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors duration-200 ${
+            isActive
+              ? "bg-white/20"
+              : "bg-[var(--color-badge-bg)] group-hover:bg-[var(--color-border)]"
+          }`}
+        >
           <Icon
             size={16}
-            className={isActive ? "text-white" : "text-[var(--color-accent)] group-hover:text-[var(--color-heading)]"}
+            className={
+              isActive
+                ? "text-white"
+                : "text-[var(--color-accent)] group-hover:text-[var(--color-heading)]"
+            }
           />
         </div>
 
         <span className="font-semibold text-sm flex-1">{item.name}</span>
 
-        {isActive && <ChevronRight size={13} className="text-white/70 flex-shrink-0" />}
+        {isActive && (
+          <ChevronRight size={13} className="text-white/70 flex-shrink-0" />
+        )}
       </Link>
     </motion.div>
   );
@@ -93,7 +114,6 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
   let idx = 0;
   return (
     <div className="flex flex-col h-full">
-
       {/* Brand block */}
       <div className="px-5 pt-6 pb-5">
         <div className="flex items-center gap-3">
@@ -123,7 +143,12 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
             </p>
             <div className="space-y-1">
               {group.items.map((item) => (
-                <NavLink key={item.name} item={item} index={idx++} onClick={onClose} />
+                <NavLink
+                  key={item.name}
+                  item={item}
+                  index={idx++}
+                  onClick={onClose}
+                />
               ))}
             </div>
           </div>
@@ -140,18 +165,28 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
             <Building2 size={15} className="text-white" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-bold text-[var(--color-heading)] truncate">Hospital Admin</p>
-            <p className="text-[11px] text-[var(--color-muted)] truncate">admin@hospital.com</p>
+            <p className="text-sm font-bold text-[var(--color-heading)] truncate">
+              Hospital Admin
+            </p>
+            <p className="text-[11px] text-[var(--color-muted)] truncate">
+              admin@hospital.com
+            </p>
           </div>
         </div>
 
         {/* Sign out */}
-        <form action="/auth/logout" method="POST">
-          <button className="flex items-center gap-3 w-full px-3 py-2.5 text-[var(--color-muted)] hover:text-[var(--color-error)] hover:bg-red-50 rounded-xl transition-all duration-200 group">
+        <form action={logoutAction}>
+          <button
+            type="submit"
+            className="flex items-center gap-3 w-full px-3 py-2.5 text-[var(--color-muted)] hover:text-[var(--color-error)] hover:bg-red-50 rounded-xl transition-all duration-200 group"
+          >
             <div className="w-8 h-8 rounded-lg bg-[var(--color-badge-bg)] group-hover:bg-red-100 flex items-center justify-center transition-colors flex-shrink-0">
-              <LogOut size={15} className="group-hover:text-[var(--color-error)] transition-colors" />
+              <LogOut
+                size={15}
+                className="group-hover:text-[var(--color-error)] transition-colors"
+              />
             </div>
-            <span className="font-semibold text-sm">Logout</span>
+            <span className="font-semibold text-sm">Sign Out</span>
           </button>
         </form>
       </div>

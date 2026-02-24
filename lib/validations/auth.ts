@@ -21,17 +21,44 @@ export const LoginSchema = z.object({
 
 export const AdminSignupSchema = z
   .object({
-    full_name: z.string().min(2),
-    email: z.string().email().trim().toLowerCase(),
-    password: passwordRule,
-    confirmPassword: z.string(),
+    full_name: z
+      .string()
+      .min(2, "Full name must be at least 2 characters")
+      .max(50, "Full name is too long"),
 
-    hospital_name: z.string().min(3),
-    official_email: z.string().email("Hospital official email is required"),
-    official_phone: z.string().min(10, "Hospital phone is required"),
-    location_id: z.string().uuid(),
-    has_ayushman_bharat: z.boolean(),
-    emergency_contact: z.string().regex(/^[0-9]{10}$/),
+    email: z
+      .string()
+      .email("Please enter a valid work email address")
+      .trim()
+      .toLowerCase(),
+
+    password: passwordRule,
+
+    confirmPassword: z.string().min(1, "Please confirm your password"),
+
+    hospital_name: z
+      .string()
+      .min(3, "Hospital name must be at least 3 characters")
+      .max(100, "Hospital name is too long"),
+
+    official_email: z
+      .string()
+      .email("Please enter a valid hospital official email"),
+
+    official_phone: z
+      .string()
+      .min(10, "Phone number must be at least 10 digits")
+      .max(15, "Phone number is too long"),
+
+    location_id: z.string().uuid("Please select a valid hospital location"),
+
+    has_ayushman_bharat: z.boolean({
+      error: "Please specify if you support Ayushman Bharat",
+    }),
+
+    emergency_contact: z
+      .string()
+      .regex(/^[0-9]{10}$/, "Emergency contact must be exactly 10 digits"),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",

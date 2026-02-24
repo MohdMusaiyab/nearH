@@ -86,11 +86,17 @@ export function Navigation() {
   }, [supabase.auth]);
 
   const handleSignOut = async (): Promise<void> => {
-    await supabase.auth.signOut();
-    setIsOpen(false);
-    setDropdownOpen(false);
-    router.push("/");
-    router.refresh();
+    try {
+      await supabase.auth.signOut();
+
+      setIsOpen(false);
+      setDropdownOpen(false);
+
+      router.refresh();
+      router.push("/auth/login");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
 
   const navLinks = [
@@ -109,7 +115,7 @@ export function Navigation() {
   const navBg = isScrolled
     ? "bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-sm"
     : "bg-transparent";
-
+  if (pathname.startsWith("/auth/")) return null;
   return (
     <>
       <nav
@@ -205,7 +211,7 @@ export function Navigation() {
                           {/* Links */}
                           <div className="py-2">
                             <Link
-                              href="/admin"
+                              href="/admin/dashboard"
                               onClick={() => setDropdownOpen(false)}
                               className="flex items-center gap-3 px-5 py-3 text-sm font-semibold text-heading hover:bg-slate-50 transition-colors"
                             >

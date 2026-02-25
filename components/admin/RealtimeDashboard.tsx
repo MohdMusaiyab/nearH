@@ -2,20 +2,24 @@
 
 import { useEffect, useState, useTransition } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { updateAvailability, updateBloodStock } from "@/actions/admin/dashboard";
+import {
+  updateAvailability,
+  updateBloodStock,
+} from "@/actions/admin/dashboard";
 import { Database } from "@/types/database.types";
-import { 
-  Bed, 
-  Droplets, 
-  Plus, 
-  Minus, 
-  Loader2, 
+import {
+  Bed,
+  Droplets,
+  Plus,
+  Minus,
+  Loader2,
   Edit3,
   Check,
   X,
   Activity,
   AlertCircle,
-  RefreshCw
+  RefreshCw,
+  TrendingUp,
 } from "lucide-react";
 
 type Inventory = Database["public"]["Tables"]["hospital_inventory"]["Row"];
@@ -27,24 +31,48 @@ interface Props {
   hospitalId: string;
 }
 
-// Editable field component with inline editing
-function EditableField({ 
-  value, 
-  onSave, 
-  label,
-  unit = "beds",
-  max,
-  min = 0,
-  isPending 
-}: { 
-  value: number; 
+// ─────────────────────────────────────────────────────────────────────────────
+// Themed Components
+// ─────────────────────────────────────────────────────────────────────────────
+
+function SectionHeader({
+  title,
+  icon: Icon,
+  right,
+}: {
+  title: string;
+  icon: React.ElementType;
+  right?: React.ReactNode;
+}) {
+  return (
+    <div className="flex items-center justify-between mb-4 px-1">
+      <h2 className="text-sm font-bold text-[var(--color-heading)] uppercase tracking-widest flex items-center gap-2">
+        <Icon className="w-4 h-4 text-[var(--color-accent)]" /> {title}
+      </h2>
+      {right}
+    </div>
+  );
+}
+
+interface EditableFieldProps {
+  value: number;
   onSave: (newValue: number) => Promise<void>;
-  label: string;
   unit?: string;
   max?: number;
   min?: number;
   isPending: boolean;
-}) {
+  size?: "md" | "lg";
+}
+
+function EditableField({
+  value,
+  onSave,
+  unit = "units",
+  max,
+  min = 0,
+  isPending,
+  size = "lg",
+}: EditableFieldProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [inputValue, setInputValue] = useState(value.toString());
   const [isSaving, setIsSaving] = useState(false);
@@ -54,61 +82,63 @@ function EditableField({
     if (isNaN(numValue)) return;
     if (max !== undefined && numValue > max) return;
     if (min !== undefined && numValue < min) return;
-    
+
     setIsSaving(true);
     await onSave(numValue);
     setIsSaving(false);
     setIsEditing(false);
   };
 
-  const handleCancel = () => {
-    setInputValue(value.toString());
-    setIsEditing(false);
-  };
-
-  // Update input value when parent value changes
   useEffect(() => {
     setInputValue(value.toString());
   }, [value]);
 
   if (isEditing) {
     return (
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1.5">
         <input
           type="number"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
-          className="w-24 px-3 py-2 bg-white border-2 border-indigo-200 rounded-xl text-sm font-bold text-slate-900 focus:border-indigo-500 focus:outline-none"
-          min={min}
-          max={max}
+          className="w-16 px-2 py-1 bg-white border border-[var(--color-accent)] rounded-lg text-sm font-black text-[var(--color-heading)] focus:outline-none"
           autoFocus
         />
         <button
           onClick={handleSave}
           disabled={isSaving || isPending}
-          className="p-2 bg-green-100 text-green-600 rounded-xl hover:bg-green-200 transition-colors disabled:opacity-50"
+          className="p-1.5 bg-[var(--color-success)]/10 text-[var(--color-success)] rounded-lg hover:bg-[var(--color-success)]/20 transition-colors"
         >
-          {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+          {isSaving ? (
+            <Loader2 className="w-3 h-3 animate-spin" />
+          ) : (
+            <Check className="w-3 h-3" />
+          )}
         </button>
         <button
-          onClick={handleCancel}
-          className="p-2 bg-red-100 text-red-600 rounded-xl hover:bg-red-200 transition-colors"
+          onClick={() => setIsEditing(false)}
+          className="p-1.5 bg-[var(--color-error)]/10 text-[var(--color-error)] rounded-lg hover:bg-[var(--color-error)]/20 transition-colors"
         >
-          <X className="w-4 h-4" />
+          <X className="w-3 h-3" />
         </button>
       </div>
     );
   }
 
   return (
-    <div className="flex items-center gap-3 group">
-      <div>
-        <span className="text-3xl font-black text-slate-900">{value}</span>
-        <span className="text-sm text-slate-400 ml-1">{unit}</span>
-      </div>
+    <div className="flex items-center gap-2 group">
+      <span
+        className={`${size === "lg" ? "text-3xl" : "text-lg"} font-black text-[var(--color-heading)] tabular-nums`}
+      >
+        {value}
+      </span>
+      {unit && (
+        <span className="text-[10px] font-bold text-[var(--color-muted)] uppercase">
+          {unit}
+        </span>
+      )}
       <button
         onClick={() => setIsEditing(true)}
-        className="p-1.5 bg-slate-100 text-slate-400 rounded-lg opacity-0 group-hover:opacity-100 hover:bg-indigo-100 hover:text-indigo-600 transition-all"
+        className="p-1 text-[var(--color-muted)] opacity-0 group-hover:opacity-100 hover:text-[var(--color-accent)] transition-all"
       >
         <Edit3 className="w-3.5 h-3.5" />
       </button>
@@ -116,152 +146,98 @@ function EditableField({
   );
 }
 
-// Quick action buttons for common increments
-function QuickActions({ 
-  onAction, 
-  currentValue, 
-  max,
-  isPending 
-}: { 
-  onAction: (newValue: number) => void;
-  currentValue: number;
-  max: number;
-  isPending: boolean;
-}) {
-  const actions = [
-    { label: '−10', value: currentValue - 10 },
-    { label: '−5', value: currentValue - 5 },
-    { label: '−1', value: currentValue - 1 },
-    { label: '+1', value: currentValue + 1 },
-    { label: '+5', value: currentValue + 5 },
-    { label: '+10', value: currentValue + 10 },
-  ];
+// ─────────────────────────────────────────────────────────────────────────────
+// Bed Card
+// ─────────────────────────────────────────────────────────────────────────────
 
-  return (
-    <div className="flex flex-wrap gap-2 mt-3">
-      {actions.map((action) => {
-        const isDisabled = action.value < 0 || action.value > max || isPending;
-        return (
-          <button
-            key={action.label}
-            onClick={() => onAction(action.value)}
-            disabled={isDisabled}
-            className="px-3 py-1.5 bg-slate-100 text-slate-700 rounded-lg text-xs font-bold hover:bg-slate-200 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-          >
-            {action.label}
-          </button>
-        );
-      })}
-    </div>
-  );
-}
-
-// Bed Card Component
-function BedCard({ 
-  title,
-  description,
-  available,
-  total,
-  onUpdate,
-  isPending
-}: { 
+interface BedCardProps {
   title: string;
   description: string;
   available: number;
   total: number;
   onUpdate: (value: number) => Promise<void>;
   isPending: boolean;
-}) {
-  const occupied = total - available;
-  const occupancyPercentage = total > 0 ? (occupied / total) * 100 : 0;
-  
-  const getOccupancyColor = () => {
-    if (occupancyPercentage >= 80) return "bg-red-500";
-    if (occupancyPercentage >= 50) return "bg-amber-500";
-    return "bg-green-500";
-  };
+}
 
-  const getStatusText = () => {
-    if (occupancyPercentage >= 80) return "Critical";
-    if (occupancyPercentage >= 50) return "Moderate";
-    return "Good";
-  };
+function BedCard({
+  title,
+  description,
+  available,
+  total,
+  onUpdate,
+  isPending,
+}: BedCardProps) {
+  const occupied = total - available;
+  const pct = total > 0 ? (occupied / total) * 100 : 0;
+  const colorClass =
+    pct >= 90
+      ? "bg-[var(--color-error)]"
+      : pct >= 70
+        ? "bg-[var(--color-warning)]"
+        : "bg-[var(--color-success)]";
 
   return (
-    <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+    <div className="bg-white p-5 rounded-2xl border border-[var(--color-border)] hover:shadow-sm transition-shadow">
       <div className="flex justify-between items-start mb-4">
         <div>
-          <h3 className="font-black text-slate-900">{title}</h3>
-          <p className="text-sm text-slate-500">{description}</p>
+          <h3 className="text-sm font-bold text-[var(--color-heading)]">
+            {title}
+          </h3>
+          <p className="text-xs text-[var(--color-muted)]">{description}</p>
         </div>
-        <div className="text-right">
-          <div className="text-sm text-slate-400">Total Capacity</div>
-          <span className="text-2xl font-black text-slate-900">{total}</span>
+        <div className="bg-[var(--color-badge-bg)] px-2 py-1 rounded-lg">
+          <span className="text-[10px] font-bold text-[var(--color-badge-text)] uppercase">
+            Capacity: {total}
+          </span>
         </div>
       </div>
 
       <EditableField
         value={available}
         onSave={onUpdate}
-        label="Available"
-        unit="beds"
         max={total}
         isPending={isPending}
+        unit="beds"
       />
 
-      {/* Clear Occupancy Display */}
-      <div className="mt-4">
-        <div className="grid grid-cols-2 gap-3 mb-3">
-          <div className="bg-green-50 p-3 rounded-xl">
-            <p className="text-xs text-green-600 font-bold flex items-center gap-1">
-              <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-              FREE
-            </p>
-            <p className="text-2xl font-black text-green-700">{available}</p>
-          </div>
-          <div className="bg-amber-50 p-3 rounded-xl">
-            <p className="text-xs text-amber-600 font-bold flex items-center gap-1">
-              <span className="w-2 h-2 bg-amber-500 rounded-full"></span>
-              OCCUPIED
-            </p>
-            <p className="text-2xl font-black text-amber-700">{occupied}</p>
-          </div>
+      <div className="mt-5 space-y-2">
+        <div className="flex justify-between items-end">
+          <span
+            className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-md ${pct >= 90 ? "bg-red-50 text-red-600" : "bg-emerald-50 text-emerald-600"}`}
+          >
+            {pct.toFixed(0)}% Occupied
+          </span>
+          <span className="text-[10px] font-bold text-[var(--color-muted)]">
+            {available} Free / {occupied} Filled
+          </span>
         </div>
-        
-        {/* Progress Bar with Labels */}
-        <div className="space-y-1">
-          <div className="flex justify-between text-xs">
-            <span className="text-slate-500 font-medium">0%</span>
-            <span className="text-slate-700 font-bold flex items-center gap-1">
-              <span className={`w-2 h-2 rounded-full ${getOccupancyColor()}`}></span>
-              {occupancyPercentage.toFixed(0)}% Occupied ({getStatusText()})
-            </span>
-            <span className="text-slate-500 font-medium">100%</span>
-          </div>
-          
-          <div className="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
-            <div
-              className={`h-full transition-all duration-500 ${getOccupancyColor()}`}
-              style={{ width: `${occupancyPercentage}%` }}
-            />
-          </div>
-          
-          <div className="flex justify-between text-xs text-slate-400">
-            <span>Free: {available}</span>
-            <span>Occupied: {occupied}</span>
-          </div>
+        <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden border border-slate-50">
+          <div
+            className={`h-full transition-all duration-700 ${colorClass}`}
+            style={{ width: `${pct}%` }}
+          />
         </div>
       </div>
 
-      <QuickActions
-        currentValue={available}
-        max={total}
-        onAction={onUpdate}
-        isPending={isPending}
-      />
+      <div className="flex gap-1.5 mt-4">
+        {[-5, -1, 1, 5].map((v) => (
+          <button
+            key={v}
+            disabled={isPending || available + v < 0 || available + v > total}
+            onClick={() => onUpdate(available + v)}
+            className="flex-1 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-[10px] font-bold text-[var(--color-body)] hover:bg-[var(--color-badge-bg)] hover:border-[var(--color-border)] disabled:opacity-30 transition-colors"
+          >
+            {v > 0 ? `+${v}` : v}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Root Dashboard
+// ─────────────────────────────────────────────────────────────────────────────
 
 export default function RealtimeDashboard({
   initialInventory,
@@ -277,8 +253,8 @@ export default function RealtimeDashboard({
   const supabase = createClient();
 
   useEffect(() => {
-    const inventoryChannel = supabase
-      .channel("realtime-inventory")
+    const invChannel = supabase
+      .channel("inv")
       .on(
         "postgres_changes",
         {
@@ -287,16 +263,15 @@ export default function RealtimeDashboard({
           table: "hospital_inventory",
           filter: `hospital_id=eq.${hospitalId}`,
         },
-        (payload) => {
-          console.log("Inventory update received:", payload.new);
-          setInventory(payload.new as Inventory);
+        (p) => {
+          setInventory(p.new as Inventory);
           setLastUpdated(new Date().toLocaleTimeString());
         },
       )
       .subscribe();
 
     const bloodChannel = supabase
-      .channel("realtime-blood")
+      .channel("blood")
       .on(
         "postgres_changes",
         {
@@ -305,19 +280,17 @@ export default function RealtimeDashboard({
           table: "blood_bank",
           filter: `hospital_id=eq.${hospitalId}`,
         },
-        (payload) => {
-          console.log("Blood bank update received:", payload);
-          if (payload.eventType === "UPDATE" || payload.eventType === "INSERT") {
-            setBloodBank((prev) => {
-              const newBlood = payload.new as BloodBank;
-              const exists = prev.some(b => b.id === newBlood.id);
-              if (exists) {
-                return prev.map(b => b.id === newBlood.id ? newBlood : b);
-              }
-              return [...prev, newBlood];
-            });
-          } else if (payload.eventType === "DELETE") {
-            setBloodBank((prev) => prev.filter(b => b.id !== payload.old.id));
+        (p) => {
+          if (p.eventType === "UPDATE" || p.eventType === "INSERT") {
+            const newData = p.new as BloodBank;
+            setBloodBank((prev) =>
+              prev.some((b) => b.id === newData.id)
+                ? prev.map((b) => (b.id === newData.id ? newData : b))
+                : [...prev, newData],
+            );
+          } else if (p.eventType === "DELETE") {
+            const oldData = p.old as { id: string };
+            setBloodBank((prev) => prev.filter((b) => b.id !== oldData.id));
           }
           setLastUpdated(new Date().toLocaleTimeString());
         },
@@ -325,193 +298,172 @@ export default function RealtimeDashboard({
       .subscribe();
 
     return () => {
-      supabase.removeChannel(inventoryChannel);
+      supabase.removeChannel(invChannel);
       supabase.removeChannel(bloodChannel);
     };
   }, [hospitalId, supabase]);
 
-  const handleBedUpdate = async (field: keyof Pick<Inventory, 'available_beds' | 'icu_beds_available' | 'ventilators_available'>, value: number) => {
+  const handleBedUpdate = async (field: keyof Inventory, value: number) => {
     startTransition(async () => {
-      const result = await updateAvailability({ [field]: value });
-      if (result.success) {
-        // Optimistically update local state
-        setInventory(prev => prev ? { ...prev, [field]: value } : prev);
-      }
+      const res = await updateAvailability({ [field]: value });
+      if (res.success)
+        setInventory((prev) => (prev ? { ...prev, [field]: value } : prev));
     });
   };
 
-  const handleBloodUpdate = async (groupId: string, currentUnits: number, newUnits: number) => {
+  const handleBloodUpdate = async (group: string, val: number) => {
     startTransition(async () => {
-      const result = await updateBloodStock(groupId, Math.max(0, newUnits));
-      if (result.success) {
-        // Optimistically update local state
-        setBloodBank(prev => 
-          prev.map(b => 
-            b.blood_group === groupId 
-              ? { ...b, units_available: Math.max(0, newUnits) }
-              : b
-          )
+      const res = await updateBloodStock(group, Math.max(0, val));
+      if (res.success)
+        setBloodBank((prev) =>
+          prev.map((b) =>
+            b.blood_group === group
+              ? { ...b, units_available: Math.max(0, val) }
+              : b,
+          ),
         );
-      }
     });
   };
 
-  // Manual refresh button
-  const handleRefresh = () => {
-    window.location.reload();
-  };
-
-  if (!inventory) {
+  if (!inventory)
     return (
-      <div className="p-8 text-center">
-        <Loader2 className="animate-spin inline mr-2" /> Loading inventory...
+      <div className="p-12 text-center text-[var(--color-muted)] font-bold animate-pulse">
+        Establishing Secure Connection...
       </div>
     );
-  }
 
   return (
-    <div className="space-y-8">
-      {/* Last Updated Indicator */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2 text-xs text-slate-400">
-          <Activity className="w-3 h-3" />
-          <span>Last updated: {lastUpdated || 'Just now'}</span>
-          {isPending && (
-            <>
-              <Loader2 className="w-3 h-3 animate-spin ml-2" />
-              <span className="text-indigo-500">Updating...</span>
-            </>
-          )}
+    <div className="max-w-7xl mx-auto space-y-6 pb-12">
+      {/* Header Info Bar */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-[var(--color-border)] shadow-sm">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-[var(--color-accent)]/10 flex items-center justify-center">
+            <TrendingUp className="w-5 h-5 text-[var(--color-accent)]" />
+          </div>
+          <div>
+            <h1 className="text-lg font-black text-[var(--color-heading)] leading-none tracking-tight">
+              Inventory Terminal
+            </h1>
+            <p className="text-[10px] font-bold text-[var(--color-muted)] uppercase mt-1 flex items-center gap-1">
+              <span className="w-1.5 h-1.5 bg-[var(--color-success)] rounded-full animate-pulse" />
+              Live Sync Active • {lastUpdated || "Connected"}
+            </p>
+          </div>
         </div>
         <button
-          onClick={handleRefresh}
-          className="flex items-center gap-1 px-3 py-1.5 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold hover:bg-slate-200 transition-colors"
+          onClick={() => window.location.reload()}
+          className="flex items-center justify-center gap-2 px-4 py-2 bg-slate-50 hover:bg-[var(--color-badge-bg)] text-[var(--color-heading)] text-xs font-bold rounded-xl border border-[var(--color-border)] transition-all"
         >
-          <RefreshCw className="w-3 h-3" />
+          <RefreshCw
+            className={`w-3.5 h-3.5 ${isPending ? "animate-spin" : ""}`}
+          />
           Refresh
         </button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Main Inventory Section */}
-        <div className="lg:col-span-2 space-y-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
-              <Bed className="w-5 h-5 text-blue-600" /> Bed Availability
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 gap-6">
-            {/* General Beds Card */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* Left: Bed Management */}
+        <div className="lg:col-span-8 space-y-4">
+          <SectionHeader title="Bed Availability" icon={Bed} />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <BedCard
-              title="General Beds"
-              description="Regular ward beds"
+              title="General Ward"
+              description="Standard patient beds"
               available={inventory.available_beds ?? 0}
               total={inventory.total_beds ?? 0}
-              onUpdate={(val) => handleBedUpdate("available_beds", val)}
+              onUpdate={(v) => handleBedUpdate("available_beds", v)}
               isPending={isPending}
             />
-
-            {/* ICU Beds Card */}
             <BedCard
-              title="ICU Beds"
-              description="Intensive Care Units"
+              title="ICU Units"
+              description="Critical care support"
               available={inventory.icu_beds_available ?? 0}
               total={inventory.icu_beds_total ?? 0}
-              onUpdate={(val) => handleBedUpdate("icu_beds_available", val)}
+              onUpdate={(v) => handleBedUpdate("icu_beds_available", v)}
               isPending={isPending}
             />
-
-            {/* Ventilators Card */}
-            <BedCard
-              title="Ventilators"
-              description="Mechanical ventilators"
-              available={inventory.ventilators_available ?? 0}
-              total={inventory.ventilators_total ?? 0}
-              onUpdate={(val) => handleBedUpdate("ventilators_available", val)}
-              isPending={isPending}
-            />
+            <div className="md:col-span-2">
+              <BedCard
+                title="Ventilators"
+                description="Life support equipment"
+                available={inventory.ventilators_available ?? 0}
+                total={inventory.ventilators_total ?? 0}
+                onUpdate={(v) => handleBedUpdate("ventilators_available", v)}
+                isPending={isPending}
+              />
+            </div>
           </div>
         </div>
 
-        {/* Blood Bank Section */}
-        <div className="space-y-6">
-          <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
-            <Droplets className="w-5 h-5 text-red-600" /> Blood Stock
-          </h2>
-          
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-            <div className="space-y-4">
+        {/* Right: Blood Bank Management */}
+        <div className="lg:col-span-4 space-y-4">
+          <SectionHeader title="Blood Bank" icon={Droplets} />
+          <div className="bg-white rounded-2xl border border-[var(--color-border)] overflow-hidden shadow-sm">
+            <div className="divide-y divide-[var(--color-border)]/50">
               {bloodBank.map((blood) => {
                 const units = blood.units_available ?? 0;
+                const isLow = units < 5;
                 return (
-                  <div key={blood.id} className="p-4 bg-slate-50 rounded-xl">
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="font-black text-slate-900 text-lg">
-                        {blood.blood_group}
-                      </span>
+                  <div
+                    key={blood.id}
+                    className="p-4 hover:bg-slate-50/50 transition-colors"
+                  >
+                    <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
-                        <button
-                          disabled={isPending}
-                          onClick={() => handleBloodUpdate(
-                            blood.blood_group,
-                            units,
-                            units - 1
-                          )}
-                          className="p-2 bg-white rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
+                        <span
+                          className={`w-9 h-9 rounded-lg flex items-center justify-center text-xs font-black ${isLow ? "bg-red-100 text-red-600" : "bg-[var(--color-badge-bg)] text-[var(--color-badge-text)]"}`}
                         >
-                          <Minus className="w-4 h-4" />
-                        </button>
-                        
-                        <EditableField
-                          value={units}
-                          onSave={(val) => handleBloodUpdate(blood.blood_group, units, val)}
-                          label=""
-                          unit="units"
-                          isPending={isPending}
-                        />
-                        
-                        <button
-                          disabled={isPending}
-                          onClick={() => handleBloodUpdate(
-                            blood.blood_group,
-                            units,
-                            units + 1
-                          )}
-                          className="p-2 bg-white rounded-lg text-slate-400 hover:text-green-600 hover:bg-green-50 transition-colors disabled:opacity-50"
-                        >
-                          <Plus className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
-                    
-                    {/* Stock indicator */}
-                    <div className="space-y-1">
-                      <div className="flex justify-between text-xs">
-                        <span className="text-slate-500">0</span>
-                        <span className="text-slate-700 font-bold">
-                          {units} units
+                          {blood.blood_group}
                         </span>
-                        <span className="text-slate-500">20+</span>
+                        {isLow && (
+                          <div className="flex items-center gap-1 text-[10px] font-bold text-red-600 animate-pulse">
+                            <AlertCircle className="w-3 h-3" /> LOW
+                          </div>
+                        )}
                       </div>
-                      <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
-                        <div
-                          className={`h-full transition-all duration-500 ${
-                            units < 5 ? "bg-red-500" : 
-                            units < 10 ? "bg-amber-500" : "bg-green-500"
-                          }`}
-                          style={{ width: `${Math.min(100, (units / 20) * 100)}%` }}
-                        />
+                      <div className="flex items-center gap-1">
+                        <button
+                          disabled={isPending}
+                          onClick={() =>
+                            handleBloodUpdate(blood.blood_group, units - 1)
+                          }
+                          className="p-1 bg-white border border-[var(--color-border)] rounded-md text-[var(--color-muted)] hover:text-[var(--color-error)]"
+                        >
+                          <Minus className="w-3 h-3" />
+                        </button>
+
+                        <div className="px-2">
+                          <EditableField
+                            value={units}
+                            onSave={(val) =>
+                              handleBloodUpdate(blood.blood_group, val)
+                            }
+                            isPending={isPending}
+                            unit=""
+                            size="md"
+                          />
+                        </div>
+
+                        <button
+                          disabled={isPending}
+                          onClick={() =>
+                            handleBloodUpdate(blood.blood_group, units + 1)
+                          }
+                          className="p-1 bg-white border border-[var(--color-border)] rounded-md text-[var(--color-muted)] hover:text-[var(--color-success)]"
+                        >
+                          <Plus className="w-3 h-3" />
+                        </button>
                       </div>
                     </div>
-                    
-                    {/* Low stock warning */}
-                    {units < 5 && (
-                      <div className="flex items-center gap-1 mt-2 text-xs text-red-600">
-                        <AlertCircle className="w-3 h-3" />
-                        <span>Low stock - only {units} units left</span>
-                      </div>
-                    )}
+                    {/* Visual Progress Bar for Blood */}
+                    <div className="h-1 w-full bg-slate-100 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full transition-all duration-500 ${isLow ? "bg-[var(--color-error)]" : "bg-[var(--color-success)]"}`}
+                        style={{
+                          width: `${Math.min(100, (units / 20) * 100)}%`,
+                        }}
+                      />
+                    </div>
                   </div>
                 );
               })}

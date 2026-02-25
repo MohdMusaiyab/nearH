@@ -1,4 +1,6 @@
-import { Stethoscope } from "lucide-react";
+"use client";
+
+import { Stethoscope, Plus, Users, UserPlus } from "lucide-react";
 import { DoctorCard } from "./DoctorCard";
 import { PublicHospitalProfile } from "@/types/hospital";
 
@@ -11,17 +13,21 @@ interface Props {
 export function DoctorsTab({ doctors, canViewPrivate, canEdit }: Props) {
   if (doctors.length === 0) {
     return (
-      <div className="text-center py-12">
-        <Stethoscope className="w-16 h-16 mx-auto text-slate-300 mb-4" />
-        <h3 className="text-xl font-black text-slate-900 mb-2">
-          No Doctors Listed
+      <div className="flex flex-col items-center justify-center py-24 text-center animate-in fade-in zoom-in-95 duration-500">
+        <div className="w-20 h-20 rounded-[2rem] bg-[var(--color-badge-bg)] border border-[var(--color-border)] flex items-center justify-center mb-6 shadow-sm">
+          <Stethoscope className="w-10 h-10 text-[var(--color-muted)]" />
+        </div>
+        <h3 className="text-xl font-black text-[var(--color-heading)] uppercase tracking-tighter mb-2">
+          Clinical Staff Pending
         </h3>
-        <p className="text-slate-500">
-          This hospital hasn&apos;t added any doctors yet.
+        <p className="text-sm text-[var(--color-muted)] max-w-xs font-medium leading-relaxed">
+          There are currently no practitioners associated with this facility&apos;s
+          digital registry.
         </p>
+
         {canEdit && (
-          <button className="mt-6 px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-700 transition-colors">
-            Add Doctors
+          <button className="mt-8 flex items-center gap-2 px-8 py-4 bg-[var(--color-heading)] text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 active:scale-95">
+            <UserPlus size={16} /> Add Medical Staff
           </button>
         )}
       </div>
@@ -29,19 +35,32 @@ export function DoctorsTab({ doctors, canViewPrivate, canEdit }: Props) {
   }
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
-        <h3 className="text-lg font-black text-slate-900">
-          Medical Staff ({doctors.length})
-        </h3>
+    <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+      {/* ── Tab Header ── */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 pb-6 border-b border-slate-50">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-[var(--color-badge-bg)] flex items-center justify-center text-[var(--color-accent)] border border-[var(--color-accent)]/10">
+            <Users size={20} />
+          </div>
+          <div>
+            <h3 className="text-xs font-black text-[var(--color-heading)] uppercase tracking-[0.2em] leading-none">
+              Verified Practitioners
+            </h3>
+            <p className="text-[10px] font-bold text-[var(--color-muted)] uppercase mt-1">
+              {doctors.length} Active Medical Staff Members
+            </p>
+          </div>
+        </div>
+
         {canEdit && (
-          <button className="px-4 py-2 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-700 transition-colors">
-            Manage Doctors
+          <button className="flex items-center gap-2 px-5 py-3 bg-white border border-[var(--color-border)] text-[var(--color-heading)] rounded-xl font-black text-[10px] uppercase tracking-widest hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] transition-all shadow-sm active:scale-95">
+            <Plus size={14} strokeWidth={3} /> Manage Registry
           </button>
         )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* ── Responsive Staff Grid ── */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         {doctors.map((doctor) => (
           <DoctorCard
             key={doctor.id}

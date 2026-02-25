@@ -5,35 +5,65 @@ import {
   type ReferralWithDetails,
   updateReferralStatus,
 } from "@/actions/admin/referrals";
-import { Clock, User, CheckCircle2, Loader2 } from "lucide-react";
+import {
+  Clock,
+  User,
+  CheckCircle2,
+  Loader2,
+  Hospital,
+  ArrowRight,
+} from "lucide-react";
 import { format } from "date-fns";
 import { Database } from "@/types/database.types";
 import AcceptModal from "./AcceptModal";
+import { toast } from "sonner";
+import { Modal, ConfigProvider, App as AntApp } from "antd";
 
 type Priority = Database["public"]["Enums"]["priority_level"];
+type Status = Database["public"]["Enums"]["referral_status"];
 
 export const ReferralCard = memo(
   ({ referral }: { referral: ReferralWithDetails }) => {
     const [isPending, startTransition] = useTransition();
     const [showModal, setShowModal] = useState(false);
 
-    const priorityColors: Record<Priority, string> = {
+    // Mapping to NearH Semantic Theme Variables
+    const priorityStyles: Record<Priority, string> = {
       Routine: "bg-blue-50 text-blue-700 border-blue-100",
-      Urgent: "bg-orange-50 text-orange-700 border-orange-100",
-      Critical: "bg-red-50 text-red-700 border-red-100",
+      Urgent:
+        "bg-[var(--color-badge-bg)] text-[var(--color-badge-text)] border-[var(--color-border)]",
+      Critical: "bg-red-50 text-[var(--color-error)] border-red-100",
     };
 
-    const handleAction = (
-      status: Database["public"]["Enums"]["referral_status"],
-    ) => {
+    const handleAction = (status: Status) => {
+      if (status === "Rejected") {
+        Modal.confirm({
+          title: (
+            <span className="font-black text-[var(--color-heading)]">
+              Decline Referral
+            </span>
+          ),
+          content: `Are you sure you want to decline the referral for ${referral.patient_name}?`,
+          okText: "Decline",
+          okType: "danger",
+          centered: true,
+          async onOk() {
+            performUpdate(status);
+          },
+        });
+      } else {
+        performUpdate(status);
+      }
+    };
+
+    const performUpdate = (status: Status) => {
       startTransition(async () => {
         const res = await updateReferralStatus(referral.id, status);
         if (res.success) {
-          if (status === "Accepted") {
-            setShowModal(true);
-          }
+          toast.success(`Referral ${status.toLowerCase()}`);
+          if (status === "Accepted") setShowModal(true);
         } else {
-          alert(res.message);
+          toast.error("Operation failed", { description: res.message });
         }
       });
     };
@@ -44,106 +74,139 @@ export const ReferralCard = memo(
     const priorityKey = referral.priority || "Routine";
 
     return (
-      <>
-        {}
-        {showModal && (
-          <AcceptModal
-            referral={referral}
-            onClose={() => setShowModal(false)}
-          />
-        )}
+      <ConfigProvider
+        theme={{
+          token: {
+            colorPrimary: "#0284C7",
+            borderRadius: 16,
+          },
+        }}
+      >
+        <AntApp>
+          {showModal && (
+            <AcceptModal
+              referral={referral}
+              onClose={() => setShowModal(false)}
+            />
+          )}
 
-        <div className="bg-white p-6 rounded-[2rem] border border-slate-200 shadow-sm hover:shadow-md transition-all group">
-          <div className="flex flex-col md:flex-row justify-between gap-6">
-            <div className="space-y-4 flex-1">
+          <div className="bg-white p-5 md:p-6 rounded-[2rem] border border-[var(--color-border)] shadow-sm hover:shadow-md transition-all group relative overflow-hidden">
+            {/* Top Priority/Time Row */}
+            <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-3">
                 <span
-                  className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${priorityColors[priorityKey]}`}
+                  className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${priorityStyles[priorityKey]}`}
                 >
                   {priorityKey}
                 </span>
-                <span className="text-xs text-slate-400 font-medium flex items-center gap-1">
-                  <Clock className="w-3 h-3" />{" "}
+                <span className="text-[10px] font-bold text-[var(--color-muted)] uppercase flex items-center gap-1.5">
+                  <Clock className="w-3.5 h-3.5" />
                   {format(dateValue, "MMM d, h:mm a")}
                 </span>
               </div>
 
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400">
-                  <User className="w-6 h-6" />
+              <div className="flex items-center gap-1.5 px-3 py-1 bg-[var(--color-badge-bg)]/40 rounded-lg border border-[var(--color-border)]">
+                <Hospital className="w-3 h-3 text-[var(--color-accent)]" />
+                <span className="text-[10px] font-black text-[var(--color-heading)] uppercase tracking-tight">
+                  {referral.direction === "inbound"
+                    ? "Inbound Request"
+                    : "Outbound Sent"}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex flex-col lg:flex-row justify-between gap-6">
+              <div className="flex-1 space-y-4">
+                {/* Patient Info */}
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-[var(--color-badge-bg)] rounded-2xl flex items-center justify-center text-[var(--color-accent)] border border-[var(--color-border)] flex-shrink-0">
+                    <User className="w-6 h-6" />
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="text-xl font-black text-[var(--color-heading)] truncate tracking-tight">
+                      {referral.patient_name}
+                    </h3>
+                    <p className="text-xs font-bold text-[var(--color-muted)] uppercase mt-0.5">
+                      {referral.patient_age} Years • {referral.patient_gender} •{" "}
+                      {referral.specialty?.specialty_name || "General Medicine"}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-xl font-bold text-slate-900">
-                    {referral.patient_name}
-                  </h3>
-                  <p className="text-sm text-slate-500 font-medium">
-                    {referral.patient_age}y • {referral.patient_gender} •{" "}
-                    {referral.specialty?.specialty_name || "General"}
+
+                {/* Medical Reason */}
+                <div className="p-4 bg-slate-50/80 rounded-2xl border border-slate-100 group-hover:bg-white group-hover:border-[var(--color-accent)]/20 transition-all">
+                  <p className="text-[10px] font-black text-[var(--color-muted)] uppercase mb-1.5 tracking-widest">
+                    Clinical Reason
+                  </p>
+                  <p className="text-sm text-[var(--color-body)] leading-relaxed line-clamp-2 italic font-medium">
+                    &ldquo;{referral.medical_reason}&rdquo;
                   </p>
                 </div>
               </div>
 
-              <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                <p className="text-[10px] font-black text-slate-400 uppercase mb-1 tracking-widest">
-                  Medical Reason
-                </p>
-                <p className="text-sm text-slate-700 line-clamp-2">
-                  {referral.medical_reason}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex flex-col justify-between items-end border-t md:border-t-0 md:border-l border-slate-100 pt-6 md:pt-0 md:pl-8 min-w-[200px]">
-              <div className="text-right space-y-1">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                  {referral.direction === "inbound" ? "From" : "To"}
-                </p>
-                <p className="font-bold text-slate-900">
-                  {referral.direction === "inbound"
-                    ? referral.from_hospital?.name || "Unknown Hospital"
-                    : referral.to_hospital?.name || "Unknown Hospital"}
-                </p>
-              </div>
-
-              <div className="flex gap-2 mt-4">
-                {referral.status === "Pending" &&
-                referral.direction === "inbound" ? (
-                  <>
-                    <button
-                      disabled={isPending}
-                      onClick={() => handleAction("Accepted")}
-                      className="px-6 py-2.5 bg-green-600 text-white rounded-xl font-bold text-sm hover:bg-green-700 transition-all flex items-center gap-2 disabled:bg-slate-200"
-                    >
-                      {isPending ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                      ) : (
-                        <CheckCircle2 className="w-4 h-4" />
-                      )}
-                      Accept
-                    </button>
-                    <button
-                      disabled={isPending}
-                      onClick={() => handleAction("Rejected")}
-                      className="px-6 py-2.5 bg-white border border-slate-200 text-slate-600 rounded-xl font-bold text-sm hover:bg-red-50 hover:text-red-600 transition-all disabled:opacity-50"
-                    >
-                      Reject
-                    </button>
-                  </>
-                ) : (
-                  <div className="flex items-center gap-2 px-4 py-2 bg-slate-50 rounded-xl border border-slate-200">
-                    <div
-                      className={`w-2 h-2 rounded-full ${referral.status === "Accepted" ? "bg-green-500" : "bg-slate-300"}`}
-                    />
-                    <span className="text-sm font-bold text-slate-700">
-                      {referral.status}
+              {/* Hospital & Actions Column */}
+              <div className="flex flex-col justify-between items-end border-t lg:border-t-0 lg:border-l border-[var(--color-border)] pt-6 lg:pt-0 lg:pl-8 min-w-[240px]">
+                <div className="text-right w-full">
+                  <p className="text-[10px] font-black text-[var(--color-muted)] uppercase tracking-widest mb-1">
+                    {referral.direction === "inbound"
+                      ? "Originating Hospital"
+                      : "Target Hospital"}
+                  </p>
+                  <div className="flex items-center justify-end gap-2 text-[var(--color-heading)]">
+                    <span className="font-black text-sm">
+                      {referral.direction === "inbound"
+                        ? referral.from_hospital?.name
+                        : referral.to_hospital?.name}
                     </span>
+                    <ArrowRight className="w-3.5 h-3.5 text-[var(--color-accent)]" />
                   </div>
-                )}
+                </div>
+
+                <div className="flex w-full gap-2 mt-6">
+                  {referral.status === "Pending" &&
+                  referral.direction === "inbound" ? (
+                    <>
+                      <button
+                        disabled={isPending}
+                        onClick={() => handleAction("Accepted")}
+                        className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-[var(--color-success)] text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-100 disabled:opacity-50"
+                      >
+                        {isPending ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <CheckCircle2 className="w-4 h-4" />
+                        )}
+                        Accept
+                      </button>
+                      <button
+                        disabled={isPending}
+                        onClick={() => handleAction("Rejected")}
+                        className="px-4 py-3 bg-white border border-[var(--color-border)] text-[var(--color-error)] rounded-xl text-xs font-black uppercase tracking-widest hover:bg-red-50 hover:border-red-200 transition-all disabled:opacity-50"
+                      >
+                        Decline
+                      </button>
+                    </>
+                  ) : (
+                    <div className="w-full flex items-center justify-between px-4 py-3 bg-[var(--color-badge-bg)]/40 rounded-xl border border-[var(--color-border)]">
+                      <span className="text-[10px] font-black text-[var(--color-muted)] uppercase">
+                        Transfer Status
+                      </span>
+                      <div className="flex items-center gap-2">
+                        <div
+                          className={`w-1.5 h-1.5 rounded-full ${referral.status === "Accepted" ? "bg-[var(--color-success)] animate-pulse" : "bg-slate-400"}`}
+                        />
+                        <span className="text-xs font-black text-[var(--color-heading)] uppercase">
+                          {referral.status}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </>
+        </AntApp>
+      </ConfigProvider>
     );
   },
 );

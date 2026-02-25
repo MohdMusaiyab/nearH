@@ -1,4 +1,5 @@
-// components/hospital/profile/tabs/ServicesTab.tsx
+"use client";
+
 import {
   Pill,
   Stethoscope,
@@ -7,14 +8,15 @@ import {
   Droplets,
   HeartPulse,
   LucideIcon,
+  ShieldCheck,
+  Zap,
 } from "lucide-react";
 
 interface Props {
   services: string[];
-  specialties: string[]; // Keep specialties separate
+  specialties: string[];
 }
 
-// Map common services to icons
 const getServiceIcon = (service: string) => {
   const iconMap: Record<string, LucideIcon> = {
     ICU: HeartPulse,
@@ -26,11 +28,9 @@ const getServiceIcon = (service: string) => {
   };
 
   for (const [key, Icon] of Object.entries(iconMap)) {
-    if (service.toLowerCase().includes(key.toLowerCase())) {
-      return Icon;
-    }
+    if (service.toLowerCase().includes(key.toLowerCase())) return Icon;
   }
-  return Pill;
+  return Zap;
 };
 
 export function ServicesTab({ services, specialties }: Props) {
@@ -39,31 +39,41 @@ export function ServicesTab({ services, specialties }: Props) {
 
   if (!hasServices && !hasSpecialties) {
     return (
-      <div className="text-center py-12">
-        <Pill className="w-16 h-16 mx-auto text-slate-300 mb-4" />
-        <p className="text-slate-500">No services or specialties listed</p>
+      <div className="flex flex-col items-center justify-center py-24 text-center">
+        <div className="w-20 h-20 rounded-[2rem] bg-[var(--color-badge-bg)] border border-[var(--color-border)] flex items-center justify-center mb-6">
+          <Pill className="w-10 h-10 text-[var(--color-muted)] opacity-40" />
+        </div>
+        <p className="text-xs font-black text-[var(--color-muted)] uppercase tracking-widest">
+          No Clinical Capabilities Listed
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-8">
-      {/* Services Section */}
+    <div className="space-y-12 animate-in fade-in duration-700">
+      {/* ── Services Section ── */}
       {hasServices && (
-        <div>
-          <h3 className="text-lg font-black text-slate-900 mb-4">
-            Hospital Services
-          </h3>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="space-y-6">
+          <div className="flex items-center gap-3 px-1">
+            <div className="w-1.5 h-5 bg-[var(--color-accent)] rounded-full" />
+            <h3 className="text-[10px] font-black text-[var(--color-muted)] uppercase tracking-[0.25em]">
+              Facility Infrastucture & Services
+            </h3>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             {services.map((service) => {
               const Icon = getServiceIcon(service);
               return (
                 <div
                   key={service}
-                  className="p-4 bg-indigo-50 rounded-xl hover:bg-indigo-100 transition-colors"
+                  className="group p-5 bg-white border border-[var(--color-border)] rounded-[1.5rem] hover:border-[var(--color-accent)]/40 hover:shadow-xl hover:shadow-[var(--color-accent)]/5 transition-all duration-300"
                 >
-                  <Icon className="w-5 h-5 text-indigo-500 mb-2" />
-                  <span className="font-bold text-sm text-indigo-900">
+                  <div className="w-10 h-10 rounded-xl bg-[var(--color-badge-bg)] flex items-center justify-center text-[var(--color-accent)] mb-4 group-hover:bg-[var(--color-accent)] group-hover:text-white transition-all">
+                    <Icon size={18} strokeWidth={2.5} />
+                  </div>
+                  <span className="text-xs font-black text-[var(--color-heading)] uppercase tracking-tight block">
                     {service}
                   </span>
                 </div>
@@ -73,20 +83,26 @@ export function ServicesTab({ services, specialties }: Props) {
         </div>
       )}
 
-      {/* Specialties Section (from doctors) */}
+      {/* ── Specialties Section ── */}
       {hasSpecialties && (
-        <div>
-          <h3 className="text-lg font-black text-slate-900 mb-4">
-            Medical Specialties
-          </h3>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="space-y-6 pt-4">
+          <div className="flex items-center gap-3 px-1">
+            <div className="w-1.5 h-5 bg-emerald-500 rounded-full" />
+            <h3 className="text-[10px] font-black text-[var(--color-muted)] uppercase tracking-[0.25em]">
+              Medical Expertise & Specialties
+            </h3>
+          </div>
+
+          <div className="flex flex-wrap gap-3">
             {specialties.map((specialty) => (
               <div
                 key={specialty}
-                className="p-4 bg-purple-50 rounded-xl hover:bg-purple-100 transition-colors"
+                className="flex items-center gap-2.5 pl-2.5 pr-4 py-2.5 bg-white border border-[var(--color-border)] rounded-xl hover:border-emerald-200 hover:bg-emerald-50/30 transition-all group cursor-default"
               >
-                <Stethoscope className="w-5 h-5 text-purple-500 mb-2" />
-                <span className="font-bold text-sm text-purple-900">
+                <div className="w-7 h-7 rounded-lg bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600">
+                  <ShieldCheck size={14} strokeWidth={3} />
+                </div>
+                <span className="text-[10px] font-black text-[var(--color-heading)] uppercase tracking-wide">
                   {specialty}
                 </span>
               </div>
@@ -94,6 +110,14 @@ export function ServicesTab({ services, specialties }: Props) {
           </div>
         </div>
       )}
+
+      {/* ── Mobile Friendly Footer ── */}
+      <div className="mt-8 p-6 rounded-2xl border border-dashed border-[var(--color-border)] bg-slate-50/50">
+        <p className="text-[9px] font-bold text-[var(--color-muted)] uppercase tracking-widest text-center leading-relaxed">
+          The above services and specialties are verified based on current
+          facility audit data and active medical staff credentials.
+        </p>
+      </div>
     </div>
   );
 }

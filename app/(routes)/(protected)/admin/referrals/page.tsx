@@ -2,6 +2,7 @@ import { getAllHospitalReferrals } from "@/actions/admin/referrals";
 import ReferralClientPage from "@/components/admin/ReferralClientPage";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { ArrowLeftRight } from "lucide-react";
 
 export default async function ReferralsPage() {
   const supabase = await createClient();
@@ -15,27 +16,33 @@ export default async function ReferralsPage() {
     .eq("id", user?.id || "")
     .single();
 
-  if (!profile?.associated_hospital_id) return notFound();
+  const hospitalId = profile?.associated_hospital_id;
+  if (!hospitalId) return notFound();
 
-  const { data, success } = await getAllHospitalReferrals();
+  const { data } = await getAllHospitalReferrals();
 
   return (
-    <div className="space-y-8">
-      <div className="flex justify-between items-end">
-        <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight">
-            Referrals
-          </h1>
-          <p className="text-slate-500">
-            Manage patient transfers and incoming requests.
-          </p>
+    <div className="min-h-screen space-y-6 pb-12">
+      {/* ── Page Header (NearH Pattern) ── */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-[var(--color-accent)] flex items-center justify-center shadow-lg shadow-[var(--color-accent)]/20 flex-shrink-0">
+            <ArrowLeftRight size={24} className="text-white" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-black text-[var(--color-heading)] tracking-tight leading-none">
+              Patient Referrals
+            </h1>
+            <p className="text-sm text-[var(--color-muted)] mt-1">
+              Track and manage inter-hospital patient transfers in real-time
+            </p>
+          </div>
         </div>
       </div>
 
-      <ReferralClientPage
-        initialData={data || []}
-        hospitalId={profile.associated_hospital_id}
-      />
+      <div className="h-px bg-[var(--color-border)]" />
+
+      <ReferralClientPage initialData={data || []} hospitalId={hospitalId} />
     </div>
   );
 }

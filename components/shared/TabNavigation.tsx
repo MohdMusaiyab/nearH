@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Hospital,
   Stethoscope,
@@ -46,26 +48,51 @@ export function TabNavigation({
     : tabs;
 
   return (
-    <div className="flex gap-2 mb-8 overflow-x-auto pb-2 scrollbar-hide">
-      {allTabs.map((tab) => {
-        const Icon = tab.icon;
-        const isActive = activeTab === tab.id;
+    <div className="w-full overflow-hidden">
+      {/* - overflow-x-auto + scrollbar-none: Allows horizontal swiping on mobile.
+         - px-1: Prevents the focus ring/border from being clipped.
+      */}
+      <div className="flex items-center gap-2 overflow-x-auto scrollbar-none flex-nowrap py-1 px-1">
+        {allTabs.map((tab) => {
+          const Icon = tab.icon;
+          const isActive = activeTab === tab.id;
 
-        return (
-          <button
-            key={tab.id}
-            onClick={() => onTabChange(tab.id)}
-            className={`flex items-center gap-2 px-6 py-3 rounded-full font-bold text-sm transition-all whitespace-nowrap ${
-              isActive
-                ? "bg-indigo-600 text-white shadow-lg shadow-indigo-200"
-                : "bg-white text-slate-600 hover:bg-slate-100"
-            }`}
-          >
-            <Icon className="w-4 h-4" />
-            {tab.label}
-          </button>
-        );
-      })}
+          return (
+            <button
+              key={tab.id}
+              onClick={() => onTabChange(tab.id)}
+              className={`
+                flex items-center gap-2 px-4 md:px-5 py-3 rounded-xl 
+                text-[10px] font-black uppercase tracking-[0.15em] 
+                transition-all duration-300 whitespace-nowrap border
+                ${
+                  isActive
+                    ? "bg-[var(--color-badge-bg)] text-[var(--color-accent)] border-[var(--color-accent)]/40 shadow-sm ring-4 ring-[var(--color-accent)]/5"
+                    : "bg-white text-[var(--color-muted)] border-[var(--color-border)] hover:border-[var(--color-accent)]/40 hover:bg-slate-50/50"
+                }
+              `}
+            >
+              <Icon
+                size={14}
+                className={`transition-colors duration-300 ${
+                  isActive
+                    ? "text-[var(--color-accent)]"
+                    : "text-[var(--color-muted)]"
+                }`}
+                strokeWidth={isActive ? 3 : 2}
+              />
+              <span className={isActive ? "text-[var(--color-heading)]" : ""}>
+                {tab.label}
+              </span>
+
+              {/* Live indicator dot - matches 'Explore' availability logic */}
+              {isActive && (
+                <span className="flex h-1.5 w-1.5 rounded-full bg-[var(--color-accent)] animate-pulse ml-0.5" />
+              )}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }

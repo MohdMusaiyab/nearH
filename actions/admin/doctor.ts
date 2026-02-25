@@ -80,7 +80,7 @@ export async function getHospitalDoctors(params: {
     },
   };
 }
-
+  
 export async function createDoctor(
   payload: Omit<DoctorInsert, "hospital_id">,
 ): Promise<ActionResponse<DoctorRow>> {

@@ -1,74 +1,150 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { deleteDoctor, type DoctorWithSpecialty } from "@/actions/admin/doctor";
-import { Pencil, Trash2, Search, User } from "lucide-react";
+import {
+  Pencil,
+  Trash2,
+  Search,
+  User,
+  GraduationCap,
+  AlertCircle,
+  Loader2,
+  ChevronLeft,
+  ChevronRight,
+  Stethoscope,
+} from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { toast } from "sonner";
+import { Modal, ConfigProvider, App } from "antd";
 
 interface DoctorTableProps {
   initialData: DoctorWithSpecialty[];
+  totalCount: number;
+  pageSize: number;
 }
 
-export default function DoctorTable({ initialData }: DoctorTableProps) {
+// ── Internal Table Component ──
+// We move the logic here so it can consume the 'App' context correctly.
+function DoctorTableContent({
+  initialData,
+  totalCount,
+  pageSize,
+}: DoctorTableProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [data, setData] = useState<DoctorWithSpecialty[]>(initialData);
+  const { modal } = App.useApp(); // This is the secret sauce for the theme to work
 
-  const updateFilters = (key: string, value: string) => {
+  const [data, setData] = useState<DoctorWithSpecialty[]>(initialData);
+  const [isDeletingId, setIsDeletingId] = useState<string | null>(null);
+
+  const currentPage = Number(searchParams.get("page")) || 1;
+  const totalPages = Math.ceil(totalCount / pageSize);
+
+  useEffect(() => {
+    setData(initialData);
+  }, [initialData]);
+
+  const updateFilters = (key: string, value: string | number) => {
     const params = new URLSearchParams(searchParams.toString());
-    if (value) params.set(key, value);
+    if (value) params.set(key, value.toString());
     else params.delete(key);
-    params.set("page", "1");
+    if (key === "search") params.set("page", "1");
     router.push(`?${params.toString()}`);
   };
 
-  const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`Remove Dr. ${name}?`)) return;
-    const prev = [...data];
-    setData(data.filter((d) => d.id !== id));
+  const handleDelete = (id: string, name: string) => {
+    modal.confirm({
+      title: (
+        <span className="font-black text-[var(--color-heading)]">
+          Remove Medical Staff
+        </span>
+      ),
+      icon: <AlertCircle className="text-[var(--color-error)] w-5 h-5" />,
+      content: (
+        <div className="pt-1">
+          <p className="text-sm text-[var(--color-body)] mb-2">
+            Are you sure you want to remove{" "}
+            <span className="font-bold text-[var(--color-heading)]">
+              Dr. {name}
+            </span>
+            ?
+          </p>
+          <p className="text-xs text-[var(--color-error)] font-semibold bg-red-50 rounded-lg px-3 py-2 border border-red-100">
+            ⚠️ This will remove their profile and OPD schedule from the public
+            directory.
+          </p>
+        </div>
+      ),
+      okText: "Yes, Delete Profile",
+      okType: "danger",
+      cancelText: "Cancel",
+      centered: true,
+      mask: { closable: true }, // Fixed deprecation: maskClosable -> mask.closable
+      okButtonProps: {
+        className:
+          "!bg-[var(--color-error)] !border-[var(--color-error)] hover:!bg-[var(--color-error-hover)] !font-bold !text-white !rounded-xl",
+      },
+      cancelButtonProps: {
+        className: "!rounded-xl !font-bold text-[var(--color-muted)]",
+      },
+      async onOk() {
+        const previousData = [...data];
+        setData((current) => current.filter((d) => d.id !== id));
+        setIsDeletingId(id);
 
-    const res = await deleteDoctor(id);
-    if (!res.success) {
-      alert(res.message);
-      setData(prev);
-    }
+        const res = await deleteDoctor(id);
+
+        if (res.success) {
+          toast.success(`Dr. ${name} has been removed.`);
+        } else {
+          setData(previousData);
+          toast.error("Delete failed", { description: res.message });
+        }
+        setIsDeletingId(null);
+      },
+    });
   };
 
   return (
-    <div className="flex flex-col">
-      <div className="p-4 border-b border-slate-100">
-        <div className="relative max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+    <div className="flex flex-col bg-white">
+      {/* Search Header */}
+      <div className="p-5 border-b border-[var(--color-border)]">
+        <div className="relative max-w-md">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-muted)]" />
           <input
-            placeholder="Search by name..."
-            className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none text-slate-900"
+            type="text"
+            placeholder="Search doctor by name..."
+            defaultValue={searchParams.get("search") || ""}
+            className="w-full pl-10 pr-4 py-2.5 bg-[var(--color-badge-bg)]/50 border border-[var(--color-border)] rounded-xl text-sm font-medium outline-none text-[var(--color-heading)] focus:bg-white focus:ring-2 focus:ring-[var(--color-accent)]/10 focus:border-[var(--color-accent)] transition-all"
             onChange={(e) => updateFilters("search", e.target.value)}
           />
         </div>
       </div>
 
+      {/* Table Content */}
       <div className="overflow-x-auto">
-        <table className="w-full text-left">
+        <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="bg-slate-50/50">
-              <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest">
+            <tr className="bg-[var(--color-badge-bg)]/40 border-b border-[var(--color-border)]">
+              <th className="px-6 py-4 text-[10px] font-black text-[var(--color-muted)] uppercase tracking-widest">
                 Doctor Details
               </th>
-              <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest">
+              <th className="px-6 py-4 text-[10px] font-black text-[var(--color-muted)] uppercase tracking-widest">
                 Specialty
               </th>
-              <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest text-right">
+              <th className="px-6 py-4 text-[10px] font-black text-[var(--color-muted)] uppercase tracking-widest text-right">
                 Actions
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody className="divide-y divide-[var(--color-border)]/50">
             {data.length === 0 ? (
               <tr>
                 <td
                   colSpan={3}
-                  className="px-6 py-10 text-center text-slate-400 text-sm italic"
+                  className="px-6 py-16 text-center italic text-[var(--color-muted)]"
                 >
                   No doctors found.
                 </td>
@@ -77,41 +153,48 @@ export default function DoctorTable({ initialData }: DoctorTableProps) {
               data.map((doc) => (
                 <tr
                   key={doc.id}
-                  className="hover:bg-slate-50/50 transition-colors"
+                  className={`hover:bg-[var(--color-badge-bg)]/20 transition-colors group ${isDeletingId === doc.id ? "opacity-50" : ""}`}
                 >
                   <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center text-indigo-600">
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 bg-[var(--color-badge-bg)] rounded-full border border-[var(--color-border)] flex items-center justify-center text-[var(--color-accent)]">
                         <User className="w-5 h-5" />
                       </div>
-                      <div>
-                        <div className="font-bold text-slate-900">
+                      <div className="min-w-0">
+                        <div className="font-bold text-[var(--color-heading)] truncate text-sm">
                           {doc.name}
                         </div>
-                        <div className="text-xs text-slate-500">
-                          {doc.experience_years} Years Exp.
+                        <div className="text-[10px] font-bold text-[var(--color-accent)] uppercase flex items-center gap-1 mt-0.5">
+                          <GraduationCap className="w-3 h-3" />{" "}
+                          {doc.experience_years} Years Experience
                         </div>
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="px-3 py-1 bg-blue-50 text-blue-700 text-xs font-bold rounded-full border border-blue-100">
-                      {doc.specialties_list?.specialty_name || "General"}
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold bg-[var(--color-badge-bg)] text-[var(--color-badge-text)] border border-[var(--color-border)]">
+                      {doc.specialties_list?.specialty_name ||
+                        "General Practitioner"}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <div className="flex justify-end gap-2">
+                    <div className="flex justify-end items-center gap-2">
                       <Link
                         href={`/admin/doctors/edit/${doc.id}`}
-                        className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
+                        className="p-2 text-[var(--color-muted)] hover:text-[var(--color-accent)] hover:bg-[var(--color-badge-bg)] rounded-xl transition-all"
                       >
                         <Pencil className="w-4 h-4" />
                       </Link>
                       <button
                         onClick={() => handleDelete(doc.id, doc.name)}
-                        className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                        disabled={!!isDeletingId}
+                        className="p-2 text-[var(--color-muted)] hover:text-[var(--color-error)] hover:bg-red-50 rounded-xl transition-all"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        {isDeletingId === doc.id ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <Trash2 className="w-4 h-4" />
+                        )}
                       </button>
                     </div>
                   </td>
@@ -121,6 +204,53 @@ export default function DoctorTable({ initialData }: DoctorTableProps) {
           </tbody>
         </table>
       </div>
+
+      {/* Pagination Footer */}
+      <div className="px-6 py-4 border-t border-[var(--color-border)] bg-[var(--color-badge-bg)]/20 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <p className="text-xs font-bold text-[var(--color-muted)] uppercase">
+          Showing {data.length} of {totalCount} Staff
+        </p>
+        {totalPages > 1 && (
+          <div className="flex items-center gap-1">
+            <button
+              disabled={currentPage <= 1}
+              onClick={() => updateFilters("page", currentPage - 1)}
+              className="p-2 rounded-lg border border-[var(--color-border)] bg-white disabled:opacity-30"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <div className="px-4 py-1.5 rounded-lg bg-white border border-[var(--color-border)] text-xs font-black">
+              {currentPage} / {totalPages}
+            </div>
+            <button
+              disabled={currentPage >= totalPages}
+              onClick={() => updateFilters("page", currentPage + 1)}
+              className="p-2 rounded-lg border border-[var(--color-border)] bg-white disabled:opacity-30"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+      </div>
     </div>
+  );
+}
+
+// ── Wrapper Component ──
+export default function DoctorTable(props: DoctorTableProps) {
+  return (
+    <ConfigProvider
+      theme={{
+        token: {
+          colorPrimary: "#0284C7",
+          borderRadius: 12,
+          fontFamily: "var(--font-sans)",
+        },
+      }}
+    >
+      <App>
+        <DoctorTableContent {...props} />
+      </App>
+    </ConfigProvider>
   );
 }

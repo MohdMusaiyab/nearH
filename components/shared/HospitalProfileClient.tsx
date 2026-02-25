@@ -12,11 +12,11 @@ import { ContactInfo } from "./ContactInfo";
 import { TabNavigation } from "./TabNavigation";
 import { OverviewTab } from "./OverviewTab";
 import { DoctorsTab } from "./DoctorsTab";
-import { ServicesTab } from "../superadmin/ServicesTab";
 import { ServicesTab as Services } from "./ServicesTab";
 import { BloodBankTab } from "./BloodBankTab";
 import { ReferralsTab } from "./ReferralsTab";
 import { AdminManagement } from "./AdminManagement";
+import { Info, Clock, ShieldCheck, ArrowUpRight, Sparkles } from "lucide-react";
 
 interface Props {
   hospital: HospitalProfile;
@@ -37,78 +37,141 @@ export default function HospitalProfileClient({
   const canEdit = isOwner;
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      {/* Admin Bar - Only for owners and superadmins */}
+    <div className="max-w-7xl mx-auto px-6 lg:px-12 space-y-8 pb-20 animate-in fade-in duration-700">
+      {/* ── Admin Command Strip (Light & Airy Glass Version) ── */}
       {canViewPrivate && (
-        <AdminBar
-          hospitalId={hospital.id}
-          isOwner={isOwner}
-          isSuperadmin={isSuperadmin}
-        />
-      )}
-
-      {/* Hero Section */}
-      <HeroSection hospital={hospital} />
-
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Contact Info - Only for those who can view private data */}
-        {canViewPrivate && hasPrivateData(hospital) && (
-          <ContactInfo hospital={hospital} />
-        )}
-
-        {/* Tab Navigation */}
-        <TabNavigation
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-          showReferralsTab={canViewPrivate}
-        />
-
-        {/* Tab Content */}
-        <div className="bg-white rounded-3xl p-8 shadow-sm border border-slate-200">
-          {activeTab === "overview" && <OverviewTab hospital={hospital} />}
-
-          {activeTab === "doctors" && (
-            <DoctorsTab
-              doctors={hospital.doctors}
-              canViewPrivate={canViewPrivate}
-              canEdit={canEdit}
-            />
-          )}
-
-          {activeTab === "services" && (
-            <Services
-              services={hospital.services}
-              specialties={hospital.specialties}
-            />
-          )}
-
-          {activeTab === "blood-bank" && (
-            <BloodBankTab bloodBank={hospital.blood_bank} canEdit={canEdit} />
-          )}
-
-          {activeTab === "referrals" &&
-            canViewPrivate &&
-            hasPrivateData(hospital) && (
-              <div className="space-y-8">
-                <ReferralsTab hospital={hospital} />
-                {isSuperadmin && <AdminManagement hospital={hospital} />}
-              </div>
-            )}
-        </div>
-
-        {canViewPrivate && hasPrivateData(hospital) && (
-          <div className="mt-8 text-xs text-slate-400 border-t border-slate-200 pt-6">
-            <div className="flex items-center gap-4">
-              <span>Hospital ID: {hospital.id}</span>
-              <span>•</span>
-              <span>
-                Last Updated:{" "}
-                {new Date(hospital.updated_at).toLocaleDateString()}
-              </span>
+        <div className="relative group overflow-hidden bg-white/60 backdrop-blur-xl border border-[var(--color-accent)]/20 p-2 rounded-[1.5rem] flex items-center justify-between shadow-2xl shadow-slate-200/40 animate-in slide-in-from-top-4 duration-500">
+          <div className="flex items-center gap-3 px-4">
+            <div className="w-10 h-10 rounded-xl bg-[var(--color-badge-bg)] flex items-center justify-center text-[var(--color-accent)] shadow-sm">
+              <ShieldCheck size={20} strokeWidth={2.5} />
+            </div>
+            <div>
+              <p className="text-[9px] font-black text-[var(--color-muted)] uppercase tracking-[0.25em] leading-none mb-1">
+                Security clearance level
+              </p>
+              <h2 className="text-[11px] font-black text-[var(--color-heading)] uppercase tracking-tight">
+                {isSuperadmin
+                  ? "Superadmin Intelligence"
+                  : "Facility Management"}
+              </h2>
             </div>
           </div>
-        )}
+
+          <AdminBar
+            hospitalId={hospital.id}
+            isOwner={isOwner}
+            isSuperadmin={isSuperadmin}
+          />
+        </div>
+      )}
+
+      {/* ── Hero Header ── */}
+      <HeroSection hospital={hospital} />
+
+      {/* ── Main Dossier Layout ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Left: Primary Data Columns (2/3) */}
+        <div className="lg:col-span-2 space-y-6">
+          <div className="bg-white/80 backdrop-blur-md p-2.5 rounded-3xl border border-[var(--color-border)] shadow-sm sticky top-28 z-30 transition-all">
+            <TabNavigation
+              activeTab={activeTab}
+              onTabChange={setActiveTab}
+              showReferralsTab={canViewPrivate}
+            />
+          </div>
+
+          <div className="bg-white rounded-[2.5rem] p-8 md:p-12 border border-[var(--color-border)] shadow-sm min-h-[600px] transition-all duration-500 hover:shadow-xl hover:shadow-slate-100/50">
+            {activeTab === "overview" && <OverviewTab hospital={hospital} />}
+
+            {activeTab === "doctors" && (
+              <DoctorsTab
+                doctors={hospital.doctors}
+                canViewPrivate={canViewPrivate}
+                canEdit={canEdit}
+              />
+            )}
+
+            {activeTab === "services" && (
+              <Services
+                services={hospital.services}
+                specialties={hospital.specialties}
+              />
+            )}
+
+            {activeTab === "blood-bank" && (
+              <BloodBankTab bloodBank={hospital.blood_bank} canEdit={canEdit} />
+            )}
+
+            {activeTab === "referrals" &&
+              canViewPrivate &&
+              hasPrivateData(hospital) && (
+                <div className="space-y-12 animate-in fade-in duration-500">
+                  <ReferralsTab hospital={hospital} />
+                  {isSuperadmin && (
+                    <div className="pt-10 border-t border-slate-100">
+                      <AdminManagement hospital={hospital} />
+                    </div>
+                  )}
+                </div>
+              )}
+          </div>
+        </div>
+
+        {/* Right: Logistics & Action Sidebar (1/3) ── */}
+        <div className="space-y-6">
+          {/* Authorization Check Badge */}
+          {canViewPrivate && (
+            <div className="bg-emerald-50 border border-emerald-100 p-4 rounded-2xl flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-emerald-600 shadow-sm">
+                <Sparkles size={16} />
+              </div>
+              <p className="text-[10px] font-black text-emerald-700 uppercase tracking-widest leading-tight">
+                Privileged data unlocked <br />
+                <span className="opacity-60">Full dossier access granted</span>
+              </p>
+            </div>
+          )}
+
+          {/* Secure Vertical Contact Stack */}
+          {canViewPrivate && hasPrivateData(hospital) && (
+            <ContactInfo hospital={hospital} />
+          )}
+
+          {/* Facility Logistics Sidebar */}
+          <div className="bg-white p-8 rounded-[2.5rem] border border-[var(--color-border)] shadow-sm">
+            <h3 className="text-[10px] font-black text-[var(--color-muted)] uppercase tracking-widest mb-8 px-1">
+              Registry Logistics
+            </h3>
+
+            <div className="space-y-8">
+              <div className="flex items-start gap-4 px-1 group">
+                <div className="w-10 h-10 rounded-2xl bg-[var(--color-badge-bg)] border border-[var(--color-border)] flex items-center justify-center text-[var(--color-accent)] group-hover:scale-110 transition-transform">
+                  <Info size={18} />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-[9px] font-black text-[var(--color-muted)] uppercase tracking-tighter leading-none mb-2">
+                    System Identifier
+                  </p>
+                  <p className="font-mono text-[10px] text-[var(--color-heading)] p-2.5 bg-slate-50 rounded-xl border border-slate-100 break-all leading-relaxed">
+                    {hospital.id}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4 px-1 group">
+                <div className="w-10 h-10 rounded-2xl bg-[var(--color-badge-bg)] border border-[var(--color-border)] flex items-center justify-center text-[var(--color-accent)] group-hover:scale-110 transition-transform">
+                  <Clock size={18} />
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-10 pt-8 border-t border-slate-50">
+              <button className="w-full py-4.5 bg-[var(--color-heading)] text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 shadow-slate-200">
+                Generate Dossier <ArrowUpRight size={14} />
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

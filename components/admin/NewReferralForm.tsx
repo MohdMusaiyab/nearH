@@ -2,8 +2,11 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { sendReferral } from "@/actions/admin/referrals";
-import { searchHospitals, type SearchResult } from "@/actions/admin/referrals";
+import {
+  sendReferral,
+  searchHospitals,
+  type SearchResult,
+} from "@/actions/admin/referrals";
 import { Database } from "@/types/database.types";
 import {
   Loader2,
@@ -13,7 +16,11 @@ import {
   ChevronRight,
   Building2,
   MapPin,
+  ChevronDown,
+  Stethoscope,
+  AlertTriangle,
 } from "lucide-react";
+import { toast } from "sonner";
 
 type Specialty = Database["public"]["Tables"]["specialties_list"]["Row"];
 type Location = Database["public"]["Tables"]["locations"]["Row"];
@@ -27,7 +34,6 @@ interface Props {
 export default function NewReferralForm({ specialties, locations }: Props) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-
   const [step, setStep] = useState<1 | 2>(1);
   const [searching, setSearching] = useState(false);
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
@@ -44,6 +50,8 @@ export default function NewReferralForm({ specialties, locations }: Props) {
     const res = await searchHospitals({ cityId });
     if (res.success) {
       setSearchResults(res.data || []);
+      if (res.data?.length === 0)
+        toast.info("No facilities found in this city.");
     }
     setSearching(false);
   };
@@ -51,7 +59,6 @@ export default function NewReferralForm({ specialties, locations }: Props) {
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!selectedHospital) return;
-
     const formData = new FormData(e.currentTarget);
 
     startTransition(async () => {
@@ -67,59 +74,78 @@ export default function NewReferralForm({ specialties, locations }: Props) {
       });
 
       if (res.success) {
+        toast.success("Referral Dispatched", {
+          description: `Request sent to ${selectedHospital.name}`,
+        });
         router.push("/admin/referrals");
         router.refresh();
       } else {
-        alert(res.message);
+        toast.error("Dispatch Failed", { description: res.message });
       }
     });
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      {}
+    <div className="max-w-5xl mx-auto space-y-8">
+      {/* ── Step 1: Hospital Discovery ── */}
       {step === 1 && (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-          <section className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
-            <h2 className="text-sm font-black text-slate-400 uppercase tracking-widest mb-4">
-              Step 1: Locate Facility
-            </h2>
-            <form onSubmit={handleSearch} className="flex gap-4">
-              <div className="relative flex-1">
-                <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <section className="bg-white p-6 md:p-8 rounded-[2rem] border border-[var(--color-border)] shadow-sm">
+            <div className="flex items-center gap-2 mb-6">
+              <span className="w-6 h-6 rounded-full bg-[var(--color-heading)] text-white text-[10px] flex items-center justify-center font-black">
+                01
+              </span>
+              <h2 className="text-xs font-black text-[var(--color-muted)] uppercase tracking-widest">
+                Select Target Facility
+              </h2>
+            </div>
+
+            <form
+              onSubmit={handleSearch}
+              className="flex flex-col sm:flex-row gap-4"
+            >
+              <div className="relative flex-1 group">
+                <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-muted)] group-focus-within:text-[var(--color-accent)] transition-colors" />
                 <select
                   name="city"
-                  className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 appearance-none font-medium"
+                  className="w-full pl-11 pr-10 py-4 bg-[var(--color-badge-bg)]/50 border border-[var(--color-border)] rounded-2xl outline-none focus:bg-white focus:ring-2 focus:ring-[var(--color-accent)]/10 focus:border-[var(--color-accent)] appearance-none font-bold text-[var(--color-heading)] transition-all cursor-pointer"
                 >
-                  <option value="">Select City / Search All</option>
+                  <option value="">Search across all cities</option>
                   {locations.map((l) => (
                     <option key={l.id} value={l.id}>
                       {l.city}, {l.state}
                     </option>
                   ))}
                 </select>
+                {/* Custom Chevron */}
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[var(--color-muted)] group-hover:text-[var(--color-heading)] transition-colors">
+                  <ChevronDown size={18} strokeWidth={3} />
+                </div>
               </div>
               <button
                 type="submit"
                 disabled={searching}
-                className="px-8 py-3.5 bg-slate-900 text-white rounded-2xl font-bold flex items-center gap-2 hover:bg-slate-800 disabled:bg-slate-300 transition-all"
+                className="px-10 py-4 bg-[var(--color-heading)] text-white rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-slate-800 disabled:opacity-50 transition-all shadow-xl shadow-slate-200"
               >
                 {searching ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
                   <Search className="w-4 h-4" />
                 )}
-                Find Hospitals
+                Discover
               </button>
             </form>
           </section>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {searchResults.length === 0 && !searching && (
-              <div className="md:col-span-2 py-12 text-center bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200">
-                <Building2 className="w-10 h-10 text-slate-300 mx-auto mb-2" />
-                <p className="text-slate-500 font-medium">
-                  Search for a city to view available hospitals.
+              <div className="md:col-span-2 py-20 text-center bg-[var(--color-badge-bg)]/20 rounded-[2.5rem] border-2 border-dashed border-[var(--color-border)]">
+                <Building2 className="w-12 h-12 text-[var(--color-border)] mx-auto mb-4" />
+                <p className="text-[var(--color-muted)] font-black text-xs uppercase tracking-widest">
+                  No facilities selected
+                </p>
+                <p className="text-[var(--color-muted)] text-[10px] mt-1 italic">
+                  Choose a city above to view real-time availability
                 </p>
               </div>
             )}
@@ -131,36 +157,40 @@ export default function NewReferralForm({ specialties, locations }: Props) {
                   setSelectedHospital(h);
                   setStep(2);
                 }}
-                className="text-left p-6 bg-white border border-slate-200 rounded-3xl hover:border-indigo-500 hover:ring-4 hover:ring-indigo-50 transition-all group relative overflow-hidden"
+                className="text-left p-6 bg-white border border-[var(--color-border)] rounded-[2rem] hover:border-[var(--color-accent)] hover:shadow-xl hover:shadow-[var(--color-accent)]/5 transition-all group relative"
               >
-                <div className="flex justify-between items-start mb-4">
-                  <div className="space-y-1">
-                    <p className="font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">
+                <div className="flex justify-between items-start mb-6">
+                  <div className="min-w-0">
+                    <h3 className="font-black text-[var(--color-heading)] text-lg truncate tracking-tight group-hover:text-[var(--color-accent)] transition-colors">
                       {h.name}
-                    </p>
-                    <p className="text-xs text-slate-500 flex items-center gap-1">
-                      <MapPin className="w-3 h-3" />{" "}
-                      {h.website_url || "Verified Facility"}
-                    </p>
+                    </h3>
+                    <div className="flex items-center gap-1.5 mt-1">
+                      <div className="w-1.5 h-1.5 rounded-full bg-[var(--color-success)] animate-pulse" />
+                      <span className="text-[10px] font-bold text-[var(--color-muted)] uppercase tracking-tight">
+                        Verified Facility
+                      </span>
+                    </div>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-slate-300 group-hover:text-indigo-500 transition-transform group-hover:translate-x-1" />
+                  <div className="w-8 h-8 rounded-full bg-[var(--color-badge-bg)] flex items-center justify-center text-[var(--color-muted)] group-hover:bg-[var(--color-accent)] group-hover:text-white transition-all">
+                    <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                  </div>
                 </div>
 
-                <div className="flex gap-2">
-                  <div className="px-3 py-1.5 bg-green-50 rounded-xl border border-green-100">
-                    <p className="text-[10px] font-black text-green-600 uppercase">
-                      General
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="p-3 bg-emerald-50 rounded-2xl border border-emerald-100">
+                    <p className="text-[9px] font-black text-emerald-600 uppercase tracking-widest">
+                      General Beds
                     </p>
-                    <p className="text-sm font-bold text-green-700">
-                      {h.inventory?.available_beds ?? 0} Free
+                    <p className="text-lg font-black text-emerald-700">
+                      {h.inventory?.available_beds ?? 0}
                     </p>
                   </div>
-                  <div className="px-3 py-1.5 bg-blue-50 rounded-xl border border-blue-100">
-                    <p className="text-[10px] font-black text-blue-600 uppercase">
-                      ICU
+                  <div className="p-3 bg-blue-50 rounded-2xl border border-blue-100">
+                    <p className="text-[9px] font-black text-blue-600 uppercase tracking-widest">
+                      ICU Units
                     </p>
-                    <p className="text-sm font-bold text-blue-700">
-                      {h.inventory?.icu_beds_available ?? 0} Free
+                    <p className="text-lg font-black text-blue-700">
+                      {h.inventory?.icu_beds_available ?? 0}
                     </p>
                   </div>
                 </div>
@@ -170,133 +200,158 @@ export default function NewReferralForm({ specialties, locations }: Props) {
         </div>
       )}
 
-      {}
+      {/* ── Step 2: Clinical Data Entry ── */}
       {step === 2 && selectedHospital && (
         <form
           onSubmit={onSubmit}
-          className="bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-sm space-y-8 animate-in zoom-in-95 duration-300"
+          className="space-y-6 animate-in zoom-in-95 duration-300"
         >
-          <div className="flex items-center gap-4 pb-6 border-b border-slate-100">
-            <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center">
-              <Building2 className="w-6 h-6" />
+          <div className="bg-white p-6 md:p-8 rounded-[2.5rem] border border-[var(--color-border)] shadow-sm space-y-8">
+            <div className="flex items-center gap-4 pb-6 border-b border-slate-50">
+              <div className="w-14 h-14 bg-[var(--color-badge-bg)] text-[var(--color-accent)] rounded-2xl border border-[var(--color-border)] flex items-center justify-center flex-shrink-0">
+                <Building2 className="w-7 h-7" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] font-black text-[var(--color-muted)] uppercase tracking-[0.2em] leading-none mb-1">
+                  Receiving Facility
+                </p>
+                <p className="text-xl font-black text-[var(--color-heading)] truncate tracking-tight uppercase leading-none">
+                  {selectedHospital.name}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setStep(1)}
+                className="px-4 py-2 text-[10px] font-black text-[var(--color-accent)] uppercase tracking-widest bg-[var(--color-badge-bg)] rounded-xl border border-[var(--color-border)] hover:bg-white transition-all"
+              >
+                Change
+              </button>
             </div>
-            <div>
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                Target Facility
-              </p>
-              <p className="text-lg font-bold text-slate-900">
-                {selectedHospital.name}
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={() => setStep(1)}
-              className="ml-auto px-4 py-2 text-xs font-bold text-indigo-600 bg-indigo-50 rounded-xl hover:bg-indigo-100 transition-colors"
-            >
-              Change Hospital
-            </button>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-            <div className="space-y-2">
-              <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">
-                Patient Full Name
-              </label>
-              <div className="relative">
-                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+              <div className="md:col-span-2 space-y-2">
+                <label className="text-[10px] font-black text-[var(--color-muted)] uppercase tracking-widest ml-1 flex items-center gap-2">
+                  <User size={12} className="text-[var(--color-accent)]" />{" "}
+                  Patient Full Name
+                </label>
                 <input
                   name="patient_name"
                   required
-                  placeholder="John Doe"
-                  className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 font-medium"
+                  placeholder="Full name as per ID"
+                  className="w-full px-5 py-4 bg-[var(--color-badge-bg)]/30 border border-[var(--color-border)] rounded-2xl outline-none focus:bg-white focus:ring-2 focus:ring-[var(--color-accent)]/10 focus:border-[var(--color-accent)] font-bold text-[var(--color-heading)] transition-all"
                 />
               </div>
-            </div>
 
-            <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-[var(--color-muted)] uppercase tracking-widest ml-1">
+                    Age
+                  </label>
+                  <input
+                    name="patient_age"
+                    type="number"
+                    required
+                    min="0"
+                    placeholder="00"
+                    className="w-full px-5 py-4 bg-[var(--color-badge-bg)]/30 border border-[var(--color-border)] rounded-2xl outline-none focus:bg-white focus:ring-2 focus:ring-[var(--color-accent)]/10 focus:border-[var(--color-accent)] font-bold text-[var(--color-heading)] transition-all"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-[var(--color-muted)] uppercase tracking-widest ml-1">
+                    Gender
+                  </label>
+                  <div className="relative">
+                    <select
+                      name="gender"
+                      className="w-full pl-5 pr-10 py-4 bg-[var(--color-badge-bg)]/30 border border-[var(--color-border)] rounded-2xl outline-none focus:bg-white focus:ring-2 focus:ring-[var(--color-accent)]/10 focus:border-[var(--color-accent)] font-bold text-[var(--color-heading)] transition-all appearance-none cursor-pointer"
+                    >
+                      <option>Male</option>
+                      <option>Female</option>
+                      <option>Other</option>
+                    </select>
+                    <ChevronDown
+                      size={14}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--color-muted)] pointer-events-none"
+                    />
+                  </div>
+                </div>
+              </div>
+
               <div className="space-y-2">
-                <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">
-                  Age
+                <label className="text-[10px] font-black text-[var(--color-muted)] uppercase tracking-widest ml-1 flex items-center gap-2">
+                  <Stethoscope
+                    size={12}
+                    className="text-[var(--color-accent)]"
+                  />{" "}
+                  Required Specialty
                 </label>
-                <input
-                  name="patient_age"
-                  type="number"
+                <div className="relative">
+                  <select
+                    name="specialty"
+                    required
+                    className="w-full pl-5 pr-10 py-4 bg-[var(--color-badge-bg)]/30 border border-[var(--color-border)] rounded-2xl outline-none focus:bg-white focus:ring-2 focus:ring-[var(--color-accent)]/10 focus:border-[var(--color-accent)] font-bold text-[var(--color-heading)] transition-all appearance-none cursor-pointer"
+                  >
+                    {specialties.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.specialty_name}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown
+                    size={14}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--color-muted)] pointer-events-none"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-[var(--color-muted)] uppercase tracking-widest ml-1 flex items-center gap-2">
+                  <AlertTriangle
+                    size={12}
+                    className="text-[var(--color-error)]"
+                  />{" "}
+                  Priority Level
+                </label>
+                <div className="relative">
+                  <select
+                    name="priority"
+                    className="w-full pl-5 pr-10 py-4 bg-red-50 border border-red-100 rounded-2xl outline-none focus:ring-2 focus:ring-[var(--color-error)]/10 focus:border-[var(--color-error)] font-black text-[var(--color-error)] transition-all appearance-none cursor-pointer uppercase text-xs"
+                  >
+                    <option value="Routine">Routine</option>
+                    <option value="Urgent">Urgent</option>
+                    <option value="Critical">Critical</option>
+                  </select>
+                  <ChevronDown
+                    size={14}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--color-error)] pointer-events-none"
+                  />
+                </div>
+              </div>
+
+              <div className="md:col-span-2 space-y-2">
+                <label className="text-[10px] font-black text-[var(--color-muted)] uppercase tracking-widest ml-1">
+                  Clinical Reason / Notes
+                </label>
+                <textarea
+                  name="reason"
+                  rows={4}
                   required
-                  placeholder="0"
-                  className="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 font-medium"
+                  className="w-full p-5 bg-[var(--color-badge-bg)]/30 border border-[var(--color-border)] rounded-3xl outline-none focus:bg-white focus:ring-2 focus:ring-[var(--color-accent)]/10 focus:border-[var(--color-accent)] font-medium text-sm leading-relaxed"
+                  placeholder="Explain why the patient needs a transfer..."
                 />
               </div>
-              <div className="space-y-2">
-                <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">
-                  Gender
-                </label>
-                <select
-                  name="gender"
-                  className="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 font-medium"
-                >
-                  <option>Male</option>
-                  <option>Female</option>
-                  <option>Other</option>
-                </select>
-              </div>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">
-                Required Specialty
-              </label>
-              <select
-                name="specialty"
-                required
-                className="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 font-medium"
-              >
-                {specialties.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.specialty_name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">
-                Priority Level
-              </label>
-              <select
-                name="priority"
-                className="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-red-500 font-black text-red-600"
-              >
-                <option value="Routine">Routine</option>
-                <option value="Urgent">Urgent</option>
-                <option value="Critical">Critical</option>
-              </select>
-            </div>
-
-            <div className="md:col-span-2 space-y-2">
-              <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">
-                Medical Reason / Clinical Notes
-              </label>
-              <textarea
-                name="reason"
-                rows={4}
-                required
-                className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 font-medium text-sm"
-                placeholder="Detailed reason for referral..."
-              />
-            </div>
-          </div>
-
-          <div className="flex gap-4 pt-4">
             <button
               type="submit"
               disabled={isPending}
-              className="flex-1 py-4.5 bg-indigo-600 text-white rounded-2xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-2 shadow-xl shadow-indigo-100 hover:bg-indigo-700 active:scale-[0.98] transition-all disabled:bg-slate-300"
+              className="w-full py-5 bg-[var(--color-accent)] text-white rounded-[2rem] font-black text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-xl shadow-[var(--color-accent)]/20 hover:bg-[var(--color-accent-hover)] active:scale-[0.98] transition-all disabled:opacity-50"
             >
               {isPending ? (
                 <Loader2 className="w-5 h-5 animate-spin" />
               ) : (
                 <>
-                  <Send className="w-4 h-4" /> Send Referral
+                  <Send size={16} /> Dispatch Referral
                 </>
               )}
             </button>

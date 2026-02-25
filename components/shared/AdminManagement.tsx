@@ -1,17 +1,27 @@
-import { UserCog, Mail, Calendar } from "lucide-react";
+"use client";
+
+import {
+  UserCog,
+  Mail,
+  Calendar,
+  ShieldCheck,
+  UserCheck,
+  ShieldAlert,
+} from "lucide-react";
 import {
   PrivateHospitalProfile,
   SuperAdminHospitalProfile,
 } from "@/types/hospital";
+import { format } from "date-fns";
 
 interface Props {
   hospital: PrivateHospitalProfile | SuperAdminHospitalProfile;
 }
 
 const statusColors: Record<string, string> = {
-  pending: "bg-amber-100 text-amber-700",
-  approved: "bg-green-100 text-green-700",
-  rejected: "bg-red-100 text-red-700",
+  pending: "bg-amber-50 text-amber-600 border-amber-100",
+  approved: "bg-emerald-50 text-emerald-600 border-emerald-100",
+  rejected: "bg-red-50 text-[var(--color-error)] border-red-100",
 };
 
 const hasAdmins = (
@@ -27,50 +37,77 @@ export function AdminManagement({ hospital }: Props) {
     hospital.admins.length === 0
   ) {
     return (
-      <div className="mt-8 p-8 bg-slate-50 rounded-2xl text-center">
-        <UserCog className="w-12 h-12 mx-auto text-slate-300 mb-3" />
-        <p className="text-slate-500">No admins assigned to this hospital</p>
+      <div className="p-10 bg-[var(--color-badge-bg)]/20 rounded-[2rem] border-2 border-dashed border-[var(--color-border)] text-center animate-in fade-in duration-500">
+        <div className="w-16 h-16 bg-white rounded-2xl border border-[var(--color-border)] flex items-center justify-center mx-auto mb-4 shadow-sm text-[var(--color-muted)]">
+          <UserCog size={32} strokeWidth={1.5} />
+        </div>
+        <p className="text-[10px] font-black text-[var(--color-muted)] uppercase tracking-[0.2em]">
+          No assigned administrators found
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="mt-8">
-      <h3 className="text-lg font-black text-slate-900 mb-4">
-        Hospital Administrators
-      </h3>
-      <div className="space-y-3">
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      {/* ── Section Header ── */}
+      <div className="flex items-center gap-3 px-1">
+        <div className="w-10 h-10 rounded-xl bg-[var(--color-heading)] flex items-center justify-center text-white shadow-lg shadow-slate-200">
+          <ShieldCheck size={20} strokeWidth={2.5} />
+        </div>
+        <div>
+          <h3 className="text-xs font-black text-[var(--color-heading)] uppercase tracking-[0.2em] leading-none">
+            Facility Authorities
+          </h3>
+          <p className="text-[10px] font-bold text-[var(--color-muted)] uppercase mt-1">
+            {hospital.admins.length} Verified System Administrators
+          </p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {hospital.admins.map((admin) => (
           <div
             key={admin.id}
-            className="p-4 bg-slate-50 rounded-xl border border-slate-200"
+            className="group p-5 bg-white border border-[var(--color-border)] rounded-[2rem] hover:border-[var(--color-accent)]/30 hover:shadow-xl hover:shadow-[var(--color-accent)]/5 transition-all duration-300"
           >
-            <div className="flex justify-between items-start mb-2">
-              <div>
-                <p className="font-black text-slate-900">
-                  {admin.full_name || "Unnamed Admin"}
-                </p>
-                <div className="flex items-center gap-2 mt-1 text-sm text-slate-500">
-                  <Mail className="w-3 h-3" />
-                  <span>{admin.email}</span>
+            <div className="flex justify-between items-start gap-4">
+              <div className="flex gap-4">
+                <div className="w-10 h-10 rounded-xl bg-[var(--color-badge-bg)] flex items-center justify-center text-[var(--color-accent)] group-hover:bg-[var(--color-accent)] group-hover:text-white transition-all">
+                  <UserCheck size={18} strokeWidth={2.5} />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm font-black text-[var(--color-heading)] uppercase leading-none mb-2 truncate">
+                    {admin.full_name || "Anonymous Admin"}
+                  </p>
+                  <div className="flex items-center gap-2 text-[10px] font-bold text-[var(--color-muted)] uppercase truncate">
+                    <Mail size={12} className="text-[var(--color-accent)]" />
+                    <span>{admin.email}</span>
+                  </div>
                 </div>
               </div>
+
               {admin.status && (
-                <span
-                  className={`px-3 py-1 rounded-full text-xs font-black ${
-                    statusColors[admin.status]
-                  }`}
+                <div
+                  className={`px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border shadow-sm ${statusColors[admin.status.toLowerCase()] || "bg-slate-50 text-slate-500"}`}
                 >
-                  {admin.status.toUpperCase()}
-                </span>
+                  {admin.status}
+                </div>
               )}
             </div>
+
+            {/* Timeline / Metadata Gutter */}
             {admin.created_at && (
-              <div className="flex items-center gap-1 mt-2 text-xs text-slate-400">
-                <Calendar className="w-3 h-3" />
-                <span>
-                  Since {new Date(admin.created_at).toLocaleDateString()}
-                </span>
+              <div className="mt-5 pt-4 border-t border-slate-50 flex items-center justify-between">
+                <div className="flex items-center gap-2 text-[9px] font-black text-[var(--color-muted)] uppercase tracking-widest">
+                  <Calendar size={12} className="text-[var(--color-accent)]" />
+                  <span>
+                    Onboarded {format(new Date(admin.created_at), "MMM yyyy")}
+                  </span>
+                </div>
+                <div className="text-[8px] font-mono text-slate-300 uppercase">
+                  UID: {admin.id.slice(0, 8)}
+                </div>
               </div>
             )}
           </div>

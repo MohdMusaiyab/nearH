@@ -11,7 +11,11 @@ import {
   MapPin,
   Phone,
   Globe,
+  Check,
+  ChevronDown,
 } from "lucide-react";
+import { toast } from "sonner";
+import { ConfigProvider, App as AntApp } from "antd";
 
 type Hospital = Database["public"]["Tables"]["hospitals"]["Row"];
 type ServiceItem = Database["public"]["Tables"]["services_list"]["Row"];
@@ -24,7 +28,7 @@ interface Props {
   locations: LocationItem[];
 }
 
-export default function HospitalProfileForm({
+function HospitalProfileFormContent({
   hospital,
   allServices,
   selectedServiceIds,
@@ -52,60 +56,68 @@ export default function HospitalProfileForm({
     };
 
     const res = await updateHospitalProfile(payload, services);
-    if (res.success) alert("Profile updated!");
-    else alert(res.message);
+    if (res.success) {
+      toast.success("Profile Synchronized", {
+        description: "Your hospital information has been updated successfully.",
+      });
+    } else {
+      toast.error("Update Failed", { description: res.message });
+    }
     setLoading(false);
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
       {/* SECTION: Basic Information */}
-      <section className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
-        <h3 className="font-bold text-slate-800 flex items-center gap-2">
-          <Building2 className="w-5 h-5 text-indigo-600" /> Hospital Information
-        </h3>
+      <section className="bg-white p-6 md:p-8 rounded-3xl border border-[var(--color-border)] shadow-sm space-y-6">
+        <div className="flex items-center gap-2 pb-2 border-b border-slate-50">
+          <Building2 className="w-4 h-4 text-[var(--color-accent)]" />
+          <h2 className="text-sm font-black text-[var(--color-heading)] uppercase tracking-widest">
+            Hospital Information
+          </h2>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Hospital Name */}
           <div className="space-y-2">
-            <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest px-1">
+            <label className="text-[10px] font-black text-[var(--color-muted)] uppercase tracking-widest px-1">
               Hospital Name
             </label>
             <input
               name="name"
               required
               defaultValue={hospital.name}
-              className="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-medium text-slate-900"
+              className="w-full p-3.5 bg-slate-50 border border-[var(--color-border)] rounded-2xl outline-none focus:bg-white focus:ring-2 focus:ring-[var(--color-accent)]/10 focus:border-[var(--color-accent)] transition-all font-bold text-[var(--color-heading)]"
             />
           </div>
 
           {/* Official Phone */}
           <div className="space-y-2">
-            <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest px-1">
+            <label className="text-[10px] font-black text-[var(--color-muted)] uppercase tracking-widest px-1">
               Official Phone
             </label>
-            <div className="relative">
-              <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <div className="relative group">
+              <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-muted)] group-focus-within:text-[var(--color-accent)] transition-colors" />
               <input
                 name="official_phone"
                 required
                 defaultValue={hospital.official_phone}
-                className="w-full pl-10 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-medium text-slate-900"
+                className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-[var(--color-border)] rounded-2xl outline-none focus:bg-white focus:ring-2 focus:ring-[var(--color-accent)]/10 focus:border-[var(--color-accent)] transition-all font-bold text-[var(--color-heading)]"
               />
             </div>
           </div>
 
           {/* Location Dropdown */}
           <div className="space-y-2">
-            <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest px-1">
+            <label className="text-[10px] font-black text-[var(--color-muted)] uppercase tracking-widest px-1">
               Operating City
             </label>
-            <div className="relative">
-              <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <div className="relative group">
+              <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-muted)] group-focus-within:text-[var(--color-accent)] transition-colors" />
               <select
                 name="location_id"
                 defaultValue={hospital.location_id || ""}
-                className="w-full pl-10 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 appearance-none font-medium text-slate-900"
+                className="w-full pl-11 pr-10 py-3.5 bg-slate-50 border border-[var(--color-border)] rounded-2xl outline-none focus:bg-white focus:ring-2 focus:ring-[var(--color-accent)]/10 focus:border-[var(--color-accent)] appearance-none font-bold text-[var(--color-heading)] cursor-pointer"
               >
                 <option value="">Select City</option>
                 {locations.map((loc) => (
@@ -114,21 +126,22 @@ export default function HospitalProfileForm({
                   </option>
                 ))}
               </select>
+              <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-muted)] pointer-events-none group-hover:text-[var(--color-heading)] transition-colors" />
             </div>
           </div>
 
           {/* Website URL */}
           <div className="space-y-2">
-            <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest px-1">
+            <label className="text-[10px] font-black text-[var(--color-muted)] uppercase tracking-widest px-1">
               Website URL
             </label>
-            <div className="relative">
-              <Globe className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <div className="relative group">
+              <Globe className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-muted)] group-focus-within:text-[var(--color-accent)] transition-colors" />
               <input
                 name="website_url"
                 defaultValue={hospital.website_url || ""}
                 placeholder="https://hospital.com"
-                className="w-full pl-10 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-medium text-slate-900"
+                className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-[var(--color-border)] rounded-2xl outline-none focus:bg-white focus:ring-2 focus:ring-[var(--color-accent)]/10 focus:border-[var(--color-accent)] transition-all font-bold text-[var(--color-heading)]"
               />
             </div>
           </div>
@@ -136,43 +149,57 @@ export default function HospitalProfileForm({
       </section>
 
       {/* SECTION: Services Selector */}
-      <section className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
-        <h3 className="font-bold text-slate-800 flex items-center gap-2">
-          <Activity className="w-5 h-5 text-indigo-600" /> Available Facilities
-        </h3>
+      <section className="bg-white p-6 md:p-8 rounded-3xl border border-[var(--color-border)] shadow-sm space-y-6">
+        <div className="flex items-center gap-2 pb-2 border-b border-slate-50">
+          <Activity className="w-4 h-4 text-[var(--color-accent)]" />
+          <h2 className="text-sm font-black text-[var(--color-heading)] uppercase tracking-widest">
+            Available Facilities
+          </h2>
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {allServices.map((s) => (
-            <label
-              key={s.id}
-              className={`group flex items-center justify-between p-4 rounded-2xl border cursor-pointer transition-all ${services.includes(s.id) ? "bg-indigo-50 border-indigo-200" : "bg-slate-50/50 border-slate-100 hover:bg-white hover:border-slate-300"}`}
-            >
-              <span
-                className={`text-sm font-bold ${services.includes(s.id) ? "text-indigo-700" : "text-slate-700"}`}
+          {allServices.map((s) => {
+            const isSelected = services.includes(s.id);
+            return (
+              <label
+                key={s.id}
+                className={`group flex items-center justify-between p-4 rounded-2xl border cursor-pointer transition-all duration-200 ${
+                  isSelected
+                    ? "bg-[var(--color-badge-bg)] border-[var(--color-accent)]"
+                    : "bg-slate-50/50 border-[var(--color-border)] hover:bg-white hover:border-[var(--color-accent)]/40"
+                }`}
               >
-                {s.service_name}
-              </span>
-              <input
-                type="checkbox"
-                className="hidden"
-                checked={services.includes(s.id)}
-                onChange={() => toggleService(s.id)}
-              />
-              <div
-                className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${services.includes(s.id) ? "bg-indigo-600 border-indigo-600" : "border-slate-300"}`}
-              >
-                {services.includes(s.id) && (
-                  <Save className="w-3 h-3 text-white" />
-                )}
-              </div>
-            </label>
-          ))}
+                <span
+                  className={`text-xs font-black uppercase tracking-tight transition-colors ${isSelected ? "text-[var(--color-accent)]" : "text-[var(--color-body)]"}`}
+                >
+                  {s.service_name}
+                </span>
+                <input
+                  type="checkbox"
+                  className="hidden"
+                  checked={isSelected}
+                  onChange={() => toggleService(s.id)}
+                />
+                <div
+                  className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
+                    isSelected
+                      ? "bg-[var(--color-accent)] border-[var(--color-accent)]"
+                      : "border-[var(--color-border)]"
+                  }`}
+                >
+                  {isSelected && (
+                    <Check className="w-3 h-3 text-white" strokeWidth={4} />
+                  )}
+                </div>
+              </label>
+            );
+          })}
         </div>
       </section>
 
       <button
         type="submit"
         disabled={loading}
-        className="w-full py-4.5 bg-indigo-600 text-white rounded-2xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-2 shadow-xl shadow-indigo-100 hover:bg-indigo-700 active:scale-[0.98] transition-all disabled:bg-slate-300"
+        className="w-full py-4.5 bg-[var(--color-heading)] text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-xl shadow-slate-200 hover:bg-slate-800 active:scale-[0.98] transition-all disabled:opacity-50"
       >
         {loading ? (
           <Loader2 className="w-5 h-5 animate-spin" />
@@ -183,5 +210,23 @@ export default function HospitalProfileForm({
         )}
       </button>
     </form>
+  );
+}
+
+export default function HospitalProfileForm(props: Props) {
+  return (
+    <ConfigProvider
+      theme={{
+        token: {
+          colorPrimary: "#0284C7",
+          borderRadius: 12,
+          fontFamily: "var(--font-sans)",
+        },
+      }}
+    >
+      <AntApp>
+        <HospitalProfileFormContent {...props} />
+      </AntApp>
+    </ConfigProvider>
   );
 }

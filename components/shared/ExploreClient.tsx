@@ -71,7 +71,7 @@ export default function ExploreClient({
 
   const getDestinationPath = (hospitalId: string) => {
     if (profile?.role === "superadmin") return `/superadmin/hospitals/${hospitalId}`;
-    return `/explore/hospitals/${hospitalId}`;
+    return `/hospitals/${hospitalId}`;
   };
 
   const updateFilters = useCallback(

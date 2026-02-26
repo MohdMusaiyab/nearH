@@ -28,7 +28,25 @@ export async function login(formData: unknown): Promise<ActionResponse<null>> {
     return { success: false, message: errorMessage, data: null };
   }
   await invalidateUserCache(data.user.id);
-  revalidatePath("/admin/dashboard", "layout");
+  const supabaseForProfile = await createClient();
+  const { data: profile } = await supabaseForProfile
+    .from("profiles")
+    .select("role, status")
+    .eq("id", data.user.id)
+    .single();
+
+  revalidatePath("/", "layout");
+
+  // Redirect server-side — cookies are guaranteed to be set at this point
+  if (profile?.role === "superadmin") {
+    redirect("/superadmin/dashboard");
+  } else if (profile?.role === "admin" && profile?.status === "approved") {
+    redirect("/admin/dashboard");
+  } else if (profile?.status === "pending") {
+    redirect("/auth/waiting-room");
+  } else {
+    redirect("/");
+  }
   return { success: true, message: "Logged in successfully", data: null };
 }
 export async function signup(formData: unknown): Promise<ActionResponse<null>> {

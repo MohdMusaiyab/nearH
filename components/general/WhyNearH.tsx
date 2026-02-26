@@ -14,6 +14,7 @@ import {
   Activity,
   ShieldCheck,
   TrendingDown,
+  ChevronRight,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -21,195 +22,181 @@ import Link from "next/link";
 export function WhyNearH() {
   return (
     <section className="relative py-24 bg-white overflow-hidden">
-      {/* Background Decor: Suble Medical SVGs */}
-      <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none">
-        <svg
-          className="absolute top-0 left-0 w-full h-full"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <defs>
-            <pattern
-              id="grid"
-              width="40"
-              height="40"
-              patternUnits="userSpaceOnUse"
-            >
-              <path
-                d="M 40 0 L 0 0 0 40"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1"
-              />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#grid)" />
-        </svg>
-      </div>
+      {/* 40px System Grid Background (Matching Explore/Dossier) */}
+      <div
+        className="absolute inset-0 opacity-[0.2] pointer-events-none"
+        style={{
+          backgroundImage: `linear-gradient(var(--color-border) 1px, transparent 1px), linear-gradient(90deg, var(--color-border) 1px, transparent 1px)`,
+          backgroundSize: "40px 40px",
+        }}
+      />
 
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
-        {/* Header: High Impact */}
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-16 gap-6">
-          <div className="max-w-2xl">
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
+        {/* ── Header: Audit Narrative ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end mb-20">
+          <div className="lg:col-span-8">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
-              className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-error/10 text-error font-bold text-xs uppercase tracking-tighter mb-4"
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-50 text-[var(--color-error)] text-[10px] font-black uppercase tracking-widest mb-6 border border-red-100"
             >
               <AlertCircle size={14} />
-              The Emergency Gap
+              Latency Analysis
             </motion.div>
-            <h2 className="text-4xl lg:text-6xl font-heading font-bold text-heading leading-[1.1]">
+            <h2 className="text-5xl lg:text-7xl font-black text-[var(--color-heading)] tracking-tighter leading-[0.9] uppercase">
               In emergencies, <br />
-              <span className="text-accent underline decoration-error/30">
-                minutes are milestones.
+              <span className="text-[var(--color-accent)]">
+                Minutes are Milestones.
               </span>
             </h2>
           </div>
-          <p className="text-body text-lg max-w-sm font-medium border-l-4 border-accent pl-6">
-            We replace frantic phone calls with verified data, giving you the
-            clarity to act fast.
-          </p>
+          <div className="lg:col-span-4">
+            <p className="text-[var(--color-muted)] text-sm font-bold uppercase tracking-widest leading-relaxed border-l-2 border-[var(--color-accent)] pl-6">
+              NearH replaces systemic fragmentation with verified clinical data,
+              accelerating the path from crisis to care.
+            </p>
+          </div>
         </div>
 
-        {/* The Comparison Bento Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-24">
-          {/* Left: The Problem (4 Columns) */}
-          <motion.div
-            whileHover={{ y: -5 }}
-            className="md:col-span-5 bg-slate-50 rounded-[2rem] p-8 border border-slate-200"
-          >
-            <div className="flex items-center gap-3 mb-8 text-slate-400">
-              <div className="p-2 bg-white rounded-lg shadow-sm">
-                <TrendingDown size={24} />
+        {/* ── Comparison Bento: Friction vs. Flow ── */}
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 mb-24">
+          {/* Friction (The Old Way) */}
+          <div className="xl:col-span-5 bg-slate-50 rounded-[3rem] p-10 border border-[var(--color-border)] flex flex-col justify-between group">
+            <div>
+              <div className="flex items-center gap-3 mb-10">
+                <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-400">
+                  <TrendingDown size={20} />
+                </div>
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+                  Legacy Friction
+                </span>
               </div>
-              <span className="font-bold uppercase text-sm tracking-widest">
-                Traditional Way
-              </span>
+              <ul className="space-y-6">
+                {beforeItems.map((item, i) => (
+                  <li key={i} className="flex items-start gap-4 opacity-60">
+                    <div className="w-5 h-5 rounded-full bg-slate-200 flex items-center justify-center flex-shrink-0 text-[8px] font-black text-slate-500 mt-1">
+                      ✕
+                    </div>
+                    <span className="text-sm font-bold text-slate-600 tracking-tight leading-snug">
+                      {item}
+                    </span>
+                  </li>
+                ))}
+              </ul>
             </div>
-            <ul className="space-y-6">
-              {beforeItems.map((item, i) => (
-                <li
-                  key={i}
-                  className="flex items-center gap-4 text-slate-500 opacity-70"
-                >
-                  <div className="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center flex-shrink-0 text-[10px] font-bold">
-                    ✕
-                  </div>
-                  <span className="text-base font-medium line-through">
-                    {item}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </motion.div>
+          </div>
 
-          {/* Right: The NearH Solution (7 Columns) */}
-          <motion.div
-            whileHover={{ y: -5 }}
-            className="md:col-span-7 bg-heading rounded-[2rem] p-8 lg:p-10 text-white relative overflow-hidden shadow-2xl"
-          >
-            {/* Decorative SVG Wave */}
-            <div className="absolute top-0 right-0 w-1/2 h-full opacity-10 pointer-events-none">
+          {/* Flow (The NearH Standard) */}
+          <div className="xl:col-span-7 bg-[var(--color-heading)] rounded-[3rem] p-10 lg:p-14 text-white relative overflow-hidden shadow-2xl">
+            {/* Dynamic Wave Decor */}
+            <div className="absolute top-0 right-0 w-2/3 h-full opacity-10 pointer-events-none">
               <Activity
-                size={300}
-                className="translate-x-1/4 -translate-y-1/4"
+                size={400}
+                className="translate-x-1/4 -translate-y-1/4 text-white"
               />
             </div>
 
-            <div className="relative z-10">
-              <div className="flex items-center gap-3 mb-8">
-                <div className="p-2 bg-accent rounded-lg">
-                  <ShieldCheck size={24} className="text-white" />
-                </div>
-                <span className="font-bold uppercase text-sm tracking-widest text-blue-200">
-                  The NearH Standard
-                </span>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {afterItems.map((item, i) => (
-                  <div
-                    key={i}
-                    className="flex flex-col gap-2 p-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
-                  >
-                    <CheckCircle2 size={20} className="text-success" />
-                    <span className="text-sm lg:text-base font-semibold leading-tight">
-                      {item}
-                    </span>
+            <div className="relative z-10 flex flex-col h-full justify-between">
+              <div>
+                <div className="flex items-center gap-3 mb-10">
+                  <div className="w-10 h-10 rounded-xl bg-[var(--color-accent)] flex items-center justify-center shadow-lg shadow-blue-500/20">
+                    <ShieldCheck size={20} className="text-white" />
                   </div>
-                ))}
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-200">
+                    NearH Standard 2.0
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {afterItems.map((item, i) => (
+                    <div
+                      key={i}
+                      className="flex items-center gap-4 p-5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm group hover:bg-white/10 transition-all"
+                    >
+                      <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center text-white">
+                        <CheckCircle2 size={14} strokeWidth={3} />
+                      </div>
+                      <span className="text-sm font-black uppercase tracking-tight">
+                        {item}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
 
-        {/* Interactive Steps */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 mb-24">
+        {/* ── Systemic Execution Pipeline ── */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-0 border border-[var(--color-border)] rounded-[2.5rem] bg-white overflow-hidden mb-24">
           {steps.map((step, idx) => (
-            <div key={idx} className="relative group text-center sm:text-left">
-              <div className="mb-6 inline-flex p-4 rounded-2xl bg-badge-bg text-accent group-hover:bg-accent group-hover:text-white transition-all duration-300">
-                <step.icon size={32} />
+            <div
+              key={idx}
+              className={`p-10 relative group ${idx !== 2 ? "border-b md:border-b-0 md:border-r border-[var(--color-border)]" : ""}`}
+            >
+              <div className="flex items-center justify-between mb-8">
+                <div className="w-14 h-14 rounded-2xl bg-[var(--color-badge-bg)] text-[var(--color-accent)] flex items-center justify-center group-hover:bg-[var(--color-accent)] group-hover:text-white transition-all duration-300">
+                  <step.icon size={28} strokeWidth={2.5} />
+                </div>
+                <span className="text-4xl font-black text-slate-100 group-hover:text-[var(--color-accent)]/10 transition-colors">
+                  {idx + 1}
+                </span>
               </div>
-              <h3 className="text-xl font-heading font-bold text-heading mb-2">
+              <h3 className="text-xl font-black text-[var(--color-heading)] uppercase tracking-tighter mb-4">
                 {step.title}
               </h3>
-              <p className="text-muted text-sm leading-relaxed">
+              <p className="text-[var(--color-muted)] text-sm font-medium leading-relaxed">
                 {step.description}
               </p>
-              {idx !== 2 && (
-                <div className="hidden sm:block absolute top-8 left-full w-full border-t-2 border-dashed border-border -z-10" />
-              )}
             </div>
           ))}
         </div>
 
-        {/* Impact Stats Section */}
-        <div className="rounded-[3rem] bg-accent p-8 lg:p-16 relative overflow-hidden shadow-3xl shadow-blue-500/20">
-          <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20" />
+        {/* ── Impact Meter ── */}
+        <div className="relative rounded-[4rem] bg-[var(--color-accent)] p-12 lg:p-20 overflow-hidden shadow-3xl shadow-blue-500/20">
+          <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]" />
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative z-10">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-16 relative z-10">
             {impactStats.map((stat, idx) => (
-              <motion.div
+              <div
                 key={idx}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.1 }}
-                className="flex flex-col items-center text-center text-white"
+                className="flex flex-col items-center text-center group"
               >
-                <div className="mb-4 p-3 bg-white/20 rounded-xl backdrop-blur-md">
-                  <stat.icon size={28} />
+                <div className="mb-6 w-16 h-16 rounded-[2rem] bg-white/20 backdrop-blur-lg flex items-center justify-center text-white border border-white/20 group-hover:scale-110 transition-transform">
+                  <stat.icon size={32} />
                 </div>
-                <div className="text-5xl lg:text-6xl font-black mb-1 tracking-tighter">
+                <div className="text-6xl lg:text-7xl font-black text-white tracking-tighter mb-2">
                   {stat.value}
                 </div>
-                <div className="font-bold text-blue-100 uppercase text-xs tracking-[0.2em]">
+                <div className="font-black text-blue-100 uppercase text-[10px] tracking-[0.3em] mb-4">
                   {stat.label}
                 </div>
-                <div className="text-white/60 text-xs mt-2 italic">
+                <div className="px-4 py-1.5 rounded-full bg-white/10 text-white text-[9px] font-bold uppercase tracking-widest border border-white/10">
                   {stat.subtext}
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
 
-        {/* Final CTA */}
-        <div className="mt-24 text-center">
-          <h3 className="text-3xl lg:text-5xl font-heading font-bold text-heading mb-6">
-            Ready to secure a life?
+        {/* ── CTA Segment ── */}
+        <div className="mt-28 flex flex-col items-center">
+          <h3 className="text-4xl lg:text-6xl font-black text-[var(--color-heading)] tracking-tighter uppercase text-center mb-10 max-w-3xl leading-[0.9]">
+            Secure the{" "}
+            <span className="text-[var(--color-accent)]">Critical Grid.</span>
           </h3>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
             <Link
               href="/auth/signup"
-              className="w-full sm:w-auto px-10 py-5 bg-accent text-white rounded-2xl font-bold shadow-xl shadow-blue-500/30 hover:-translate-y-1 transition-all flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-12 py-5 bg-[var(--color-heading)] text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-2xl hover:bg-slate-800 transition-all flex items-center justify-center gap-3 active:scale-95"
             >
-              Join the Network <ArrowRight size={20} />
+              Initialize Access <ChevronRight size={18} strokeWidth={3} />
             </Link>
             <Link
-              href="/about-us"
-              className="w-full sm:w-auto px-10 py-5 bg-white text-heading border-2 border-border rounded-2xl font-bold hover:bg-slate-50 transition-all flex items-center justify-center"
+              href="/explore"
+              className="w-full sm:w-auto px-12 py-5 bg-white text-[var(--color-heading)] border border-[var(--color-border)] rounded-2xl font-black text-xs uppercase tracking-[0.2em] hover:bg-slate-50 transition-all flex items-center justify-center"
             >
-              View Hospitals
+              Verify Grid
             </Link>
           </div>
         </div>
@@ -218,55 +205,58 @@ export function WhyNearH() {
   );
 }
 
-const steps = [
-  {
-    icon: Search,
-    title: "Locate",
-    description: "Filter by ICU, ventilators, or blood type in real-time.",
-  },
-  {
-    icon: Zap,
-    title: "Verify",
-    description: "Our systems sync with hospital HMS every 5 minutes.",
-  },
-  {
-    icon: PhoneCall,
-    title: "Navigate",
-    description: "Direct emergency routing and pre-arrival contact.",
-  },
-];
-
 const beforeItems = [
-  "Endless phone calls during crisis",
-  "Outdated data and false hope",
-  "Zero transparency on pricing",
-  "Wasted travel to 'Full' hospitals",
+  "Frantic phone calls during crisis",
+  "Outdated inventory & false hope",
+  "Opaque pricing & hidden costs",
+  "Travel time lost to 'Full' facilities",
 ];
 
 const afterItems = [
-  "One-tap real-time directory",
-  "Data synced every 5 minutes",
-  "Verified bed availability counts",
-  "Emergency navigation routes",
+  "One-tap real-time grid",
+  "Sync intervals of <5 mins",
+  "Verified bed availability",
+  "Live ICU & blood logistics",
 ];
 
 const impactStats = [
   {
     icon: Users,
-    value: "10k+",
-    label: "Lives Guided",
-    subtext: "To critical care",
+    value: "10K+",
+    label: "Lives Routed",
+    subtext: "Clinical Success",
   },
   {
     icon: Heart,
     value: "500+",
-    label: "Hospitals",
-    subtext: "Verified partners",
+    label: "Facilities",
+    subtext: "Verified Partners",
   },
   {
     icon: Clock,
-    value: "12m",
-    label: "Response",
-    subtext: "Time reduced by 85%",
+    value: "12M",
+    label: "Response Time",
+    subtext: "85% Efficiency Gain",
+  },
+];
+
+const steps = [
+  {
+    icon: Search,
+    title: "Grid Discovery",
+    description:
+      "Filter by live ICU, ventilator capacity, or blood types across our localized clinical nodes.",
+  },
+  {
+    icon: Zap,
+    title: "Data Verification",
+    description:
+      "Our protocols synchronize with hospital HMS every 5 minutes to eliminate latency.",
+  },
+  {
+    icon: PhoneCall,
+    title: "Clinical Handoff",
+    description:
+      "Pre-arrival communication and emergency routing ensure the facility is ready for the intake.",
   },
 ];

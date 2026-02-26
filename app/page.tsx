@@ -1,4 +1,4 @@
-import { FeaturedHospitals } from "@/components/general/FeaturedHospitals";
+import {  SystemIntelligence } from "@/components/general/FeaturedHospitals";
 import {ForHospitalAdmins} from "@/components/general/ForHospitalAdmins";
 import { Hero } from "@/components/general/Hero";
 import { WhyNearH } from "@/components/general/WhyNearH";
@@ -9,7 +9,7 @@ const page = () => {
     <div>
       <Hero />
       <WhyNearH />
-      <FeaturedHospitals />
+      <SystemIntelligence/>
       <ForHospitalAdmins />
     </div>
   );

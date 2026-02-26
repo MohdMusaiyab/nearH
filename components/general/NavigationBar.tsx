@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -35,13 +35,66 @@ export function Navigation() {
   const supabase = createClient();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  // ── Dynamic Dashboard Route Logic ──
+  const dashboardHref = useMemo(() => {
+    if (isLoading) return "#"; // Or a loading state
+    if (!profile) return "/auth/login";
+    if (profile.role === "superadmin") return "/superadmin/dashboard";
+    if (profile.role === "admin") return "/admin/dashboard";
+    return "/profile";
+  }, [profile, isLoading]);
+
+  // ── Real-Time Auth & Profile Sync ──
+  useEffect(() => {
+    const supabase = createClient(); // <-- fresh client each time
+
+    const fetchProfile = async () => {
+      setIsLoading(true);
+      try {
+        const res = await fetch("/api/auth/me", { cache: "no-store" }); // 👈 also add no-store
+        if (res.ok) {
+          const data = await res.json();
+          setProfile(data);
+        }
+      } catch (e) {
+        console.error("Redis Sync Error:", e);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        setUser(session.user);
+        fetchProfile();
+      } else {
+        setIsLoading(false);
+      }
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (session) {
+        setUser(session.user);
+        await fetchProfile();
+        if (event === "SIGNED_IN") router.refresh();
+      } else {
+        setUser(null);
+        setProfile(null);
+        setIsLoading(false);
+        if (event === "SIGNED_OUT") router.refresh();
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [router]); // 👈 no supabase.auth dependency — it was causing re-subscription loops
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 40);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (
@@ -55,7 +108,6 @@ export function Navigation() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Lock body scroll when mobile menu is open
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "";
     return () => {
@@ -63,36 +115,12 @@ export function Navigation() {
     };
   }, [isOpen]);
 
-  useEffect(() => {
-    async function syncAuth() {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      if (session) {
-        setUser(session.user);
-        try {
-          const res = await fetch("/api/auth/me");
-          if (res.ok) {
-            const data: ExtendedProfile = await res.json();
-            setProfile(data);
-          }
-        } catch (e) {
-          console.error("Auth Sync Error:", e);
-        }
-      }
-      setIsLoading(false);
-    }
-    syncAuth();
-  }, [supabase.auth]);
-
   const handleSignOut = async (): Promise<void> => {
     try {
       await supabase.auth.signOut();
-
       setIsOpen(false);
       setDropdownOpen(false);
-
-      router.refresh();
+      // router.refresh is called in the auth listener above
       router.push("/auth/login");
     } catch (error) {
       console.error("Logout failed:", error);
@@ -115,7 +143,9 @@ export function Navigation() {
   const navBg = isScrolled
     ? "bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-sm"
     : "bg-transparent";
+
   if (pathname.startsWith("/auth/")) return null;
+
   return (
     <>
       <nav
@@ -151,9 +181,7 @@ export function Navigation() {
                     >
                       {link.label}
                       <span
-                        className={`absolute bottom-0 left-0 h-[2px] bg-heading rounded-full transition-all duration-300 ${
-                          isActive ? "w-full" : "w-0 group-hover:w-full"
-                        }`}
+                        className={`absolute bottom-0 left-0 h-[2px] bg-heading rounded-full transition-all duration-300 ${isActive ? "w-full" : "w-0 group-hover:w-full"}`}
                       />
                     </Link>
                   );
@@ -165,7 +193,6 @@ export function Navigation() {
             <div className="hidden lg:flex items-center px-6">
               {!isLoading &&
                 (user ? (
-                  /* ── Account Dropdown ── */
                   <div
                     className="relative"
                     ref={dropdownRef}
@@ -196,7 +223,6 @@ export function Navigation() {
                           className="absolute left-1/2 -translate-x-1/2 mt-2 w-60 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden"
                           style={{ transformOrigin: "top center" }}
                         >
-                          {/* User info */}
                           <div className="px-5 py-4 bg-slate-50 border-b border-slate-100">
                             <p className="text-xs font-bold text-heading truncate">
                               {user.email}
@@ -207,26 +233,30 @@ export function Navigation() {
                               </p>
                             )}
                           </div>
-
-                          {/* Links */}
                           <div className="py-2">
                             <Link
-                              href="/admin/dashboard"
-                              onClick={() => setDropdownOpen(false)}
-                              className="flex items-center gap-3 px-5 py-3 text-sm font-semibold text-heading hover:bg-slate-50 transition-colors"
+                              href={dashboardHref}
+                              onClick={(e) => {
+                                if (dashboardHref === "#") e.preventDefault();
+                                setDropdownOpen(false);
+                              }}
+                              className={`flex items-center gap-3 px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                                dashboardHref === "#"
+                                  ? "opacity-50 cursor-not-allowed"
+                                  : "text-[var(--color-heading)] hover:bg-[var(--color-badge-bg)] hover:text-[var(--color-accent)]"
+                              }`}
                             >
                               <LayoutDashboard
                                 size={15}
                                 className="text-accent"
                               />
-                              Dashboard
+                              {isLoading ? "Syncing..." : "Command Center"}
                             </Link>
                             <button
                               onClick={handleSignOut}
                               className="w-full flex items-center gap-3 px-5 py-3 text-sm font-semibold text-error hover:bg-red-50 transition-colors text-left"
                             >
-                              <LogOut size={15} />
-                              Logout
+                              <LogOut size={15} /> Logout
                             </button>
                           </div>
                         </motion.div>
@@ -243,47 +273,35 @@ export function Navigation() {
                 ))}
             </div>
 
-            {/* MOBILE: Animated Hamburger */}
+            {/* MOBILE: Hamburger */}
             <button
               onClick={() => setIsOpen((v) => !v)}
               className="lg:hidden relative w-10 h-10 flex flex-col items-center justify-center gap-[6px] group"
-              aria-label="Toggle menu"
             >
               <span
-                className={`block h-[2.5px] bg-heading rounded-full transition-all duration-300 ${
-                  isOpen ? "w-6 rotate-45 translate-y-[8.5px]" : "w-6"
-                }`}
+                className={`block h-[2.5px] bg-heading rounded-full transition-all duration-300 ${isOpen ? "w-6 rotate-45 translate-y-[8.5px]" : "w-6"}`}
               />
               <span
-                className={`block h-[2.5px] bg-heading rounded-full transition-all duration-300 ${
-                  isOpen ? "opacity-0 w-0" : "w-4"
-                }`}
+                className={`block h-[2.5px] bg-heading rounded-full transition-all duration-300 ${isOpen ? "opacity-0 w-0" : "w-4"}`}
               />
               <span
-                className={`block h-[2.5px] bg-heading rounded-full transition-all duration-300 ${
-                  isOpen ? "w-6 -rotate-45 -translate-y-[8.5px]" : "w-5"
-                }`}
+                className={`block h-[2.5px] bg-heading rounded-full transition-all duration-300 ${isOpen ? "w-6 -rotate-45 -translate-y-[8.5px]" : "w-5"}`}
               />
             </button>
           </div>
         </div>
       </nav>
 
-      {/* MOBILE DRAWER */}
       <AnimatePresence>
         {isOpen && (
           <>
-            {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
               className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[105] lg:hidden"
               onClick={() => setIsOpen(false)}
             />
-
-            {/* Drawer panel */}
             <motion.div
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
@@ -291,7 +309,6 @@ export function Navigation() {
               transition={{ type: "spring", damping: 28, stiffness: 300 }}
               className="fixed top-0 right-0 h-full w-[min(320px,90vw)] bg-white z-[110] lg:hidden flex flex-col shadow-2xl"
             >
-              {/* Header */}
               <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
                 <div className="flex items-center gap-2.5">
                   <div className="w-8 h-8 bg-heading rounded-lg flex items-center justify-center">
@@ -302,9 +319,7 @@ export function Navigation() {
                 <button
                   onClick={() => setIsOpen(false)}
                   className="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center text-heading hover:bg-slate-200 transition-colors"
-                  aria-label="Close menu"
                 >
-                  {/* Inline X icon */}
                   <svg
                     width="16"
                     height="16"
@@ -319,7 +334,6 @@ export function Navigation() {
                 </button>
               </div>
 
-              {/* Nav Links */}
               <div className="flex flex-col px-4 py-6 gap-1">
                 {navLinks.map((link, i) => {
                   const isActive = pathname === link.href;
@@ -334,11 +348,7 @@ export function Navigation() {
                       <Link
                         href={link.href}
                         onClick={() => setIsOpen(false)}
-                        className={`flex items-center gap-3 px-4 py-3.5 rounded-xl font-bold text-base transition-colors ${
-                          isActive
-                            ? "bg-heading text-white"
-                            : "text-heading hover:bg-slate-50"
-                        }`}
+                        className={`flex items-center gap-3 px-4 py-3.5 rounded-xl font-bold text-base transition-colors ${isActive ? "bg-heading text-white" : "text-heading hover:bg-slate-50"}`}
                       >
                         <Icon
                           size={18}
@@ -351,7 +361,6 @@ export function Navigation() {
                 })}
               </div>
 
-              {/* User info (if logged in) */}
               {user && (
                 <div className="px-4 mb-4">
                   <div className="rounded-xl bg-slate-50 border border-slate-100 overflow-hidden">
@@ -366,12 +375,19 @@ export function Navigation() {
                       )}
                     </div>
                     <Link
-                      href="/admin"
-                      onClick={() => setIsOpen(false)}
-                      className="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-heading hover:bg-slate-100 transition-colors"
+                      href={dashboardHref}
+                      onClick={(e) => {
+                        if (dashboardHref === "#") e.preventDefault();
+                        setDropdownOpen(false);
+                      }}
+                      className={`flex items-center gap-3 px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                        dashboardHref === "#"
+                          ? "opacity-50 cursor-not-allowed"
+                          : "text-[var(--color-heading)] hover:bg-[var(--color-badge-bg)] hover:text-[var(--color-accent)]"
+                      }`}
                     >
-                      <LayoutDashboard size={15} className="text-accent" />{" "}
-                      Dashboard
+                      <LayoutDashboard size={15} className="text-accent" />
+                      {isLoading ? "Syncing..." : "Command Center"}
                     </Link>
                     <button
                       onClick={handleSignOut}
@@ -383,25 +399,24 @@ export function Navigation() {
                 </div>
               )}
 
-              {/* Bottom CTA */}
               <div className="mt-auto px-4 py-6 border-t border-slate-100">
-                {user ? null : (
-                  <Link
-                    href="/auth/signup"
-                    onClick={() => setIsOpen(false)}
-                    className="block w-full py-4 bg-heading text-white text-center font-bold rounded-xl hover:opacity-90 transition-opacity"
-                  >
-                    Register Hospital
-                  </Link>
-                )}
                 {!user && (
-                  <Link
-                    href="/auth/login"
-                    onClick={() => setIsOpen(false)}
-                    className="block w-full py-4 text-heading text-center font-bold border-2 border-heading rounded-xl mt-3 hover:bg-heading hover:text-white transition-all"
-                  >
-                    Partner Login
-                  </Link>
+                  <>
+                    <Link
+                      href="/auth/signup"
+                      onClick={() => setIsOpen(false)}
+                      className="block w-full py-4 bg-heading text-white text-center font-bold rounded-xl hover:opacity-90 transition-opacity"
+                    >
+                      Register Hospital
+                    </Link>
+                    <Link
+                      href="/auth/login"
+                      onClick={() => setIsOpen(false)}
+                      className="block w-full py-4 text-heading text-center font-bold border-2 border-heading rounded-xl mt-3 hover:bg-heading hover:text-white transition-all"
+                    >
+                      Partner Login
+                    </Link>
+                  </>
                 )}
               </div>
             </motion.div>

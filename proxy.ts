@@ -95,7 +95,7 @@ export async function proxy(request: NextRequest) {
     if (pathname === "/auth/waiting-room") return response;
     if (pathname === "/auth/reset-password") return response;
 
-    const dest = profile?.role === "superadmin" ? "/superadmin" : "/admin";
+    const dest = profile?.role === "superadmin" ? "/superadmin/dashboard" : "/admin/dashboard";
     return NextResponse.redirect(new URL(dest, request.url));
   }
 

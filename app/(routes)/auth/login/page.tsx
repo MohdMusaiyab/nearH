@@ -24,7 +24,7 @@ export default function LoginPage() {
   const [serverError, setServerError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const router = useRouter();
+  
 
   const {
     register,
@@ -35,17 +35,17 @@ export default function LoginPage() {
   });
 
   const onSubmit = async (data: LoginInput) => {
-    setIsLoading(true);
-    setServerError(null);
-    const result = await login(data);
-    if (result.success) {
-      router.push("/admin/dashboard");
-      router.refresh();
-    } else {
-      setServerError(result.message);
-      setIsLoading(false);
-    }
-  };
+  setIsLoading(true);
+  setServerError(null);
+
+  const result = await login(data);
+
+  // Only runs if login failed (redirect throws and never returns on success)
+  if (!result.success) {
+    setServerError(result.message);
+    setIsLoading(false);
+  }
+};
 
   return (
     <div className="relative min-h-screen flex items-center justify-center overflow-hidden">

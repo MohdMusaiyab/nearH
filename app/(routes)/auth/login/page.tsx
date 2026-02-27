@@ -24,6 +24,7 @@ export default function LoginPage() {
   const [serverError, setServerError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const router=useRouter();
   
 
   const {
@@ -40,8 +41,9 @@ export default function LoginPage() {
 
   const result = await login(data);
 
-  // Only runs if login failed (redirect throws and never returns on success)
-  if (!result.success) {
+  if (result.success) {
+    router.push("/admin/dashboard"); // just push, no refresh
+  } else {
     setServerError(result.message);
     setIsLoading(false);
   }

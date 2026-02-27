@@ -46,27 +46,28 @@ export function Navigation() {
 
   // ── Real-Time Auth & Profile Sync ──
   useEffect(() => {
-    const supabase = createClient(); // <-- fresh client each time
+    const supabase = createClient();
 
     const fetchProfile = async () => {
       setIsLoading(true);
       try {
-        const res = await fetch("/api/auth/me", { cache: "no-store" }); // 👈 also add no-store
+        const res = await fetch("/api/auth/me", { cache: "no-store" });
         if (res.ok) {
           const data = await res.json();
           setProfile(data);
         }
       } catch (e) {
-        console.error("Redis Sync Error:", e);
+        console.error("Error:", e);
       } finally {
         setIsLoading(false);
       }
     };
 
+    // This handles the case where session already exists on mount (after redirect)
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
         setUser(session.user);
-        fetchProfile();
+        fetchProfile(); // 👈 always fetch profile if session exists
       } else {
         setIsLoading(false);
       }
@@ -78,17 +79,15 @@ export function Navigation() {
       if (session) {
         setUser(session.user);
         await fetchProfile();
-        if (event === "SIGNED_IN") router.refresh();
       } else {
         setUser(null);
         setProfile(null);
         setIsLoading(false);
-        if (event === "SIGNED_OUT") router.refresh();
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [router]); // 👈 no supabase.auth dependency — it was causing re-subscription loops
+  }, [pathname]); // 👈 KEY CHANGE: pathname as dependency so it re-runs on every navigation
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 40);
     window.addEventListener("scroll", handleScroll);

@@ -8,7 +8,6 @@ import {
   Mail,
   ArrowUpRight,
   Database,
-  Terminal,
 } from "lucide-react";
 
 export const Footer = () => {
@@ -16,7 +15,7 @@ export const Footer = () => {
 
   return (
     <footer className="bg-white border-t border-[var(--color-border)] mt-auto relative overflow-hidden">
-      {/* 40px System Grid Background (Subtle) */}
+      {}
       <div
         className="absolute inset-0 opacity-[0.1] pointer-events-none"
         style={{
@@ -27,7 +26,7 @@ export const Footer = () => {
 
       <div className="max-w-7xl mx-auto px-6 lg:px-12 py-16 lg:py-20 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-16">
-          {/* ── Brand Identification ── */}
+          {}
           <div className="lg:col-span-1 space-y-8">
             <Link href="/" className="flex items-center gap-3">
               <div className="w-12 h-12 bg-[var(--color-heading)] rounded-2xl flex items-center justify-center text-white shadow-lg shadow-slate-200">
@@ -46,12 +45,6 @@ export const Footer = () => {
               India&apos;s real-time clinical network. Synchronizing emergency
               protocols with live hospital inventory.
             </p>
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[var(--color-badge-bg)] border border-[var(--color-accent)]/10 text-[var(--color-accent)]">
-              <span className="w-2 h-2 rounded-full bg-[var(--color-success)] animate-pulse" />
-              <span className="text-[10px] font-black uppercase tracking-widest">
-                Nodes Online: 524 Facilities
-              </span>
-            </div>
           </div>
 
           <div>
@@ -69,7 +62,7 @@ export const Footer = () => {
             </ul>
           </div>
 
-          {/* ── Administrative ── */}
+          {}
           <div>
             <h4 className="text-[10px] font-black text-[var(--color-heading)] uppercase tracking-[0.2em] mb-8">
               System Access
@@ -84,7 +77,7 @@ export const Footer = () => {
             </ul>
           </div>
 
-          {/* ── Support & Triage ── */}
+          {}
           <div>
             <h4 className="text-[10px] font-black text-[var(--color-heading)] uppercase tracking-[0.2em] mb-8">
               Support Triage
@@ -123,11 +116,11 @@ export const Footer = () => {
           </div>
         </div>
 
-        {/* ── System Metadata Bar ── */}
+        {}
         <div className="mt-20 pt-10 border-t border-slate-50 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-4 order-2 md:order-1">
             <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">
-              © {currentYear} NearH Intelligence. Verified Clinical Ledger.
+              © {currentYear} NearH
             </p>
           </div>
 
@@ -139,14 +132,17 @@ export const Footer = () => {
               Terms
             </Link>
             <Link
+              href="/privacy-policy"
+              className="text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-[var(--color-accent)] transition-colors"
+            >
+              Privacy Policy
+            </Link>
+            <Link
               href="/security"
               className="text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-[var(--color-accent)] transition-colors"
             >
               Security
             </Link>
-            <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-slate-50 border border-slate-100 text-[9px] font-mono font-black text-slate-400 uppercase tracking-tighter">
-              <Terminal size={10} /> v2.0.4-LTS
-            </div>
           </div>
         </div>
       </div>
@@ -154,7 +150,6 @@ export const Footer = () => {
   );
 };
 
-/* Internal Sub-Component for Clean Code */
 const FooterLink = ({
   href,
   label,

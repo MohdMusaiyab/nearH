@@ -1,12 +1,12 @@
 "use client";
 
 import React from "react";
-import { ShieldCheck, FileText, Scale, Globe } from "lucide-react";
+import { Scale } from "lucide-react";
 
 export default function TermsPage() {
   return (
     <div className="min-h-screen bg-white pt-24 pb-20 relative overflow-hidden">
-      {/* System Grid Background */}
+      {}
       <div
         className="absolute inset-0 opacity-[0.15] pointer-events-none"
         style={{
@@ -16,7 +16,7 @@ export default function TermsPage() {
       />
 
       <div className="max-w-4xl mx-auto px-6 relative z-10">
-        {/* Document Header */}
+        {}
         <div className="mb-16 border-b border-[var(--color-border)] pb-10">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--color-badge-bg)] text-[var(--color-accent)] text-[10px] font-black uppercase tracking-widest mb-6 border border-[var(--color-accent)]/10">
             <Scale size={14} /> Legal Protocol v1.0
@@ -26,11 +26,11 @@ export default function TermsPage() {
             <span className="text-[var(--color-accent)]">Service.</span>
           </h1>
           <p className="mt-6 text-[var(--color-muted)] text-sm font-bold uppercase tracking-widest">
-            Last Updated: February 26, 2026 • Reference: NH-LEG-2026-001
+            Last Updated: February 26, 2026
           </p>
         </div>
 
-        {/* Content Sections */}
+        {}
         <div className="space-y-16">
           <section className="group">
             <h3 className="text-xs font-black text-[var(--color-heading)] uppercase tracking-[0.3em] mb-6 flex items-center gap-3">
@@ -87,7 +87,7 @@ export default function TermsPage() {
           </section>
         </div>
 
-        {/* Support Footer */}
+        {}
         <div className="mt-24 p-10 bg-slate-50 rounded-[3rem] border border-[var(--color-border)] text-center">
           <p className="text-[10px] font-black text-[var(--color-muted)] uppercase tracking-widest mb-4">
             Questions regarding our legal framework?

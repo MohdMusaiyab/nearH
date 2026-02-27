@@ -10,7 +10,6 @@ import {
   Clock,
   Heart,
   Users,
-  ArrowRight,
   Activity,
   ShieldCheck,
   TrendingDown,
@@ -22,7 +21,7 @@ import Link from "next/link";
 export function WhyNearH() {
   return (
     <section className="relative py-24 bg-white overflow-hidden">
-      {/* 40px System Grid Background (Matching Explore/Dossier) */}
+      {}
       <div
         className="absolute inset-0 opacity-[0.2] pointer-events-none"
         style={{
@@ -32,7 +31,7 @@ export function WhyNearH() {
       />
 
       <div className="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
-        {/* ── Header: Audit Narrative ── */}
+        {}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end mb-20">
           <div className="lg:col-span-8">
             <motion.div
@@ -58,9 +57,9 @@ export function WhyNearH() {
           </div>
         </div>
 
-        {/* ── Comparison Bento: Friction vs. Flow ── */}
+        {}
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 mb-24">
-          {/* Friction (The Old Way) */}
+          {}
           <div className="xl:col-span-5 bg-slate-50 rounded-[3rem] p-10 border border-[var(--color-border)] flex flex-col justify-between group">
             <div>
               <div className="flex items-center gap-3 mb-10">
@@ -86,9 +85,9 @@ export function WhyNearH() {
             </div>
           </div>
 
-          {/* Flow (The NearH Standard) */}
+          {}
           <div className="xl:col-span-7 bg-[var(--color-heading)] rounded-[3rem] p-10 lg:p-14 text-white relative overflow-hidden shadow-2xl">
-            {/* Dynamic Wave Decor */}
+            {}
             <div className="absolute top-0 right-0 w-2/3 h-full opacity-10 pointer-events-none">
               <Activity
                 size={400}
@@ -127,7 +126,7 @@ export function WhyNearH() {
           </div>
         </div>
 
-        {/* ── Systemic Execution Pipeline ── */}
+        {}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-0 border border-[var(--color-border)] rounded-[2.5rem] bg-white overflow-hidden mb-24">
           {steps.map((step, idx) => (
             <div
@@ -152,7 +151,7 @@ export function WhyNearH() {
           ))}
         </div>
 
-        {/* ── Impact Meter ── */}
+        {}
         <div className="relative rounded-[4rem] bg-[var(--color-accent)] p-12 lg:p-20 overflow-hidden shadow-3xl shadow-blue-500/20">
           <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]" />
 
@@ -179,7 +178,7 @@ export function WhyNearH() {
           </div>
         </div>
 
-        {/* ── CTA Segment ── */}
+        {}
         <div className="mt-28 flex flex-col items-center">
           <h3 className="text-4xl lg:text-6xl font-black text-[var(--color-heading)] tracking-tighter uppercase text-center mb-10 max-w-3xl leading-[0.9]">
             Secure the{" "}
@@ -251,7 +250,7 @@ const steps = [
     icon: Zap,
     title: "Data Verification",
     description:
-      "Our protocols synchronize with hospital HMS every 5 minutes to eliminate latency.",
+      "Our protocols synchronize with hospital  every 5 minutes to eliminate latency.",
   },
   {
     icon: PhoneCall,

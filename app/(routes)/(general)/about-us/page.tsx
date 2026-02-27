@@ -14,8 +14,11 @@ import {
   Clock,
   Activity,
   PhoneOff,
+  X,
+  Info,
 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 const values = [
   {
@@ -56,7 +59,7 @@ const narrativeSteps = [
     description:
       "Arriving at a hospital only to be turned away is a heartbreak we can prevent. We bridge the gap between emergency sirens and hospital entry gates.",
     image:
-      "https://images.unsplash.com/photo-1586773860418-d3b97978c65a?q=80&w=2070",
+      "https://images.unsplash.com/photo-1512678080530-7760d81faba6?q=80&w=1474&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     icon: AlertCircle,
     points: [
       "Verified ambulance routing.",
@@ -79,19 +82,21 @@ const narrativeSteps = [
     ],
   },
 ];
+
 export default function AboutPage() {
   const [index, setIndex] = useState(0);
+  const [showModal, setShowModal] = useState(false);
 
-  // Auto-slide logic: 3 seconds
   useEffect(() => {
     const timer = setInterval(() => {
       setIndex((prev) => (prev + 1) % narrativeSteps.length);
-    }, 3000);
+    }, 5000);
     return () => clearInterval(timer);
   }, []);
+
   return (
     <main className="bg-white">
-      {/* --- Hero Section: The Mission Statement --- */}
+      {/* Narrative Section */}
       <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
         <div className="absolute inset-0 z-0 opacity-40">
           <div className="absolute top-0 left-1/4 w-96 h-96 bg-accent/20 blur-[120px] rounded-full" />
@@ -122,20 +127,19 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* --- The Problem vs. The Solution (Storytelling) --- */}
+      {/* Narrative Carousel */}
       <section className="py-24 bg-slate-50 overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="relative">
             <AnimatePresence mode="wait">
               <motion.div
                 key={index}
-                initial={{ opacity: 0, x: 100 }} // Starts from right
-                animate={{ opacity: 1, x: 0 }} // Slides to center
-                exit={{ opacity: 0, x: -100 }} // Slides out to left
+                initial={{ opacity: 0, x: 100 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -100 }}
                 transition={{ duration: 0.8, ease: "easeInOut" }}
                 className="grid lg:grid-cols-2 gap-16 items-center"
               >
-                {/* Left Side: Dynamic Image */}
                 <div className="relative h-[400px] lg:h-[550px] rounded-[3rem] overflow-hidden shadow-2xl border-8 border-white">
                   <Image
                     src={narrativeSteps[index].image}
@@ -145,8 +149,6 @@ export default function AboutPage() {
                     priority
                   />
                   <div className="absolute inset-0 bg-heading/10 mix-blend-multiply" />
-
-                  {/* Floating Icon Badge */}
                   <div className="absolute top-8 left-8 p-4 bg-white/90 backdrop-blur-md rounded-2xl shadow-xl">
                     {React.createElement(narrativeSteps[index].icon, {
                       className: "w-8 h-8 text-accent",
@@ -154,7 +156,6 @@ export default function AboutPage() {
                   </div>
                 </div>
 
-                {/* Right Side: Dynamic Content */}
                 <div className="flex flex-col justify-center">
                   <div className="flex items-center gap-2 mb-4 text-accent font-bold uppercase tracking-widest text-xs">
                     <Activity size={16} /> Step 0{index + 1}
@@ -181,7 +182,6 @@ export default function AboutPage() {
                     ))}
                   </div>
 
-                  {/* Progress Indicators */}
                   <div className="flex gap-2 mt-12">
                     {narrativeSteps.map((_, i) => (
                       <div
@@ -197,7 +197,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* --- Our Values: The "VVIP" Cards --- */}
+      {/* Values Section */}
       <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -226,7 +226,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* --- Impact Stats --- */}
+      {/* Stats Bar */}
       <section className="py-24 relative overflow-hidden bg-heading">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:20px_20px]" />
@@ -262,7 +262,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* --- Final CTA: The Human Connection --- */}
+      {/* CTA Section */}
       <section className="py-24 bg-white">
         <div className="max-w-5xl mx-auto px-6 lg:px-8">
           <div className="bg-accent rounded-[3rem] p-12 lg:p-20 text-center relative overflow-hidden">
@@ -278,16 +278,69 @@ export default function AboutPage() {
               that no patient is ever left without a choice.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center relative z-10">
-              <button className="px-10 py-5 bg-white text-heading font-black rounded-2xl shadow-xl hover:scale-105 transition-all flex items-center justify-center gap-2">
+              <Link
+                href={"/auth/signup"}
+                className="px-10 py-5 bg-white text-heading font-black rounded-2xl shadow-xl hover:scale-105 transition-all flex items-center justify-center gap-2"
+              >
                 Register Your Hospital <ArrowRight size={20} />
-              </button>
-              <button className="px-10 py-5 bg-heading text-white font-black rounded-2xl shadow-xl hover:bg-slate-800 transition-all">
+              </Link>
+              <button
+                onClick={() => setShowModal(true)}
+                className="px-10 py-5 bg-heading text-white font-black rounded-2xl shadow-xl hover:bg-slate-800 transition-all"
+              >
                 Contact Our Team
               </button>
             </div>
           </div>
         </div>
       </section>
+
+      {/* Implementation Modal */}
+      <AnimatePresence>
+        {showModal && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowModal(false)}
+              className="fixed inset-0 bg-heading/40 backdrop-blur-sm z-[100] cursor-pointer"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-md bg-white rounded-[2.5rem] p-10 shadow-3xl z-[101] border border-slate-100"
+            >
+              <button
+                onClick={() => setShowModal(false)}
+                className="absolute top-6 right-6 text-slate-400 hover:text-heading transition-colors"
+              >
+                <X size={24} />
+              </button>
+              <div className="text-center">
+                <div className="w-16 h-16 bg-accent/10 text-accent rounded-2xl flex items-center justify-center mx-auto mb-6">
+                  <Info size={32} />
+                </div>
+                <h3 className="text-2xl font-black text-heading mb-4">
+                  Protocol in Progress
+                </h3>
+                <p className="text-body font-medium leading-relaxed mb-8">
+                  The direct contact gateway is currently being initialized. For
+                  urgent administrative inquiries, please use our primary system
+                  channels.
+                </p>
+                <button
+                  onClick={() => setShowModal(false)}
+                  className="w-full py-4 bg-heading text-white font-black rounded-xl hover:bg-slate-800 transition-all"
+                >
+                  Close
+                </button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </main>
   );
 }

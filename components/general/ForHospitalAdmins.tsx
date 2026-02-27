@@ -1,16 +1,11 @@
 "use client";
-
-import React from "react";
 import {
-  LayoutDashboard,
   UserPlus,
   History,
   BarChart,
-  Smartphone,
   Zap,
   CheckCircle2,
   ArrowRight,
-  ShieldCheck,
   Globe,
 } from "lucide-react";
 import { motion } from "framer-motion";
@@ -42,7 +37,7 @@ const adminFeatures = [
 export function ForHospitalAdmins() {
   return (
     <section className="relative py-24 bg-white overflow-hidden">
-      {/* Subtle Background Pattern - Very faint grid */}
+      {}
       <div className="absolute inset-0 z-0 opacity-[0.03] [mask-image:linear-gradient(to_bottom,white,transparent,white)]">
         <svg className="h-full w-full" xmlns="http://www.w3.org/2000/svg">
           <defs>
@@ -66,7 +61,7 @@ export function ForHospitalAdmins() {
 
       <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-          {/* Left: Content */}
+          {}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -113,15 +108,18 @@ export function ForHospitalAdmins() {
               >
                 Get Admin Access <ArrowRight size={18} />
               </Link>
-              <button className="px-8 py-4 bg-white border border-border text-heading rounded-2xl font-bold hover:bg-slate-50 transition-all">
+              <Link
+                href={"/about-us"}
+                className="px-8 py-4 bg-white border border-border text-heading rounded-2xl font-bold hover:bg-slate-50 transition-all"
+              >
                 Learn More
-              </button>
+              </Link>
             </div>
           </motion.div>
 
-          {/* Right: Clean Dashboard Interface */}
+          {}
           <div className="relative">
-            {/* Soft Glow Backgrounds */}
+            {}
             <div className="absolute -top-10 -right-10 w-64 h-64 bg-accent/5 blur-[100px] rounded-full" />
             <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-blue-500/5 blur-[100px] rounded-full" />
 
@@ -130,7 +128,7 @@ export function ForHospitalAdmins() {
               whileInView={{ opacity: 1, x: 0 }}
               className="relative bg-white rounded-[2.5rem] border border-slate-200 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.08)] overflow-hidden"
             >
-              {/* Mockup Top Bar */}
+              {}
               <div className="px-8 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center text-white font-black text-xs">
@@ -148,7 +146,7 @@ export function ForHospitalAdmins() {
                 </div>
               </div>
 
-              {/* Mockup Stats */}
+              {}
               <div className="p-8 space-y-6">
                 <div className="space-y-4">
                   <div className="flex justify-between items-end">
@@ -189,7 +187,7 @@ export function ForHospitalAdmins() {
                   </div>
                 </div>
 
-                {/* Activity Mockup */}
+                {}
                 <div className="pt-4 border-t border-slate-100">
                   <p className="text-[10px] font-bold text-muted uppercase mb-4">
                     Live Activity

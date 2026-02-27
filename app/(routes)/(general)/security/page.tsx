@@ -1,7 +1,13 @@
 "use client";
 
 import React from "react";
-import { ShieldAlert, Lock, Database, RefreshCcw, EyeOff } from "lucide-react";
+import {
+  ShieldAlert,
+  Lock,
+  Database,
+  EyeOff,
+  ShieldCheck,
+} from "lucide-react";
 
 export default function SecurityPage() {
   return (
@@ -32,7 +38,7 @@ export default function SecurityPage() {
           <SecurityCard
             icon={<Lock />}
             title="End-to-End Encryption"
-            desc="All clinical data transfers between hospital HMS and the NearH Grid are secured via TLS 1.3 and AES-256 encryption."
+            desc="All clinical data transfers between hospital  and the NearH Grid are secured."
           />
           <SecurityCard
             icon={<Database />}
@@ -40,9 +46,9 @@ export default function SecurityPage() {
             desc="Patient metadata and facility credentials are stored in high-security, compliant regional nodes with 24/7 monitoring."
           />
           <SecurityCard
-            icon={<RefreshCcw />}
-            title="Auto-Audit Sync"
-            desc="Our verification engine automatically blacklists facilities with inconsistent reporting to prevent 'Ghost Bed' data."
+            icon={<ShieldCheck />}
+            title="Isolated Profile Access"
+            desc="Role-based protocols restrict hospital admins to their specific clinical node, preventing unauthorized cross-facility data manipulation."
           />
           <SecurityCard
             icon={<EyeOff />}
@@ -60,9 +66,12 @@ export default function SecurityPage() {
               Found a vulnerability? We operate a bug bounty program for
               security researchers. Help us harden the grid.
             </p>
-            <button className="px-8 py-4 bg-[var(--color-accent)] rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-600 transition-all shadow-xl shadow-blue-500/20">
+            <a
+              href="mailto:musaiyab2003@gmail.com?subject=Vulnerability Report - NearH Grid"
+              className="px-8 py-4 bg-[var(--color-accent)] rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-600 transition-all shadow-xl shadow-blue-500/20 inline-block"
+            >
               Report Vulnerability
-            </button>
+            </a>
           </div>
           <ShieldAlert
             className="absolute top-0 right-0 w-64 h-64 text-white/5 -translate-y-1/4 translate-x-1/4"

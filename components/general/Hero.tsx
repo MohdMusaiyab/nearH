@@ -2,44 +2,36 @@
 
 import React from "react";
 import { easeOut, motion } from "framer-motion";
-import {
-  Activity,
-  Shield,
-  Droplets,
-  Search,
-  ArrowRight,
-  Users,
-} from "lucide-react";
+import { Activity, Search, ArrowRight, Zap, Clock, Globe } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
 const stats = [
   {
-    label: "ICU Beds Available",
-    value: "1,240+",
+    label: "Inventory Sync",
+    value: "< 5 Min",
     icon: Activity,
     color: "text-blue-500",
   },
   {
-    label: "Blood Units Ready",
-    value: "850+",
-    icon: Droplets,
-    color: "text-red-500",
+    label: "Search Latency",
+    value: "Sub-Sec",
+    icon: Zap,
+    color: "text-amber-500",
   },
   {
-    label: "Verified Hospitals",
-    value: "420+",
-    icon: Shield,
+    label: "Service Uptime",
+    value: "24/7",
+    icon: Clock,
     color: "text-emerald-500",
   },
   {
-    label: "Patients Assisted",
-    value: "10k+",
-    icon: Users,
-    color: "text-amber-500",
+    label: "Grid Coverage",
+    value: "Multi-City",
+    icon: Globe,
+    color: "text-indigo-500",
   },
 ];
-
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: easeOut } },
@@ -48,7 +40,7 @@ const fadeInUp = {
 export const Hero = () => {
   return (
     <section className="relative w-full min-h-screen flex items-center overflow-hidden py-20 lg:py-0">
-      {/* 1. Full Background Image with Overlay */}
+      {}
       <div className="absolute inset-0 z-0">
         <Image
           src="https://wallpapercave.com/wp/wp2968489.jpg"
@@ -59,20 +51,20 @@ export const Hero = () => {
           className="object-cover"
           sizes="100vw"
         />
-        {/* Modern multi-layer overlay for readability */}
-        {/* 1. Primary Overlay: Fades white only behind the text (Left to Right) */}
+        {}
+        {}
         <div className="absolute inset-0 bg-gradient-to-r from-white/90 via-white/40 to-transparent hidden lg:block" />
 
-        {/* 2. Mobile Overlay: Fades from bottom to top so text at the bottom is readable */}
+        {}
         <div className="absolute inset-0 bg-gradient-to-t from-white via-white/60 to-transparent lg:hidden" />
 
-        {/* 3. Subtle Vignette: Adds depth to the edges so it doesn't feel "washed out" */}
+        {}
         <div className="absolute inset-0 bg-black/5 pointer-events-none" />
       </div>
 
       <div className="max-w-7xl mx-auto px-6 lg:px-8 w-full relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          {/* Left Content */}
+          {}
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -122,13 +114,16 @@ export const Hero = () => {
                   className="group-hover:translate-x-1 transition-transform"
                 />
               </Link>
-              <button className="px-8 py-4 bg-white border border-border text-heading rounded-xl font-bold hover:bg-slate-50 transition-all">
-                Partner Hospitals
-              </button>
+              <Link
+                href={"/about-us"}
+                className="px-8 py-4 bg-white border border-border text-heading rounded-xl font-bold hover:bg-slate-50 transition-all"
+              >
+                About Us
+              </Link>
             </motion.div>
           </motion.div>
 
-          {/* Right Side: Live Stats Grid (Replaced Shuffling Cards) */}
+          {}
           <motion.div
             initial={{ opacity: 0, x: 40 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -138,7 +133,7 @@ export const Hero = () => {
             {stats.map((stat, idx) => (
               <div
                 key={idx}
-                className={`p-6 md:p-8 rounded-[2rem] bg-white/20 backdrop-blur-md border border-white shadow-xl flex flex-col items-center lg:items-start text-center lg:text-left ${idx % 2 !== 0 ? "lg:translate-y-8" : ""}`}
+                className={`p-6 md:p-8 rounded-[2rem] bg-white/10 backdrop-blur-md border border-white shadow-xl flex flex-col items-center lg:items-start text-center lg:text-left ${idx % 2 !== 0 ? "lg:translate-y-8" : ""}`}
               >
                 <div className={`p-3 rounded-2xl bg-white shadow-inner mb-4`}>
                   <stat.icon size={28} className={stat.color} />
@@ -152,7 +147,7 @@ export const Hero = () => {
               </div>
             ))}
 
-            {/* Decorative element */}
+            {}
             <div className="absolute -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-accent/5 blur-[120px] rounded-full" />
           </motion.div>
         </div>

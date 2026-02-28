@@ -17,7 +17,7 @@ export default function NotFound() {
       />
 
       {/* Decorative Blur Blobs */}
-      <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-[var(--color-accent)]/5 blur-[100px] rounded-full pointer-events-none" />
+      <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-accent/5 blur-[100px] rounded-full pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-emerald-500/5 blur-[100px] rounded-full pointer-events-none" />
 
       <div className="max-w-lg w-full text-center relative z-10">
@@ -28,9 +28,9 @@ export default function NotFound() {
           className="mb-10 flex justify-center"
         >
           <div className="relative">
-            <div className="absolute inset-0 bg-[var(--color-accent)]/10 rounded-[2.5rem] blur-2xl scale-150"></div>
-            <div className="relative bg-white p-8 rounded-[2.5rem] shadow-2xl border border-[var(--color-border)]">
-              <ShieldAlert className="w-16 h-16 text-[var(--color-accent)] stroke-[1.5]" />
+            <div className="absolute inset-0 bg-accent/10 rounded-[2.5rem] blur-2xl scale-150"></div>
+            <div className="relative bg-white p-8 rounded-[2.5rem] shadow-2xl border border-border">
+              <ShieldAlert className="w-16 h-16 text-accent stroke-[1.5]" />
             </div>
           </div>
         </motion.div>
@@ -41,14 +41,14 @@ export default function NotFound() {
             404
           </h1>
           <div className="space-y-2 ">
-            <h2 className="text-2xl font-black text-[var(--color-heading)] uppercase tracking-tight">
+            <h2 className="text-2xl font-black text-heading uppercase tracking-tight">
               Resource Not Found
             </h2>
-            <p className="text-[10px] font-black text-[var(--color-muted)] uppercase tracking-[0.3em]">
+            <p className="text-[10px] font-black text-muted uppercase tracking-[0.3em]">
               Protocol Error: Terminal Endpoint Unavailable
             </p>
           </div>
-          <p className="text-[var(--color-muted)] font-medium leading-relaxed max-w-sm mx-auto text-sm">
+          <p className="text-muted font-medium leading-relaxed max-w-sm mx-auto text-sm">
             The clinical data or directory page you are attempting to access has
             been moved or purged from the live grid.
           </p>
@@ -58,7 +58,7 @@ export default function NotFound() {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             href="/"
-            className="flex items-center justify-center gap-3 px-8 py-4 bg-[var(--color-heading)] text-white font-black text-[10px] uppercase tracking-widest rounded-2xl hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 active:scale-95"
+            className="flex items-center justify-center gap-3 px-8 py-4 bg-heading text-white font-black text-[10px] uppercase tracking-widest rounded-2xl hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 active:scale-95"
           >
             <Home className="w-4 h-4" />
             Return to Core
@@ -66,7 +66,7 @@ export default function NotFound() {
 
           <Link
             href={"/explore"}
-            className="flex items-center justify-center gap-3 px-8 py-4 bg-white text-[var(--color-heading)] font-black text-[10px] uppercase tracking-widest rounded-2xl border border-[var(--color-border)] hover:bg-slate-50 transition-all active:scale-95 shadow-sm"
+            className="flex items-center justify-center gap-3 px-8 py-4 bg-white text-heading font-black text-[10px] uppercase tracking-widest rounded-2xl border border-border hover:bg-slate-50 transition-all active:scale-95 shadow-sm"
           >
             <ArrowLeft className="w-4 h-4" />
             Find Hospitals
@@ -77,7 +77,7 @@ export default function NotFound() {
         <div className="mt-16 pt-8 border-t border-slate-50">
           <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
             If this persistence continues, contact the <br />
-            <span className="text-[var(--color-accent)] font-black cursor-pointer hover:underline">
+            <span className="text-accent font-black cursor-pointer hover:underline">
               System Intelligence Bureau
             </span>
           </p>

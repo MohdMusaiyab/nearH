@@ -58,14 +58,14 @@ export default async function ApprovalsPage({
         {/* Title row */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div className="flex items-center gap-4">
-            <div className="w-11 h-11 rounded-2xl bg-[var(--color-accent)] flex items-center justify-center shadow-lg shadow-[var(--color-accent)]/25 flex-shrink-0">
+            <div className="w-11 h-11 rounded-2xl bg-accent flex items-center justify-center shadow-lg shadow-accent/25 flex-shrink-0">
               <UserCheck size={22} className="text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-black text-[var(--color-heading)] tracking-tight leading-none">
+              <h1 className="text-2xl font-black text-heading tracking-tight leading-none">
                 Pending Approvals
               </h1>
-              <p className="text-sm text-[var(--color-muted)] mt-0.5">
+              <p className="text-sm text-muted mt-0.5">
                 Review and verify hospital admin access requests
               </p>
             </div>
@@ -83,17 +83,17 @@ export default async function ApprovalsPage({
         </div>
 
         {/* Divider */}
-        <div className="h-px bg-[var(--color-border)]" />
+        <div className="h-px bg-border" />
       </div>
 
       {/* ── Table ── */}
       <Suspense
         fallback={
-          <div className="bg-white rounded-2xl border border-[var(--color-border)] p-16 text-center">
-            <div className="w-10 h-10 rounded-xl bg-[var(--color-badge-bg)] border border-[var(--color-border)] flex items-center justify-center mx-auto mb-3 animate-pulse">
-              <UserCheck size={18} className="text-[var(--color-muted)]" />
+          <div className="bg-white rounded-2xl border border-border p-16 text-center">
+            <div className="w-10 h-10 rounded-xl bg-badge-bg border border-border flex items-center justify-center mx-auto mb-3 animate-pulse">
+              <UserCheck size={18} className="text-muted" />
             </div>
-            <p className="text-sm font-semibold text-[var(--color-muted)] animate-pulse">
+            <p className="text-sm font-semibold text-muted animate-pulse">
               Loading applications…
             </p>
           </div>

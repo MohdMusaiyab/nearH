@@ -19,13 +19,13 @@ interface Props {
 const priorityColors: Record<string, string> = {
   Routine: "bg-blue-50 text-blue-600 border-blue-100",
   Urgent: "bg-amber-50 text-amber-600 border-amber-200",
-  Critical: "bg-red-50 text-[var(--color-error)] border-red-100",
+  Critical: "bg-red-50 text-error border-red-100",
 };
 
 const statusColors: Record<string, string> = {
   Pending: "bg-slate-100 text-slate-600 border-slate-200",
-  Accepted: "bg-[var(--color-badge-bg)] text-[var(--color-accent)] border-[var(--color-accent)]/20",
-  Rejected: "bg-red-50 text-[var(--color-error)] border-red-100",
+  Accepted: "bg-badge-bg text-accent border-accent/20",
+  Rejected: "bg-red-50 text-error border-red-100",
   Completed: "bg-green-50 text-green-700 border-green-200",
 };
 
@@ -36,10 +36,10 @@ export function ReferralsTab({ hospital }: Props) {
   if (fromReferrals.length === 0 && toReferrals.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-24 text-center animate-in fade-in zoom-in-95 duration-500">
-        <div className="w-20 h-20 rounded-[2rem] bg-[var(--color-badge-bg)] border border-[var(--color-border)] flex items-center justify-center mb-6 shadow-sm">
-          <FileText className="w-10 h-10 text-[var(--color-muted)] opacity-40" />
+        <div className="w-20 h-20 rounded-[2rem] bg-badge-bg border border-border flex items-center justify-center mb-6 shadow-sm">
+          <FileText className="w-10 h-10 text-muted opacity-40" />
         </div>
-        <p className="text-[10px] font-black text-[var(--color-muted)] uppercase tracking-widest">
+        <p className="text-[10px] font-black text-muted uppercase tracking-widest">
           No Transfer Records Found
         </p>
       </div>
@@ -56,10 +56,10 @@ export function ReferralsTab({ hospital }: Props) {
               <ArrowUpRight size={20} strokeWidth={3} />
             </div>
             <div>
-              <h3 className="text-xs font-black text-[var(--color-heading)] uppercase tracking-[0.2em] leading-none">
+              <h3 className="text-xs font-black text-heading uppercase tracking-[0.2em] leading-none">
                 Outgoing Transfers
               </h3>
-              <p className="text-[10px] font-bold text-[var(--color-muted)] uppercase mt-1">
+              <p className="text-[10px] font-bold text-muted uppercase mt-1">
                 Patients dispatched from this facility
               </p>
             </div>
@@ -85,10 +85,10 @@ export function ReferralsTab({ hospital }: Props) {
               <ArrowDownLeft size={20} strokeWidth={3} />
             </div>
             <div>
-              <h3 className="text-xs font-black text-[var(--color-heading)] uppercase tracking-[0.2em] leading-none">
+              <h3 className="text-xs font-black text-heading uppercase tracking-[0.2em] leading-none">
                 Incoming Requests
               </h3>
-              <p className="text-[10px] font-bold text-[var(--color-muted)] uppercase mt-1">
+              <p className="text-[10px] font-bold text-muted uppercase mt-1">
                 Patients awaiting admission here
               </p>
             </div>
@@ -115,20 +115,20 @@ function ReferralItem({ referral, type }: { referral: ReferralDetail; type: 'inc
     : ((referral as ReferralDetailTo).from_hospital as { name?: string })?.name;
 
   return (
-    <div className="group bg-white p-6 rounded-[2rem] border border-[var(--color-border)] hover:border-[var(--color-accent)]/40 hover:shadow-xl hover:shadow-[var(--color-accent)]/5 transition-all duration-300">
+    <div className="group bg-white p-6 rounded-[2rem] border border-border hover:border-accent/40 hover:shadow-xl hover:shadow-accent/5 transition-all duration-300">
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
         
         {/* Patient & Facility Info */}
         <div className="flex items-center gap-5 min-w-0">
-          <div className="w-12 h-12 rounded-2xl bg-[var(--color-badge-bg)] border border-[var(--color-border)] flex items-center justify-center text-[var(--color-accent)] group-hover:bg-[var(--color-accent)] group-hover:text-white transition-all shadow-sm">
+          <div className="w-12 h-12 rounded-2xl bg-badge-bg border border-border flex items-center justify-center text-accent group-hover:bg-accent group-hover:text-white transition-all shadow-sm">
             <User size={20} strokeWidth={2.5} />
           </div>
           <div className="min-w-0">
-            <h4 className="text-sm font-black text-[var(--color-heading)] uppercase truncate leading-none mb-2">
+            <h4 className="text-sm font-black text-heading uppercase truncate leading-none mb-2">
               {referral.patient_name}
             </h4>
-            <div className="flex items-center gap-2 text-[10px] font-bold text-[var(--color-muted)] uppercase">
-              <Building2 size={12} className="text-[var(--color-accent)]" />
+            <div className="flex items-center gap-2 text-[10px] font-bold text-muted uppercase">
+              <Building2 size={12} className="text-accent" />
               <span className="truncate">
                 {type === 'outgoing' ? 'Target' : 'Origin'}: {hospitalName || "Unspecified Facility"}
               </span>
@@ -139,8 +139,8 @@ function ReferralItem({ referral, type }: { referral: ReferralDetail; type: 'inc
         {/* Meta Stats Stack */}
         <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto">
           <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 border border-slate-100 rounded-xl">
-            <Calendar size={12} className="text-[var(--color-accent)]" />
-            <span className="text-[9px] font-black text-[var(--color-muted)] uppercase tracking-wider">
+            <Calendar size={12} className="text-accent" />
+            <span className="text-[9px] font-black text-muted uppercase tracking-wider">
               {referral.created_at ? format(new Date(referral.created_at), "dd MMM yyyy") : "N/A"}
             </span>
           </div>

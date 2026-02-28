@@ -40,15 +40,15 @@ export function OverviewTab({ hospital }: Props) {
       </div>
 
       {/* ── Status Bar ── */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-4 px-6 bg-[var(--color-badge-bg)]/30 border border-[var(--color-border)] rounded-2xl">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-4 px-6 bg-badge-bg/30 border border-border rounded-2xl">
         <div className="flex items-center gap-2">
-          <Clock size={14} className="text-[var(--color-accent)]" />
-          <p className="text-[10px] font-black text-[var(--color-muted)] uppercase tracking-widest">
+          <Clock size={14} className="text-accent" />
+          <p className="text-[10px] font-black text-muted uppercase tracking-widest">
             Data Sync Status
           </p>
         </div>
         {hospital.inventory.last_updated && (
-          <p className="text-[10px] font-black text-[var(--color-heading)] uppercase tracking-tight">
+          <p className="text-[10px] font-black text-heading uppercase tracking-tight">
             Last Refresh:{" "}
             {new Date(hospital.inventory.last_updated).toLocaleString("en-IN", {
               day: "2-digit",
@@ -67,7 +67,7 @@ export function OverviewTab({ hospital }: Props) {
         </div>
 
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 relative z-10">
-          <div className="w-14 h-14 rounded-2xl bg-white border border-red-100 flex items-center justify-center text-[var(--color-error)] shadow-sm">
+          <div className="w-14 h-14 rounded-2xl bg-white border border-red-100 flex items-center justify-center text-error shadow-sm">
             <AlertTriangle
               size={28}
               strokeWidth={2.5}
@@ -76,12 +76,12 @@ export function OverviewTab({ hospital }: Props) {
           </div>
 
           <div className="space-y-1">
-            <h4 className="text-xs font-black text-[var(--color-error)] uppercase tracking-[0.2em]">
+            <h4 className="text-xs font-black text-error uppercase tracking-[0.2em]">
               Emergency Dispatch
             </h4>
             <p className="text-2xl font-black text-red-900 tracking-tight leading-tight">
               Dial{" "}
-              <span className="text-[var(--color-error)] underline decoration-red-200 underline-offset-4">
+              <span className="text-error underline decoration-red-200 underline-offset-4">
                 108
               </span>{" "}
               for Immediate Care

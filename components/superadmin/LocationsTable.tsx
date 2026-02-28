@@ -100,23 +100,23 @@ export default function LocationTable({
   return (
     <div className="flex flex-col">
       {/* ── Search bar ── */}
-      <div className="px-5 py-4 border-b border-[var(--color-border)]">
+      <div className="px-5 py-4 border-b border-border">
         <div className="relative max-w-sm">
           <Search
             size={15}
-            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--color-muted)]"
+            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted"
           />
           <input
             type="text"
             placeholder="Search city or state…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-10 py-2.5 bg-[var(--color-badge-bg)] border border-[var(--color-border)] rounded-xl text-sm font-medium text-[var(--color-heading)] placeholder:text-[var(--color-muted)] outline-none focus:bg-white focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent)]/10 transition-all"
+            className="w-full pl-10 pr-10 py-2.5 bg-badge-bg border border-border rounded-xl text-sm font-medium text-heading placeholder:text-muted outline-none focus:bg-white focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all"
           />
           {search && (
             <button
               onClick={() => setSearch("")}
-              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--color-muted)] hover:text-[var(--color-heading)] transition-colors"
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted hover:text-heading transition-colors"
             >
               <X size={14} />
             </button>
@@ -127,13 +127,13 @@ export default function LocationTable({
       {/* Empty state */}
       {filteredData.length === 0 && (
         <div className="flex flex-col items-center justify-center py-16 text-center px-6">
-          <div className="w-12 h-12 rounded-2xl bg-[var(--color-badge-bg)] border border-[var(--color-border)] flex items-center justify-center mb-3">
-            <MapPin size={20} className="text-[var(--color-muted)]" />
+          <div className="w-12 h-12 rounded-2xl bg-badge-bg border border-border flex items-center justify-center mb-3">
+            <MapPin size={20} className="text-muted" />
           </div>
-          <p className="text-sm font-bold text-[var(--color-heading)] mb-1">
+          <p className="text-sm font-bold text-heading mb-1">
             No locations found
           </p>
-          <p className="text-xs text-[var(--color-muted)]">
+          <p className="text-xs text-muted">
             {search
               ? "Try a different search term."
               : "Add your first location to get started."}
@@ -147,25 +147,25 @@ export default function LocationTable({
           <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="bg-[var(--color-badge-bg)] border-b border-[var(--color-border)]">
-                  <th className="px-5 py-3.5 text-[10px] font-bold text-[var(--color-muted)] uppercase tracking-widest w-[40%]">
+                <tr className="bg-badge-bg border-b border-border">
+                  <th className="px-5 py-3.5 text-[10px] font-bold text-muted uppercase tracking-widest w-[40%]">
                     City
                   </th>
-                  <th className="px-5 py-3.5 text-[10px] font-bold text-[var(--color-muted)] uppercase tracking-widest">
+                  <th className="px-5 py-3.5 text-[10px] font-bold text-muted uppercase tracking-widest">
                     State
                   </th>
-                  <th className="px-5 py-3.5 text-[10px] font-bold text-[var(--color-muted)] uppercase tracking-widest text-right">
+                  <th className="px-5 py-3.5 text-[10px] font-bold text-muted uppercase tracking-widest text-right">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[var(--color-border)]/60">
+              <tbody className="divide-y divide-border/60">
                 {filteredData.map((loc) => {
                   const isEditing = editingId === loc.id;
                   return (
                     <tr
                       key={loc.id}
-                      className="hover:bg-[var(--color-badge-bg)]/40 transition-colors group"
+                      className="hover:bg-badge-bg/40 transition-colors group"
                     >
                       {/* City */}
                       <td className="px-5 py-4">
@@ -179,17 +179,17 @@ export default function LocationTable({
                                 city: e.target.value,
                               })
                             }
-                            className="w-full px-3 py-2 border border-[var(--color-accent)]/40 rounded-xl text-sm font-semibold text-[var(--color-heading)] bg-white outline-none focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent)]/10 transition-all"
+                            className="w-full px-3 py-2 border border-accent/40 rounded-xl text-sm font-semibold text-heading bg-white outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all"
                           />
                         ) : (
                           <div className="flex items-center gap-2.5">
-                            <div className="w-7 h-7 rounded-lg bg-[var(--color-badge-bg)] border border-[var(--color-border)] flex items-center justify-center flex-shrink-0">
+                            <div className="w-7 h-7 rounded-lg bg-badge-bg border border-border flex items-center justify-center flex-shrink-0">
                               <MapPin
                                 size={12}
-                                className="text-[var(--color-accent)]"
+                                className="text-accent"
                               />
                             </div>
-                            <span className="font-bold text-sm text-[var(--color-heading)]">
+                            <span className="font-bold text-sm text-heading">
                               {loc.city}
                             </span>
                           </div>
@@ -207,10 +207,10 @@ export default function LocationTable({
                                 state: e.target.value,
                               })
                             }
-                            className="w-full px-3 py-2 border border-[var(--color-accent)]/40 rounded-xl text-sm font-medium text-[var(--color-heading)] bg-white outline-none focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent)]/10 transition-all"
+                            className="w-full px-3 py-2 border border-accent/40 rounded-xl text-sm font-medium text-heading bg-white outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all"
                           />
                         ) : (
-                          <span className="text-sm font-medium text-[var(--color-body)]">
+                          <span className="text-sm font-medium text-body">
                             {loc.state}
                           </span>
                         )}
@@ -235,7 +235,7 @@ export default function LocationTable({
                               </button>
                               <button
                                 onClick={() => setEditingId(null)}
-                                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-50 text-[var(--color-muted)] border border-[var(--color-border)] hover:bg-slate-100 transition-all"
+                                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-50 text-muted border border-border hover:bg-slate-100 transition-all"
                               >
                                 <X size={13} />
                                 Cancel
@@ -245,14 +245,14 @@ export default function LocationTable({
                             <>
                               <button
                                 onClick={() => startEditing(loc)}
-                                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-[var(--color-body)] border border-[var(--color-border)] bg-white hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)] hover:bg-[var(--color-badge-bg)] transition-all opacity-0 group-hover:opacity-100"
+                                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-body border border-border bg-white hover:border-accent/40 hover:text-accent hover:bg-badge-bg transition-all opacity-0 group-hover:opacity-100"
                               >
                                 <Pencil size={13} />
                                 Edit
                               </button>
                               <button
                                 onClick={() => handleDelete(loc.id, loc.city)}
-                                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-[var(--color-error)] border border-red-100 bg-red-50 hover:bg-[var(--color-error)] hover:text-white hover:border-[var(--color-error)] transition-all opacity-0 group-hover:opacity-100"
+                                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-error border border-red-100 bg-red-50 hover:bg-error hover:text-white hover:border-error transition-all opacity-0 group-hover:opacity-100"
                               >
                                 <Trash2 size={13} />
                                 Delete
@@ -269,7 +269,7 @@ export default function LocationTable({
           </div>
 
           {/* ── Mobile cards ── */}
-          <div className="md:hidden divide-y divide-[var(--color-border)]/60">
+          <div className="md:hidden divide-y divide-border/60">
             {filteredData.map((loc) => {
               const isEditing = editingId === loc.id;
               return (
@@ -278,7 +278,7 @@ export default function LocationTable({
                     /* Edit mode on mobile */
                     <div className="space-y-3">
                       <div>
-                        <label className="text-[10px] font-bold text-[var(--color-muted)] uppercase tracking-widest mb-1.5 block">
+                        <label className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1.5 block">
                           City
                         </label>
                         <input
@@ -290,11 +290,11 @@ export default function LocationTable({
                               city: e.target.value,
                             })
                           }
-                          className="w-full px-3 py-2.5 border border-[var(--color-accent)]/40 rounded-xl text-sm font-semibold text-[var(--color-heading)] bg-white outline-none focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent)]/10 transition-all"
+                          className="w-full px-3 py-2.5 border border-accent/40 rounded-xl text-sm font-semibold text-heading bg-white outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all"
                         />
                       </div>
                       <div>
-                        <label className="text-[10px] font-bold text-[var(--color-muted)] uppercase tracking-widest mb-1.5 block">
+                        <label className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1.5 block">
                           State
                         </label>
                         <input
@@ -305,7 +305,7 @@ export default function LocationTable({
                               state: e.target.value,
                             })
                           }
-                          className="w-full px-3 py-2.5 border border-[var(--color-accent)]/40 rounded-xl text-sm font-medium text-[var(--color-heading)] bg-white outline-none focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent)]/10 transition-all"
+                          className="w-full px-3 py-2.5 border border-accent/40 rounded-xl text-sm font-medium text-heading bg-white outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all"
                         />
                       </div>
                       <div className="flex gap-2 pt-1">
@@ -323,7 +323,7 @@ export default function LocationTable({
                         </button>
                         <button
                           onClick={() => setEditingId(null)}
-                          className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold bg-slate-50 text-[var(--color-muted)] border border-[var(--color-border)] hover:bg-slate-100 transition-all"
+                          className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold bg-slate-50 text-muted border border-border hover:bg-slate-100 transition-all"
                         >
                           <X size={13} /> Cancel
                         </button>
@@ -333,17 +333,17 @@ export default function LocationTable({
                     /* View mode on mobile */
                     <div className="flex items-center justify-between gap-3">
                       <div className="flex items-center gap-3 min-w-0">
-                        <div className="w-9 h-9 rounded-xl bg-[var(--color-badge-bg)] border border-[var(--color-border)] flex items-center justify-center flex-shrink-0">
+                        <div className="w-9 h-9 rounded-xl bg-badge-bg border border-border flex items-center justify-center flex-shrink-0">
                           <MapPin
                             size={15}
-                            className="text-[var(--color-accent)]"
+                            className="text-accent"
                           />
                         </div>
                         <div className="min-w-0">
-                          <p className="text-sm font-bold text-[var(--color-heading)] truncate">
+                          <p className="text-sm font-bold text-heading truncate">
                             {loc.city}
                           </p>
-                          <p className="text-xs text-[var(--color-muted)]">
+                          <p className="text-xs text-muted">
                             {loc.state}
                           </p>
                         </div>
@@ -351,13 +351,13 @@ export default function LocationTable({
                       <div className="flex items-center gap-2 flex-shrink-0">
                         <button
                           onClick={() => startEditing(loc)}
-                          className="w-8 h-8 rounded-xl border border-[var(--color-border)] bg-white flex items-center justify-center text-[var(--color-muted)] hover:text-[var(--color-accent)] hover:border-[var(--color-accent)]/40 hover:bg-[var(--color-badge-bg)] transition-all"
+                          className="w-8 h-8 rounded-xl border border-border bg-white flex items-center justify-center text-muted hover:text-accent hover:border-accent/40 hover:bg-badge-bg transition-all"
                         >
                           <Pencil size={14} />
                         </button>
                         <button
                           onClick={() => handleDelete(loc.id, loc.city)}
-                          className="w-8 h-8 rounded-xl border border-red-100 bg-red-50 flex items-center justify-center text-[var(--color-error)] hover:bg-[var(--color-error)] hover:text-white hover:border-[var(--color-error)] transition-all"
+                          className="w-8 h-8 rounded-xl border border-red-100 bg-red-50 flex items-center justify-center text-error hover:bg-error hover:text-white hover:border-error transition-all"
                         >
                           <Trash2 size={14} />
                         </button>
@@ -370,8 +370,8 @@ export default function LocationTable({
           </div>
 
           {/* Row count footer */}
-          <div className="px-5 py-3.5 border-t border-[var(--color-border)] bg-[var(--color-badge-bg)]/40">
-            <p className="text-xs font-semibold text-[var(--color-muted)]">
+          <div className="px-5 py-3.5 border-t border-border bg-badge-bg/40">
+            <p className="text-xs font-semibold text-muted">
               {filteredData.length === data.length
                 ? `${data.length} location${data.length !== 1 ? "s" : ""}`
                 : `${filteredData.length} of ${data.length} locations`}

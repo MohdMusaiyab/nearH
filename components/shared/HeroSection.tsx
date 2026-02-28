@@ -19,7 +19,7 @@ interface Props {
 export function HeroSection({ hospital }: Props) {
   return (
     <div
-      className="relative overflow-hidden rounded-[3rem] border border-[var(--color-border)] shadow-sm"
+      className="relative overflow-hidden rounded-[3rem] border border-border shadow-sm"
       style={{ background: "var(--gradient-hero)" }}
     >
       {/* ── Background Textures ── */}
@@ -33,7 +33,7 @@ export function HeroSection({ hospital }: Props) {
           backgroundSize: "40px 40px",
         }}
       />
-      <div className="absolute -top-24 -right-24 w-96 h-96 bg-[var(--color-accent)]/5 rounded-full blur-3xl" />
+      <div className="absolute -top-24 -right-24 w-96 h-96 bg-accent/5 rounded-full blur-3xl" />
 
       {/* ── Main Layout ── */}
       <div className="relative z-10 p-8 md:p-12">
@@ -41,8 +41,8 @@ export function HeroSection({ hospital }: Props) {
           <div className="flex-1 space-y-6">
             {/* Status Badges */}
             <div className="flex flex-wrap gap-2">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-[var(--color-border)] text-[var(--color-accent)] text-[10px] font-black uppercase tracking-widest shadow-sm">
-                <span className="w-2 h-2 rounded-full bg-[var(--color-success)] animate-pulse" />
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-border text-accent text-[10px] font-black uppercase tracking-widest shadow-sm">
+                <span className="w-2 h-2 rounded-full bg-success animate-pulse" />
                 Live Data Synchronized
               </div>
               {hospital.is_verified && (
@@ -55,19 +55,19 @@ export function HeroSection({ hospital }: Props) {
 
             {/* Title & Location */}
             <div className="space-y-3">
-              <h1 className="text-5xl md:text-6xl font-black text-[var(--color-heading)] tracking-tighter leading-[0.9] uppercase">
+              <h1 className="text-5xl md:text-6xl font-black text-heading tracking-tighter leading-[0.9] uppercase">
                 {hospital.name}
               </h1>
 
-              <div className="flex items-center gap-4 text-[var(--color-muted)]">
+              <div className="flex items-center gap-4 text-muted">
                 {hospital.location && (
                   <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-tight">
-                    <MapPin className="w-4 h-4 text-[var(--color-accent)]" />
+                    <MapPin className="w-4 h-4 text-accent" />
                     {hospital.location.city}, {hospital.location.state}
                   </div>
                 )}
                 <div className="w-1.5 h-1.5 rounded-full bg-slate-300" />
-                <div className="text-[10px] font-black uppercase tracking-widest bg-[var(--color-heading)] text-white px-2 py-1 rounded-md">
+                <div className="text-[10px] font-black uppercase tracking-widest bg-heading text-white px-2 py-1 rounded-md">
                   Trauma Level {hospital.trauma_level || "N/A"}
                 </div>
               </div>
@@ -76,19 +76,19 @@ export function HeroSection({ hospital }: Props) {
 
           {/* ── Real-time Inventory Chips (The "Explore Grid" Logic) ── */}
           <div className="grid grid-cols-2 gap-3 w-full lg:w-auto min-w-[320px]">
-            <div className="p-5 bg-white rounded-[2rem] border border-[var(--color-border)] shadow-sm">
+            <div className="p-5 bg-white rounded-[2rem] border border-border shadow-sm">
               <div className="flex items-center gap-2 mb-2">
-                <div className="w-8 h-8 rounded-xl bg-[var(--color-badge-bg)] flex items-center justify-center text-[var(--color-accent)]">
+                <div className="w-8 h-8 rounded-xl bg-badge-bg flex items-center justify-center text-accent">
                   <BedDouble size={16} />
                 </div>
-                <p className="text-[10px] font-black text-[var(--color-muted)] uppercase tracking-widest">
+                <p className="text-[10px] font-black text-muted uppercase tracking-widest">
                   General
                 </p>
               </div>
-              <p className="text-3xl font-black text-[var(--color-heading)] tabular-nums">
+              <p className="text-3xl font-black text-heading tabular-nums">
                 {hospital.inventory?.available_beds ?? 0}
               </p>
-              <p className="text-[10px] font-bold text-[var(--color-muted)] uppercase mt-1">
+              <p className="text-[10px] font-bold text-muted uppercase mt-1">
                 Free Beds
               </p>
             </div>
@@ -102,17 +102,17 @@ export function HeroSection({ hospital }: Props) {
               }}
             >
               <div className="flex items-center gap-2 mb-2">
-                <div className="w-8 h-8 rounded-xl bg-white border border-[var(--color-accent)]/10 flex items-center justify-center text-[var(--color-accent)]">
+                <div className="w-8 h-8 rounded-xl bg-white border border-accent/10 flex items-center justify-center text-accent">
                   <Activity size={16} />
                 </div>
-                <p className="text-[10px] font-black text-[var(--color-accent)] uppercase tracking-widest">
+                <p className="text-[10px] font-black text-accent uppercase tracking-widest">
                   ICU Status
                 </p>
               </div>
-              <p className="text-3xl font-black text-[var(--color-accent)] tabular-nums">
+              <p className="text-3xl font-black text-accent tabular-nums">
                 {hospital.inventory?.icu_beds_available ?? 0}
               </p>
-              <p className="text-[10px] font-bold text-[var(--color-muted)] uppercase mt-1">
+              <p className="text-[10px] font-bold text-muted uppercase mt-1">
                 Available Units
               </p>
             </div>

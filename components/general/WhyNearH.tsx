@@ -37,20 +37,20 @@ export function WhyNearH() {
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-50 text-[var(--color-error)] text-[10px] font-black uppercase tracking-widest mb-6 border border-red-100"
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-50 text-error text-[10px] font-black uppercase tracking-widest mb-6 border border-red-100"
             >
               <AlertCircle size={14} />
               Latency Analysis
             </motion.div>
-            <h2 className="text-5xl lg:text-7xl font-black text-[var(--color-heading)] tracking-tighter leading-[0.9] uppercase">
+            <h2 className="text-5xl lg:text-7xl font-black text-heading tracking-tighter leading-[0.9] uppercase">
               In emergencies, <br />
-              <span className="text-[var(--color-accent)]">
+              <span className="text-accent">
                 Minutes are Milestones.
               </span>
             </h2>
           </div>
           <div className="lg:col-span-4">
-            <p className="text-[var(--color-muted)] text-sm font-bold uppercase tracking-widest leading-relaxed border-l-2 border-[var(--color-accent)] pl-6">
+            <p className="text-muted text-sm font-bold uppercase tracking-widest leading-relaxed border-l-2 border-accent pl-6">
               NearH replaces systemic fragmentation with verified clinical data,
               accelerating the path from crisis to care.
             </p>
@@ -60,7 +60,7 @@ export function WhyNearH() {
         {}
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 mb-24">
           {}
-          <div className="xl:col-span-5 bg-slate-50 rounded-[3rem] p-10 border border-[var(--color-border)] flex flex-col justify-between group">
+          <div className="xl:col-span-5 bg-slate-50 rounded-[3rem] p-10 border border-border flex flex-col justify-between group">
             <div>
               <div className="flex items-center gap-3 mb-10">
                 <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-400">
@@ -86,7 +86,7 @@ export function WhyNearH() {
           </div>
 
           {}
-          <div className="xl:col-span-7 bg-[var(--color-heading)] rounded-[3rem] p-10 lg:p-14 text-white relative overflow-hidden shadow-2xl">
+          <div className="xl:col-span-7 bg-heading rounded-[3rem] p-10 lg:p-14 text-white relative overflow-hidden shadow-2xl">
             {}
             <div className="absolute top-0 right-0 w-2/3 h-full opacity-10 pointer-events-none">
               <Activity
@@ -98,7 +98,7 @@ export function WhyNearH() {
             <div className="relative z-10 flex flex-col h-full justify-between">
               <div>
                 <div className="flex items-center gap-3 mb-10">
-                  <div className="w-10 h-10 rounded-xl bg-[var(--color-accent)] flex items-center justify-center shadow-lg shadow-blue-500/20">
+                  <div className="w-10 h-10 rounded-xl bg-accent flex items-center justify-center shadow-lg shadow-blue-500/20">
                     <ShieldCheck size={20} className="text-white" />
                   </div>
                   <span className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-200">
@@ -127,24 +127,24 @@ export function WhyNearH() {
         </div>
 
         {}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-0 border border-[var(--color-border)] rounded-[2.5rem] bg-white overflow-hidden mb-24">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-0 border border-border rounded-[2.5rem] bg-white overflow-hidden mb-24">
           {steps.map((step, idx) => (
             <div
               key={idx}
-              className={`p-10 relative group ${idx !== 2 ? "border-b md:border-b-0 md:border-r border-[var(--color-border)]" : ""}`}
+              className={`p-10 relative group ${idx !== 2 ? "border-b md:border-b-0 md:border-r border-border" : ""}`}
             >
               <div className="flex items-center justify-between mb-8">
-                <div className="w-14 h-14 rounded-2xl bg-[var(--color-badge-bg)] text-[var(--color-accent)] flex items-center justify-center group-hover:bg-[var(--color-accent)] group-hover:text-white transition-all duration-300">
+                <div className="w-14 h-14 rounded-2xl bg-badge-bg text-accent flex items-center justify-center group-hover:bg-accent group-hover:text-white transition-all duration-300">
                   <step.icon size={28} strokeWidth={2.5} />
                 </div>
-                <span className="text-4xl font-black text-slate-100 group-hover:text-[var(--color-accent)]/10 transition-colors">
+                <span className="text-4xl font-black text-slate-100 group-hover:text-accent/10 transition-colors">
                   {idx + 1}
                 </span>
               </div>
-              <h3 className="text-xl font-black text-[var(--color-heading)] uppercase tracking-tighter mb-4">
+              <h3 className="text-xl font-black text-heading uppercase tracking-tighter mb-4">
                 {step.title}
               </h3>
-              <p className="text-[var(--color-muted)] text-sm font-medium leading-relaxed">
+              <p className="text-muted text-sm font-medium leading-relaxed">
                 {step.description}
               </p>
             </div>
@@ -152,7 +152,7 @@ export function WhyNearH() {
         </div>
 
         {}
-        <div className="relative rounded-[4rem] bg-[var(--color-accent)] p-12 lg:p-20 overflow-hidden shadow-3xl shadow-blue-500/20">
+        <div className="relative rounded-[4rem] bg-accent p-12 lg:p-20 overflow-hidden shadow-3xl shadow-blue-500/20">
           <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]" />
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-16 relative z-10">
@@ -180,20 +180,20 @@ export function WhyNearH() {
 
         {}
         <div className="mt-28 flex flex-col items-center">
-          <h3 className="text-4xl lg:text-6xl font-black text-[var(--color-heading)] tracking-tighter uppercase text-center mb-10 max-w-3xl leading-[0.9]">
+          <h3 className="text-4xl lg:text-6xl font-black text-heading tracking-tighter uppercase text-center mb-10 max-w-3xl leading-[0.9]">
             Secure the{" "}
-            <span className="text-[var(--color-accent)]">Critical Grid.</span>
+            <span className="text-accent">Critical Grid.</span>
           </h3>
           <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
             <Link
               href="/auth/signup"
-              className="w-full sm:w-auto px-12 py-5 bg-[var(--color-heading)] text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-2xl hover:bg-slate-800 transition-all flex items-center justify-center gap-3 active:scale-95"
+              className="w-full sm:w-auto px-12 py-5 bg-heading text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-2xl hover:bg-slate-800 transition-all flex items-center justify-center gap-3 active:scale-95"
             >
               Initialize Access <ChevronRight size={18} strokeWidth={3} />
             </Link>
             <Link
               href="/explore"
-              className="w-full sm:w-auto px-12 py-5 bg-white text-[var(--color-heading)] border border-[var(--color-border)] rounded-2xl font-black text-xs uppercase tracking-[0.2em] hover:bg-slate-50 transition-all flex items-center justify-center"
+              className="w-full sm:w-auto px-12 py-5 bg-white text-heading border border-border rounded-2xl font-black text-xs uppercase tracking-[0.2em] hover:bg-slate-50 transition-all flex items-center justify-center"
             >
               Verify Grid
             </Link>

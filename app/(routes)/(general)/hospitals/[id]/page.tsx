@@ -52,19 +52,19 @@ export default async function HospitalPage({ params }: PageProps) {
   } catch (error) {
     return (
       <div className="min-h-screen pt-24 flex items-center justify-center p-6 bg-slate-50">
-        <div className="max-w-md w-full bg-white rounded-[2.5rem] border border-[var(--color-border)] p-10 text-center shadow-sm">
+        <div className="max-w-md w-full bg-white rounded-[2.5rem] border border-border p-10 text-center shadow-sm">
           <div className="w-20 h-20 bg-red-50 rounded-3xl flex items-center justify-center mx-auto mb-6 border border-red-100">
-            <AlertCircle className="w-10 h-10 text-[var(--color-error)]" />
+            <AlertCircle className="w-10 h-10 text-error" />
           </div>
-          <h1 className="text-2xl font-black text-[var(--color-heading)] tracking-tighter uppercase mb-2">
+          <h1 className="text-2xl font-black text-heading tracking-tighter uppercase mb-2">
             System Error
           </h1>
-          <p className="text-[var(--color-muted)] text-sm font-medium mb-8">
+          <p className="text-muted text-sm font-medium mb-8">
             An error occurred while loading this facility&apos;s dossier.
           </p>
           <Link
             href="/explore"
-            className="inline-block px-8 py-4 bg-[var(--color-heading)] text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-800 transition-all shadow-xl shadow-slate-100"
+            className="inline-block px-8 py-4 bg-heading text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-800 transition-all shadow-xl shadow-slate-100"
           >
             Back to Explore
           </Link>

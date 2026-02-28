@@ -27,7 +27,7 @@ export default async function EditDoctorPage({
       {/* ── Breadcrumb / Back Link ── */}
       <Link
         href="/admin/doctors"
-        className="inline-flex items-center gap-2 text-xs font-bold text-[var(--color-muted)] hover:text-[var(--color-accent)] transition-colors group"
+        className="inline-flex items-center gap-2 text-xs font-bold text-muted hover:text-accent transition-colors group"
       >
         <ChevronLeft
           size={14}
@@ -39,16 +39,16 @@ export default async function EditDoctorPage({
       {/* ── Page Header (NearH Pattern) ── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-[var(--color-badge-bg)] border border-[var(--color-border)] flex items-center justify-center shadow-sm flex-shrink-0">
-            <UserPen size={24} className="text-[var(--color-accent)]" />
+          <div className="w-12 h-12 rounded-2xl bg-badge-bg border border-border flex items-center justify-center shadow-sm flex-shrink-0">
+            <UserPen size={24} className="text-accent" />
           </div>
           <div>
-            <h1 className="text-2xl font-black text-[var(--color-heading)] tracking-tight leading-none">
+            <h1 className="text-2xl font-black text-heading tracking-tight leading-none">
               Edit Doctor Profile
             </h1>
-            <p className="text-sm text-[var(--color-muted)] mt-1">
+            <p className="text-sm text-muted mt-1">
               Updating clinical details and availability for{" "}
-              <span className="text-[var(--color-heading)] font-bold">
+              <span className="text-heading font-bold">
                 Dr. {doctorRes.data.name}
               </span>
             </p>
@@ -56,7 +56,7 @@ export default async function EditDoctorPage({
         </div>
       </div>
 
-      <div className="h-px bg-[var(--color-border)]" />
+      <div className="h-px bg-border" />
 
       {/* ── Form Container ── */}
       <div className="max-w-4xl">

@@ -90,12 +90,12 @@ export default function NewReferralForm({ specialties, locations }: Props) {
       {/* ── Step 1: Hospital Discovery ── */}
       {step === 1 && (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-          <section className="bg-white p-6 md:p-8 rounded-[2rem] border border-[var(--color-border)] shadow-sm">
+          <section className="bg-white p-6 md:p-8 rounded-[2rem] border border-border shadow-sm">
             <div className="flex items-center gap-2 mb-6">
-              <span className="w-6 h-6 rounded-full bg-[var(--color-heading)] text-white text-[10px] flex items-center justify-center font-black">
+              <span className="w-6 h-6 rounded-full bg-heading text-white text-[10px] flex items-center justify-center font-black">
                 01
               </span>
-              <h2 className="text-xs font-black text-[var(--color-muted)] uppercase tracking-widest">
+              <h2 className="text-xs font-black text-muted uppercase tracking-widest">
                 Select Target Facility
               </h2>
             </div>
@@ -105,10 +105,10 @@ export default function NewReferralForm({ specialties, locations }: Props) {
               className="flex flex-col sm:flex-row gap-4"
             >
               <div className="relative flex-1 group">
-                <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-muted)] group-focus-within:text-[var(--color-accent)] transition-colors" />
+                <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted group-focus-within:text-accent transition-colors" />
                 <select
                   name="city"
-                  className="w-full pl-11 pr-10 py-4 bg-[var(--color-badge-bg)]/50 border border-[var(--color-border)] rounded-2xl outline-none focus:bg-white focus:ring-2 focus:ring-[var(--color-accent)]/10 focus:border-[var(--color-accent)] appearance-none font-bold text-[var(--color-heading)] transition-all cursor-pointer"
+                  className="w-full pl-11 pr-10 py-4 bg-badge-bg/50 border border-border rounded-2xl outline-none focus:bg-white focus:ring-2 focus:ring-accent/10 focus:border-accent appearance-none font-bold text-heading transition-all cursor-pointer"
                 >
                   <option value="">Search across all cities</option>
                   {locations.map((l) => (
@@ -118,14 +118,14 @@ export default function NewReferralForm({ specialties, locations }: Props) {
                   ))}
                 </select>
                 {/* Custom Chevron */}
-                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[var(--color-muted)] group-hover:text-[var(--color-heading)] transition-colors">
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted group-hover:text-heading transition-colors">
                   <ChevronDown size={18} strokeWidth={3} />
                 </div>
               </div>
               <button
                 type="submit"
                 disabled={searching}
-                className="px-10 py-4 bg-[var(--color-heading)] text-white rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-slate-800 disabled:opacity-50 transition-all shadow-xl shadow-slate-200"
+                className="px-10 py-4 bg-heading text-white rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-slate-800 disabled:opacity-50 transition-all shadow-xl shadow-slate-200"
               >
                 {searching ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -139,12 +139,12 @@ export default function NewReferralForm({ specialties, locations }: Props) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {searchResults.length === 0 && !searching && (
-              <div className="md:col-span-2 py-20 text-center bg-[var(--color-badge-bg)]/20 rounded-[2.5rem] border-2 border-dashed border-[var(--color-border)]">
-                <Building2 className="w-12 h-12 text-[var(--color-border)] mx-auto mb-4" />
-                <p className="text-[var(--color-muted)] font-black text-xs uppercase tracking-widest">
+              <div className="md:col-span-2 py-20 text-center bg-badge-bg/20 rounded-[2.5rem] border-2 border-dashed border-border">
+                <Building2 className="w-12 h-12 text-border mx-auto mb-4" />
+                <p className="text-muted font-black text-xs uppercase tracking-widest">
                   No facilities selected
                 </p>
-                <p className="text-[var(--color-muted)] text-[10px] mt-1 italic">
+                <p className="text-muted text-[10px] mt-1 italic">
                   Choose a city above to view real-time availability
                 </p>
               </div>
@@ -157,21 +157,21 @@ export default function NewReferralForm({ specialties, locations }: Props) {
                   setSelectedHospital(h);
                   setStep(2);
                 }}
-                className="text-left p-6 bg-white border border-[var(--color-border)] rounded-[2rem] hover:border-[var(--color-accent)] hover:shadow-xl hover:shadow-[var(--color-accent)]/5 transition-all group relative"
+                className="text-left p-6 bg-white border border-border rounded-[2rem] hover:border-accent hover:shadow-xl hover:shadow-accent/5 transition-all group relative"
               >
                 <div className="flex justify-between items-start mb-6">
                   <div className="min-w-0">
-                    <h3 className="font-black text-[var(--color-heading)] text-lg truncate tracking-tight group-hover:text-[var(--color-accent)] transition-colors">
+                    <h3 className="font-black text-heading text-lg truncate tracking-tight group-hover:text-accent transition-colors">
                       {h.name}
                     </h3>
                     <div className="flex items-center gap-1.5 mt-1">
-                      <div className="w-1.5 h-1.5 rounded-full bg-[var(--color-success)] animate-pulse" />
-                      <span className="text-[10px] font-bold text-[var(--color-muted)] uppercase tracking-tight">
+                      <div className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
+                      <span className="text-[10px] font-bold text-muted uppercase tracking-tight">
                         Verified Facility
                       </span>
                     </div>
                   </div>
-                  <div className="w-8 h-8 rounded-full bg-[var(--color-badge-bg)] flex items-center justify-center text-[var(--color-muted)] group-hover:bg-[var(--color-accent)] group-hover:text-white transition-all">
+                  <div className="w-8 h-8 rounded-full bg-badge-bg flex items-center justify-center text-muted group-hover:bg-accent group-hover:text-white transition-all">
                     <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
                   </div>
                 </div>
@@ -206,23 +206,23 @@ export default function NewReferralForm({ specialties, locations }: Props) {
           onSubmit={onSubmit}
           className="space-y-6 animate-in zoom-in-95 duration-300"
         >
-          <div className="bg-white p-6 md:p-8 rounded-[2.5rem] border border-[var(--color-border)] shadow-sm space-y-8">
+          <div className="bg-white p-6 md:p-8 rounded-[2.5rem] border border-border shadow-sm space-y-8">
             <div className="flex items-center gap-4 pb-6 border-b border-slate-50">
-              <div className="w-14 h-14 bg-[var(--color-badge-bg)] text-[var(--color-accent)] rounded-2xl border border-[var(--color-border)] flex items-center justify-center flex-shrink-0">
+              <div className="w-14 h-14 bg-badge-bg text-accent rounded-2xl border border-border flex items-center justify-center flex-shrink-0">
                 <Building2 className="w-7 h-7" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-[10px] font-black text-[var(--color-muted)] uppercase tracking-[0.2em] leading-none mb-1">
+                <p className="text-[10px] font-black text-muted uppercase tracking-[0.2em] leading-none mb-1">
                   Receiving Facility
                 </p>
-                <p className="text-xl font-black text-[var(--color-heading)] truncate tracking-tight uppercase leading-none">
+                <p className="text-xl font-black text-heading truncate tracking-tight uppercase leading-none">
                   {selectedHospital.name}
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => setStep(1)}
-                className="px-4 py-2 text-[10px] font-black text-[var(--color-accent)] uppercase tracking-widest bg-[var(--color-badge-bg)] rounded-xl border border-[var(--color-border)] hover:bg-white transition-all"
+                className="px-4 py-2 text-[10px] font-black text-accent uppercase tracking-widest bg-badge-bg rounded-xl border border-border hover:bg-white transition-all"
               >
                 Change
               </button>
@@ -230,21 +230,21 @@ export default function NewReferralForm({ specialties, locations }: Props) {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
               <div className="md:col-span-2 space-y-2">
-                <label className="text-[10px] font-black text-[var(--color-muted)] uppercase tracking-widest ml-1 flex items-center gap-2">
-                  <User size={12} className="text-[var(--color-accent)]" />{" "}
+                <label className="text-[10px] font-black text-muted uppercase tracking-widest ml-1 flex items-center gap-2">
+                  <User size={12} className="text-accent" />{" "}
                   Patient Full Name
                 </label>
                 <input
                   name="patient_name"
                   required
                   placeholder="Full name as per ID"
-                  className="w-full px-5 py-4 bg-[var(--color-badge-bg)]/30 border border-[var(--color-border)] rounded-2xl outline-none focus:bg-white focus:ring-2 focus:ring-[var(--color-accent)]/10 focus:border-[var(--color-accent)] font-bold text-[var(--color-heading)] transition-all"
+                  className="w-full px-5 py-4 bg-badge-bg/30 border border-border rounded-2xl outline-none focus:bg-white focus:ring-2 focus:ring-accent/10 focus:border-accent font-bold text-heading transition-all"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-[var(--color-muted)] uppercase tracking-widest ml-1">
+                  <label className="text-[10px] font-black text-muted uppercase tracking-widest ml-1">
                     Age
                   </label>
                   <input
@@ -253,17 +253,17 @@ export default function NewReferralForm({ specialties, locations }: Props) {
                     required
                     min="0"
                     placeholder="00"
-                    className="w-full px-5 py-4 bg-[var(--color-badge-bg)]/30 border border-[var(--color-border)] rounded-2xl outline-none focus:bg-white focus:ring-2 focus:ring-[var(--color-accent)]/10 focus:border-[var(--color-accent)] font-bold text-[var(--color-heading)] transition-all"
+                    className="w-full px-5 py-4 bg-badge-bg/30 border border-border rounded-2xl outline-none focus:bg-white focus:ring-2 focus:ring-accent/10 focus:border-accent font-bold text-heading transition-all"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-[var(--color-muted)] uppercase tracking-widest ml-1">
+                  <label className="text-[10px] font-black text-muted uppercase tracking-widest ml-1">
                     Gender
                   </label>
                   <div className="relative">
                     <select
                       name="gender"
-                      className="w-full pl-5 pr-10 py-4 bg-[var(--color-badge-bg)]/30 border border-[var(--color-border)] rounded-2xl outline-none focus:bg-white focus:ring-2 focus:ring-[var(--color-accent)]/10 focus:border-[var(--color-accent)] font-bold text-[var(--color-heading)] transition-all appearance-none cursor-pointer"
+                      className="w-full pl-5 pr-10 py-4 bg-badge-bg/30 border border-border rounded-2xl outline-none focus:bg-white focus:ring-2 focus:ring-accent/10 focus:border-accent font-bold text-heading transition-all appearance-none cursor-pointer"
                     >
                       <option>Male</option>
                       <option>Female</option>
@@ -271,17 +271,17 @@ export default function NewReferralForm({ specialties, locations }: Props) {
                     </select>
                     <ChevronDown
                       size={14}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--color-muted)] pointer-events-none"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-muted pointer-events-none"
                     />
                   </div>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-[var(--color-muted)] uppercase tracking-widest ml-1 flex items-center gap-2">
+                <label className="text-[10px] font-black text-muted uppercase tracking-widest ml-1 flex items-center gap-2">
                   <Stethoscope
                     size={12}
-                    className="text-[var(--color-accent)]"
+                    className="text-accent"
                   />{" "}
                   Required Specialty
                 </label>
@@ -289,7 +289,7 @@ export default function NewReferralForm({ specialties, locations }: Props) {
                   <select
                     name="specialty"
                     required
-                    className="w-full pl-5 pr-10 py-4 bg-[var(--color-badge-bg)]/30 border border-[var(--color-border)] rounded-2xl outline-none focus:bg-white focus:ring-2 focus:ring-[var(--color-accent)]/10 focus:border-[var(--color-accent)] font-bold text-[var(--color-heading)] transition-all appearance-none cursor-pointer"
+                    className="w-full pl-5 pr-10 py-4 bg-badge-bg/30 border border-border rounded-2xl outline-none focus:bg-white focus:ring-2 focus:ring-accent/10 focus:border-accent font-bold text-heading transition-all appearance-none cursor-pointer"
                   >
                     {specialties.map((s) => (
                       <option key={s.id} value={s.id}>
@@ -299,23 +299,23 @@ export default function NewReferralForm({ specialties, locations }: Props) {
                   </select>
                   <ChevronDown
                     size={14}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--color-muted)] pointer-events-none"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-muted pointer-events-none"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-[var(--color-muted)] uppercase tracking-widest ml-1 flex items-center gap-2">
+                <label className="text-[10px] font-black text-muted uppercase tracking-widest ml-1 flex items-center gap-2">
                   <AlertTriangle
                     size={12}
-                    className="text-[var(--color-error)]"
+                    className="text-error"
                   />{" "}
                   Priority Level
                 </label>
                 <div className="relative">
                   <select
                     name="priority"
-                    className="w-full pl-5 pr-10 py-4 bg-red-50 border border-red-100 rounded-2xl outline-none focus:ring-2 focus:ring-[var(--color-error)]/10 focus:border-[var(--color-error)] font-black text-[var(--color-error)] transition-all appearance-none cursor-pointer uppercase text-xs"
+                    className="w-full pl-5 pr-10 py-4 bg-red-50 border border-red-100 rounded-2xl outline-none focus:ring-2 focus:ring-error/10 focus:border-error font-black text-error transition-all appearance-none cursor-pointer uppercase text-xs"
                   >
                     <option value="Routine">Routine</option>
                     <option value="Urgent">Urgent</option>
@@ -323,20 +323,20 @@ export default function NewReferralForm({ specialties, locations }: Props) {
                   </select>
                   <ChevronDown
                     size={14}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--color-error)] pointer-events-none"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-error pointer-events-none"
                   />
                 </div>
               </div>
 
               <div className="md:col-span-2 space-y-2">
-                <label className="text-[10px] font-black text-[var(--color-muted)] uppercase tracking-widest ml-1">
+                <label className="text-[10px] font-black text-muted uppercase tracking-widest ml-1">
                   Clinical Reason / Notes
                 </label>
                 <textarea
                   name="reason"
                   rows={4}
                   required
-                  className="w-full p-5 bg-[var(--color-badge-bg)]/30 border border-[var(--color-border)] rounded-3xl outline-none focus:bg-white focus:ring-2 focus:ring-[var(--color-accent)]/10 focus:border-[var(--color-accent)] font-medium text-sm leading-relaxed"
+                  className="w-full p-5 bg-badge-bg/30 border border-border rounded-3xl outline-none focus:bg-white focus:ring-2 focus:ring-accent/10 focus:border-accent font-medium text-sm leading-relaxed"
                   placeholder="Explain why the patient needs a transfer..."
                 />
               </div>
@@ -345,7 +345,7 @@ export default function NewReferralForm({ specialties, locations }: Props) {
             <button
               type="submit"
               disabled={isPending}
-              className="w-full py-5 bg-[var(--color-accent)] text-white rounded-[2rem] font-black text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-xl shadow-[var(--color-accent)]/20 hover:bg-[var(--color-accent-hover)] active:scale-[0.98] transition-all disabled:opacity-50"
+              className="w-full py-5 bg-accent text-white rounded-[2rem] font-black text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-xl shadow-accent/20 hover:bg-accent-hover active:scale-[0.98] transition-all disabled:opacity-50"
             >
               {isPending ? (
                 <Loader2 className="w-5 h-5 animate-spin" />

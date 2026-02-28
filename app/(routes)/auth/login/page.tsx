@@ -83,7 +83,7 @@ export default function LoginPage() {
         transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
         className="absolute top-8 left-10 flex items-center gap-2.5 z-20"
       >
-        <div className="w-9 h-9 rounded-xl bg-[var(--color-accent)] flex items-center justify-center shadow-lg shadow-[var(--color-accent)]/40">
+        <div className="w-9 h-9 rounded-xl bg-accent flex items-center justify-center shadow-lg shadow-accent/40">
           <Activity size={18} className="text-white" />
         </div>
         <Link
@@ -137,19 +137,19 @@ export default function LoginPage() {
           className="w-full max-w-sm bg-white rounded-3xl shadow-2xl shadow-black/30 overflow-hidden"
         >
           {/* Card top accent */}
-          <div className="h-1.5 w-full bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-link)]" />
+          <div className="h-1.5 w-full bg-gradient-to-r from-accent to-link" />
 
           <div className="p-8">
             {/* Header */}
             <div className="mb-7">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--color-badge-bg)] border border-[var(--color-border)] text-[var(--color-accent)] text-[10px] font-bold uppercase tracking-widest mb-4">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-badge-bg border border-border text-accent text-[10px] font-bold uppercase tracking-widest mb-4">
                 <ShieldCheck size={11} />
                 Hospital Portal
               </div>
-              <h2 className="text-2xl font-black text-[var(--color-heading)] tracking-tight leading-tight">
+              <h2 className="text-2xl font-black text-heading tracking-tight leading-tight">
                 Welcome back
               </h2>
-              <p className="text-sm text-[var(--color-muted)] mt-1">
+              <p className="text-sm text-muted mt-1">
                 Sign in to your hospital dashboard
               </p>
             </div>
@@ -163,9 +163,9 @@ export default function LoginPage() {
               >
                 <Heart
                   size={14}
-                  className="text-[var(--color-error)] flex-shrink-0 mt-0.5"
+                  className="text-error flex-shrink-0 mt-0.5"
                 />
-                <p className="text-sm text-[var(--color-error)] font-medium">
+                <p className="text-sm text-error font-medium">
                   {serverError}
                 </p>
               </motion.div>
@@ -177,25 +177,25 @@ export default function LoginPage() {
               <div className="space-y-1.5">
                 <label
                   htmlFor="email"
-                  className="text-[10px] font-bold text-[var(--color-heading)] uppercase tracking-widest block"
+                  className="text-[10px] font-bold text-heading uppercase tracking-widest block"
                 >
                   Official Email
                 </label>
                 <div className="relative group">
                   <Mail
                     size={15}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--color-muted)] group-focus-within:text-[var(--color-accent)] transition-colors"
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-muted group-focus-within:text-accent transition-colors"
                   />
                   <input
                     id="email"
                     {...register("email")}
                     type="email"
                     placeholder="admin@hospital.com"
-                    className="w-full pl-11 pr-4 py-3 bg-[var(--color-badge-bg)] border border-[var(--color-border)] rounded-xl text-sm font-semibold text-[var(--color-heading)] placeholder:text-[var(--color-muted)] placeholder:font-normal outline-none focus:bg-white focus:border-[var(--color-accent)] focus:ring-4 focus:ring-[var(--color-accent)]/10 transition-all"
+                    className="w-full pl-11 pr-4 py-3 bg-badge-bg border border-border rounded-xl text-sm font-semibold text-heading placeholder:text-muted placeholder:font-normal outline-none focus:bg-white focus:border-accent focus:ring-4 focus:ring-accent/10 transition-all"
                   />
                 </div>
                 {errors.email && (
-                  <p className="text-xs text-[var(--color-error)] font-semibold pl-1">
+                  <p className="text-xs text-error font-semibold pl-1">
                     {errors.email.message}
                   </p>
                 )}
@@ -206,13 +206,13 @@ export default function LoginPage() {
                 <div className="flex items-center justify-between">
                   <label
                     htmlFor="password"
-                    className="text-[10px] font-bold text-[var(--color-heading)] uppercase tracking-widest"
+                    className="text-[10px] font-bold text-heading uppercase tracking-widest"
                   >
                     Password
                   </label>
                   <Link
                     href="/auth/forgot-password"
-                    className="text-[10px] font-bold text-[var(--color-accent)] hover:underline uppercase tracking-widest"
+                    className="text-[10px] font-bold text-accent hover:underline uppercase tracking-widest"
                   >
                     Forgot?
                   </Link>
@@ -220,25 +220,25 @@ export default function LoginPage() {
                 <div className="relative group">
                   <Lock
                     size={15}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--color-muted)] group-focus-within:text-[var(--color-accent)] transition-colors"
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-muted group-focus-within:text-accent transition-colors"
                   />
                   <input
                     id="password"
                     {...register("password")}
                     type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
-                    className="w-full pl-11 pr-12 py-3 bg-[var(--color-badge-bg)] border border-[var(--color-border)] rounded-xl text-sm font-semibold text-[var(--color-heading)] placeholder:text-[var(--color-muted)] outline-none focus:bg-white focus:border-[var(--color-accent)] focus:ring-4 focus:ring-[var(--color-accent)]/10 transition-all"
+                    className="w-full pl-11 pr-12 py-3 bg-badge-bg border border-border rounded-xl text-sm font-semibold text-heading placeholder:text-muted outline-none focus:bg-white focus:border-accent focus:ring-4 focus:ring-accent/10 transition-all"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword((v) => !v)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--color-muted)] hover:text-[var(--color-heading)] transition-colors"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-muted hover:text-heading transition-colors"
                   >
                     {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
                   </button>
                 </div>
                 {errors.password && (
-                  <p className="text-xs text-[var(--color-error)] font-semibold pl-1">
+                  <p className="text-xs text-error font-semibold pl-1">
                     {errors.password.message}
                   </p>
                 )}
@@ -248,7 +248,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full flex items-center justify-center gap-2.5 py-3.5 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-white text-sm font-black rounded-xl shadow-lg shadow-[var(--color-accent)]/30 disabled:opacity-60 disabled:cursor-not-allowed active:scale-[0.98] transition-all mt-1"
+                className="w-full flex items-center justify-center gap-2.5 py-3.5 bg-accent hover:bg-accent-hover text-white text-sm font-black rounded-xl shadow-lg shadow-accent/30 disabled:opacity-60 disabled:cursor-not-allowed active:scale-[0.98] transition-all mt-1"
               >
                 {isLoading ? (
                   <>
@@ -265,20 +265,20 @@ export default function LoginPage() {
             </form>
 
             {/* Footer */}
-            <p className="text-sm text-center text-[var(--color-muted)] mt-6">
+            <p className="text-sm text-center text-muted mt-6">
               New hospital?{" "}
               <Link
                 href="/auth/signup"
-                className="font-bold text-[var(--color-accent)] hover:underline"
+                className="font-bold text-accent hover:underline"
               >
                 Register here
               </Link>
             </p>
 
             {/* Trust */}
-            <div className="flex items-center justify-center gap-2 mt-5 pt-5 border-t border-[var(--color-border)]">
-              <ShieldCheck size={12} className="text-[var(--color-muted)]" />
-              <p className="text-[9px] text-[var(--color-muted)] font-bold uppercase tracking-widest">
+            <div className="flex items-center justify-center gap-2 mt-5 pt-5 border-t border-border">
+              <ShieldCheck size={12} className="text-muted" />
+              <p className="text-[9px] text-muted font-bold uppercase tracking-widest">
                 256-bit encrypted · HIPAA compliant
               </p>
             </div>

@@ -26,21 +26,21 @@ export default async function ReferralsPage() {
       {/* ── Page Header (NearH Pattern) ── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-[var(--color-accent)] flex items-center justify-center shadow-lg shadow-[var(--color-accent)]/20 flex-shrink-0">
+          <div className="w-12 h-12 rounded-2xl bg-accent flex items-center justify-center shadow-lg shadow-accent/20 flex-shrink-0">
             <ArrowLeftRight size={24} className="text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-black text-[var(--color-heading)] tracking-tight leading-none">
+            <h1 className="text-2xl font-black text-heading tracking-tight leading-none">
               Patient Referrals
             </h1>
-            <p className="text-sm text-[var(--color-muted)] mt-1">
+            <p className="text-sm text-muted mt-1">
               Track and manage inter-hospital patient transfers in real-time
             </p>
           </div>
         </div>
       </div>
 
-      <div className="h-px bg-[var(--color-border)]" />
+      <div className="h-px bg-border" />
 
       <ReferralClientPage initialData={data || []} hospitalId={hospitalId} />
     </div>

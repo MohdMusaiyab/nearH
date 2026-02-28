@@ -40,7 +40,7 @@ function InventorySettingsContent() {
   const handleInitBlood = () => {
     modal.confirm({
       title: (
-        <span className="font-black text-[var(--color-heading)]">
+        <span className="font-black text-heading">
           Initialize Blood Bank?
         </span>
       ),
@@ -103,8 +103,8 @@ function InventorySettingsContent() {
   if (loading)
     return (
       <div className="flex flex-col items-center justify-center py-20 animate-pulse">
-        <Loader2 className="w-8 h-8 text-[var(--color-accent)] animate-spin mb-4" />
-        <p className="text-xs font-black text-[var(--color-muted)] uppercase tracking-widest">
+        <Loader2 className="w-8 h-8 text-accent animate-spin mb-4" />
+        <p className="text-xs font-black text-muted uppercase tracking-widest">
           Loading Infrastructure Data...
         </p>
       </div>
@@ -115,39 +115,39 @@ function InventorySettingsContent() {
       {/* ── Page Header (NearH Pattern) ── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-[var(--color-heading)] flex items-center justify-center shadow-lg shadow-slate-200 flex-shrink-0">
+          <div className="w-12 h-12 rounded-2xl bg-heading flex items-center justify-center shadow-lg shadow-slate-200 flex-shrink-0">
             <Settings2 size={24} className="text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-black text-[var(--color-heading)] tracking-tight leading-none">
+            <h1 className="text-2xl font-black text-heading tracking-tight leading-none">
               Infrastructure Settings
             </h1>
-            <p className="text-sm text-[var(--color-muted)] mt-1">
+            <p className="text-sm text-muted mt-1">
               Configure baseline capacities for beds, equipment, and resources.
             </p>
           </div>
         </div>
       </div>
 
-      <div className="h-px bg-[var(--color-border)]" />
+      <div className="h-px bg-border" />
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left Col: Setup Assistants */}
         <div className="lg:col-span-4 space-y-6 order-2 lg:order-1">
-          <div className="bg-[var(--color-badge-bg)]/30 border border-[var(--color-border)] p-6 rounded-2xl">
-            <div className="w-10 h-10 rounded-xl bg-white border border-[var(--color-border)] flex items-center justify-center mb-4">
+          <div className="bg-badge-bg/30 border border-border p-6 rounded-2xl">
+            <div className="w-10 h-10 rounded-xl bg-white border border-border flex items-center justify-center mb-4">
               <Droplets className="w-5 h-5 text-red-500" />
             </div>
-            <h3 className="font-black text-[var(--color-heading)] text-sm uppercase tracking-tight mb-2">
+            <h3 className="font-black text-heading text-sm uppercase tracking-tight mb-2">
               Blood Bank Setup
             </h3>
-            <p className="text-xs text-[var(--color-muted)] font-medium leading-relaxed mb-5">
+            <p className="text-xs text-muted font-medium leading-relaxed mb-5">
               If your hospital maintains a blood bank but the dashboard shows no
               stock groups, use this to initialize the system.
             </p>
             <button
               onClick={handleInitBlood}
-              className="w-full py-3 bg-white border border-[var(--color-border)] text-[var(--color-heading)] rounded-xl text-xs font-black hover:bg-[var(--color-badge-bg)] transition-all shadow-sm active:scale-95"
+              className="w-full py-3 bg-white border border-border text-heading rounded-xl text-xs font-black hover:bg-badge-bg transition-all shadow-sm active:scale-95"
             >
               Initialize Standard Groups
             </button>
@@ -173,7 +173,7 @@ function InventorySettingsContent() {
           onSubmit={handleSubmit}
           className="lg:col-span-8 space-y-6 order-1 lg:order-2"
         >
-          <div className="bg-white p-6 md:p-8 rounded-3xl border border-[var(--color-border)] shadow-sm space-y-8">
+          <div className="bg-white p-6 md:p-8 rounded-3xl border border-border shadow-sm space-y-8">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6">
               {[
                 {
@@ -202,7 +202,7 @@ function InventorySettingsContent() {
                 },
               ].map((field) => (
                 <div key={field.name} className="space-y-2.5">
-                  <label className="text-[10px] font-black text-[var(--color-muted)] uppercase tracking-widest flex items-center gap-2">
+                  <label className="text-[10px] font-black text-muted uppercase tracking-widest flex items-center gap-2">
                     <field.icon className="w-3 h-3" /> {field.label}
                   </label>
                   <input
@@ -213,20 +213,20 @@ function InventorySettingsContent() {
                     onKeyDown={(e) =>
                       (e.key === "-" || e.key === "e") && e.preventDefault()
                     }
-                    className="w-full p-3.5 bg-slate-50 border border-[var(--color-border)] rounded-2xl text-lg font-black text-[var(--color-heading)] focus:bg-white focus:ring-2 focus:ring-[var(--color-accent)]/10 focus:border-[var(--color-accent)] outline-none transition-all"
+                    className="w-full p-3.5 bg-slate-50 border border-border rounded-2xl text-lg font-black text-heading focus:bg-white focus:ring-2 focus:ring-accent/10 focus:border-accent outline-none transition-all"
                   />
                 </div>
               ))}
             </div>
 
             <div className="pt-6 border-t border-slate-50">
-              <label className="text-[10px] font-black text-[var(--color-muted)] uppercase tracking-widest block mb-3">
+              <label className="text-[10px] font-black text-muted uppercase tracking-widest block mb-3">
                 Liquid Medical Oxygen (LMO) Plant
               </label>
               <select
                 name="oxygen_status"
                 defaultValue={String(data?.oxygen_status)}
-                className="w-full p-4 bg-slate-50 border border-[var(--color-border)] rounded-2xl text-sm font-bold text-[var(--color-heading)] focus:bg-white outline-none transition-all appearance-none"
+                className="w-full p-4 bg-slate-50 border border-border rounded-2xl text-sm font-bold text-heading focus:bg-white outline-none transition-all appearance-none"
               >
                 <option value="true">
                   Facility Equipped with Functional Plant
@@ -240,7 +240,7 @@ function InventorySettingsContent() {
             <button
               type="submit"
               disabled={saving}
-              className="w-full py-4.5 bg-[var(--color-heading)] text-white rounded-2xl font-black flex items-center justify-center gap-3 hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 disabled:opacity-50"
+              className="w-full py-4.5 bg-heading text-white rounded-2xl font-black flex items-center justify-center gap-3 hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 disabled:opacity-50"
             >
               {saving ? (
                 <Loader2 className="w-5 h-5 animate-spin" />

@@ -21,14 +21,14 @@ export default function SecurityPage() {
       />
 
       <div className="max-w-4xl mx-auto px-6 relative z-10">
-        <div className="mb-16 border-b border-[var(--color-border)] pb-10">
+        <div className="mb-16 border-b border-border pb-10">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-600 text-[10px] font-black uppercase tracking-widest mb-6 border border-emerald-100">
             <ShieldAlert size={14} /> Network Integrity Status: Active
           </div>
-          <h1 className="text-5xl lg:text-7xl font-black text-[var(--color-heading)] tracking-tighter uppercase leading-none">
+          <h1 className="text-5xl lg:text-7xl font-black text-heading tracking-tighter uppercase leading-none">
             Security <span className="text-emerald-500">Protocols.</span>
           </h1>
-          <p className="mt-6 text-[var(--color-muted)] text-sm font-bold uppercase tracking-widest">
+          <p className="mt-6 text-muted text-sm font-bold uppercase tracking-widest">
             NearH Platform Hardening & Data Encryption Standards
           </p>
         </div>
@@ -57,7 +57,7 @@ export default function SecurityPage() {
           />
         </div>
 
-        <section className="bg-[var(--color-heading)] text-white p-12 rounded-[3rem] relative overflow-hidden shadow-2xl">
+        <section className="bg-heading text-white p-12 rounded-[3rem] relative overflow-hidden shadow-2xl">
           <div className="relative z-10">
             <h3 className="text-2xl font-black uppercase tracking-tight mb-6">
               Responsible Disclosure
@@ -68,7 +68,7 @@ export default function SecurityPage() {
             </p>
             <a
               href="mailto:musaiyab2003@gmail.com?subject=Vulnerability Report - NearH Grid"
-              className="px-8 py-4 bg-[var(--color-accent)] rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-600 transition-all shadow-xl shadow-blue-500/20 inline-block"
+              className="px-8 py-4 bg-accent rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-600 transition-all shadow-xl shadow-blue-500/20 inline-block"
             >
               Report Vulnerability
             </a>
@@ -93,14 +93,14 @@ function SecurityCard({
   desc: string;
 }) {
   return (
-    <div className="p-8 bg-white border border-[var(--color-border)] rounded-[2.5rem] hover:border-[var(--color-accent)]/30 transition-all group">
-      <div className="w-12 h-12 rounded-xl bg-[var(--color-badge-bg)] text-[var(--color-accent)] flex items-center justify-center mb-6 group-hover:bg-[var(--color-accent)] group-hover:text-white transition-all">
+    <div className="p-8 bg-white border border-border rounded-[2.5rem] hover:border-accent/30 transition-all group">
+      <div className="w-12 h-12 rounded-xl bg-badge-bg text-accent flex items-center justify-center mb-6 group-hover:bg-accent group-hover:text-white transition-all">
         {React.cloneElement(icon as React.ReactElement, {})}
       </div>
-      <h4 className="text-lg font-black text-[var(--color-heading)] uppercase tracking-tight mb-3">
+      <h4 className="text-lg font-black text-heading uppercase tracking-tight mb-3">
         {title}
       </h4>
-      <p className="text-[var(--color-muted)] text-xs font-medium leading-relaxed">
+      <p className="text-muted text-xs font-medium leading-relaxed">
         {desc}
       </p>
     </div>

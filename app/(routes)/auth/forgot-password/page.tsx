@@ -47,7 +47,7 @@ export default function ForgotPasswordPage() {
 
       {/* ── Top-left logo ── */}
       <div className="absolute top-8 left-10 flex items-center gap-2.5 z-20">
-        <div className="w-9 h-9 rounded-xl bg-[var(--color-accent)] flex items-center justify-center shadow-lg shadow-[var(--color-accent)]/40">
+        <div className="w-9 h-9 rounded-xl bg-accent flex items-center justify-center shadow-lg shadow-accent/40">
           <Activity size={18} className="text-white" />
         </div>
         <Link
@@ -67,22 +67,22 @@ export default function ForgotPasswordPage() {
           className="w-full max-w-sm bg-white rounded-3xl shadow-2xl shadow-black/30 overflow-hidden"
         >
           {/* Card top accent */}
-          <div className="h-1.5 w-full bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-link)]" />
+          <div className="h-1.5 w-full bg-gradient-to-r from-accent to-link" />
 
           <div className="p-8">
             {/* Header */}
             <div className="mb-7">
               <Link
                 href="/auth/login"
-                className="inline-flex items-center gap-2 text-[10px] font-bold text-[var(--color-accent)] uppercase tracking-widest hover:underline mb-4"
+                className="inline-flex items-center gap-2 text-[10px] font-bold text-accent uppercase tracking-widest hover:underline mb-4"
               >
                 <ArrowLeft size={12} /> Back to Login
               </Link>
-              <h2 className="text-2xl font-black text-[var(--color-heading)] tracking-tight leading-tight">
+              <h2 className="text-2xl font-black text-heading tracking-tight leading-tight">
                 Recover{" "}
-                <span className="text-[var(--color-accent)]">Access.</span>
+                <span className="text-accent">Access.</span>
               </h2>
-              <p className="text-sm text-[var(--color-muted)] mt-1">
+              <p className="text-sm text-muted mt-1">
                 Enter your email to receive a secure reset link.
               </p>
             </div>
@@ -109,13 +109,13 @@ export default function ForgotPasswordPage() {
                 <div className="space-y-1.5">
                   <label
                     htmlFor="email"
-                    className="text-[10px] font-bold text-[var(--color-heading)] uppercase tracking-widest ml-1"
+                    className="text-[10px] font-bold text-heading uppercase tracking-widest ml-1"
                   >
                     Official Email
                   </label>
                   <div className="relative group">
                     <Mail
-                      className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--color-muted)] group-focus-within:text-[var(--color-accent)] transition-colors"
+                      className="absolute left-4 top-1/2 -translate-y-1/2 text-muted group-focus-within:text-accent transition-colors"
                       size={15}
                     />
                     <input
@@ -124,14 +124,14 @@ export default function ForgotPasswordPage() {
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="w-full pl-11 pr-4 py-3 bg-[var(--color-badge-bg)] border border-[var(--color-border)] rounded-xl text-sm font-semibold text-[var(--color-heading)] placeholder:text-[var(--color-muted)] outline-none focus:bg-white focus:border-[var(--color-accent)] focus:ring-4 focus:ring-[var(--color-accent)]/10 transition-all"
+                      className="w-full pl-11 pr-4 py-3 bg-badge-bg border border-border rounded-xl text-sm font-semibold text-heading placeholder:text-muted outline-none focus:bg-white focus:border-accent focus:ring-4 focus:ring-accent/10 transition-all"
                       placeholder="admin@hospital.com"
                     />
                   </div>
                 </div>
 
                 {message?.type === "error" && (
-                  <p className="text-xs font-bold text-[var(--color-error)] text-center bg-red-50 p-2 rounded-lg">
+                  <p className="text-xs font-bold text-error text-center bg-red-50 p-2 rounded-lg">
                     {message.text}
                   </p>
                 )}
@@ -139,7 +139,7 @@ export default function ForgotPasswordPage() {
                 <button
                   type="submit"
                   disabled={isPending}
-                  className="w-full flex items-center justify-center gap-2.5 py-3.5 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-white text-sm font-black rounded-xl shadow-lg shadow-[var(--color-accent)]/30 disabled:opacity-60 transition-all mt-2"
+                  className="w-full flex items-center justify-center gap-2.5 py-3.5 bg-accent hover:bg-accent-hover text-white text-sm font-black rounded-xl shadow-lg shadow-accent/30 disabled:opacity-60 transition-all mt-2"
                 >
                   {isPending ? (
                     <>
@@ -154,9 +154,9 @@ export default function ForgotPasswordPage() {
             )}
 
             {/* Security Note */}
-            <div className="flex items-center justify-center gap-2 mt-8 pt-5 border-t border-[var(--color-border)]">
-              <ShieldCheck size={12} className="text-[var(--color-muted)]" />
-              <p className="text-[9px] text-[var(--color-muted)] font-bold uppercase tracking-widest">
+            <div className="flex items-center justify-center gap-2 mt-8 pt-5 border-t border-border">
+              <ShieldCheck size={12} className="text-muted" />
+              <p className="text-[9px] text-muted font-bold uppercase tracking-widest">
                 Identity Verification Required
               </p>
             </div>

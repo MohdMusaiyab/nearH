@@ -63,7 +63,7 @@ export default function ResetPasswordPage() {
 
       {/* ── Top-left logo ── */}
       <div className="absolute top-8 left-10 flex items-center gap-2.5 z-20">
-        <div className="w-9 h-9 rounded-xl bg-[var(--color-accent)] flex items-center justify-center shadow-lg shadow-[var(--color-accent)]/40">
+        <div className="w-9 h-9 rounded-xl bg-accent flex items-center justify-center shadow-lg shadow-accent/40">
           <Activity size={18} className="text-white" />
         </div>
         <Link
@@ -82,17 +82,17 @@ export default function ResetPasswordPage() {
           transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
           className="w-full max-w-sm bg-white rounded-3xl shadow-2xl shadow-black/30 overflow-hidden"
         >
-          <div className="h-1.5 w-full bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-link)]" />
+          <div className="h-1.5 w-full bg-gradient-to-r from-accent to-link" />
 
           <div className="p-8">
             <div className="mb-7 text-center">
-              <div className="w-12 h-12 bg-[var(--color-badge-bg)] text-[var(--color-accent)] rounded-2xl flex items-center justify-center mx-auto mb-4 border border-[var(--color-border)]">
+              <div className="w-12 h-12 bg-badge-bg text-accent rounded-2xl flex items-center justify-center mx-auto mb-4 border border-border">
                 <ShieldCheck size={24} />
               </div>
-              <h2 className="text-2xl font-black text-[var(--color-heading)] tracking-tight uppercase leading-tight">
-                New <span className="text-[var(--color-accent)]">Secret.</span>
+              <h2 className="text-2xl font-black text-heading tracking-tight uppercase leading-tight">
+                New <span className="text-accent">Secret.</span>
               </h2>
-              <p className="text-sm text-[var(--color-muted)] mt-1 font-medium">
+              <p className="text-sm text-muted mt-1 font-medium">
                 Update your credentials for secure access.
               </p>
             </div>
@@ -100,12 +100,12 @@ export default function ResetPasswordPage() {
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* New Password */}
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-[var(--color-heading)] uppercase tracking-widest ml-1">
+                <label className="text-[10px] font-bold text-heading uppercase tracking-widest ml-1">
                   New Password
                 </label>
                 <div className="relative group">
                   <Lock
-                    className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--color-muted)] group-focus-within:text-[var(--color-accent)]"
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-muted group-focus-within:text-accent"
                     size={16}
                   />
                   <input
@@ -115,13 +115,13 @@ export default function ResetPasswordPage() {
                     onChange={(e) =>
                       setFormData({ ...formData, password: e.target.value })
                     }
-                    className="w-full pl-11 pr-12 py-3 bg-[var(--color-badge-bg)] border border-[var(--color-border)] rounded-xl text-sm font-semibold text-[var(--color-heading)] placeholder:text-[var(--color-muted)] outline-none focus:bg-white focus:border-[var(--color-accent)] focus:ring-4 focus:ring-[var(--color-accent)]/10 transition-all"
+                    className="w-full pl-11 pr-12 py-3 bg-badge-bg border border-border rounded-xl text-sm font-semibold text-heading placeholder:text-muted outline-none focus:bg-white focus:border-accent focus:ring-4 focus:ring-accent/10 transition-all"
                     placeholder="••••••••"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPass(!showPass)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--color-muted)] hover:text-[var(--color-heading)]"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-muted hover:text-heading"
                   >
                     {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
@@ -130,12 +130,12 @@ export default function ResetPasswordPage() {
 
               {/* Confirm Password */}
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-[var(--color-heading)] uppercase tracking-widest ml-1">
+                <label className="text-[10px] font-bold text-heading uppercase tracking-widest ml-1">
                   Confirm Password
                 </label>
                 <div className="relative group">
                   <Lock
-                    className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--color-muted)] group-focus-within:text-[var(--color-accent)]"
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-muted group-focus-within:text-accent"
                     size={16}
                   />
                   <input
@@ -148,7 +148,7 @@ export default function ResetPasswordPage() {
                         confirmPassword: e.target.value,
                       })
                     }
-                    className="w-full pl-11 pr-4 py-3 bg-[var(--color-badge-bg)] border border-[var(--color-border)] rounded-xl text-sm font-semibold text-[var(--color-heading)] placeholder:text-[var(--color-muted)] outline-none focus:bg-white focus:border-[var(--color-accent)] focus:ring-4 focus:ring-[var(--color-accent)]/10 transition-all"
+                    className="w-full pl-11 pr-4 py-3 bg-badge-bg border border-border rounded-xl text-sm font-semibold text-heading placeholder:text-muted outline-none focus:bg-white focus:border-accent focus:ring-4 focus:ring-accent/10 transition-all"
                     placeholder="••••••••"
                   />
                 </div>
@@ -156,7 +156,7 @@ export default function ResetPasswordPage() {
 
               {error && (
                 <div className="bg-red-50 border border-red-100 p-3 rounded-xl animate-shake">
-                  <p className="text-[10px] font-bold text-[var(--color-error)] text-center uppercase tracking-tight">
+                  <p className="text-[10px] font-bold text-error text-center uppercase tracking-tight">
                     {error}
                   </p>
                 </div>
@@ -177,8 +177,8 @@ export default function ResetPasswordPage() {
               </button>
             </form>
 
-            <div className="mt-8 pt-5 border-t border-[var(--color-border)] text-center">
-              <p className="text-[9px] text-[var(--color-muted)] font-bold uppercase tracking-[0.2em]">
+            <div className="mt-8 pt-5 border-t border-border text-center">
+              <p className="text-[9px] text-muted font-bold uppercase tracking-[0.2em]">
                 System Security Protocol Active
               </p>
             </div>

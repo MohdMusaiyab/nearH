@@ -47,14 +47,14 @@ function InputField({
 }) {
   return (
     <div className="space-y-1.5">
-      <label className="text-[10px] font-bold text-[var(--color-heading)] uppercase tracking-widest block">
+      <label className="text-[10px] font-bold text-heading uppercase tracking-widest block">
         {label}
       </label>
       <div className="relative group">
         {Icon && (
           <Icon
             size={15}
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--color-muted)] group-focus-within:text-[var(--color-accent)] transition-colors pointer-events-none z-10"
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-muted group-focus-within:text-accent transition-colors pointer-events-none z-10"
           />
         )}
         {children}
@@ -65,7 +65,7 @@ function InputField({
             initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
-            className="text-xs text-[var(--color-error)] font-semibold pl-1 flex items-center gap-1"
+            className="text-xs text-error font-semibold pl-1 flex items-center gap-1"
           >
             <AlertCircle size={10} />
             {error}
@@ -73,14 +73,14 @@ function InputField({
         )}
       </AnimatePresence>
       {hint && !error && (
-        <p className="text-[10px] text-[var(--color-muted)] pl-1">{hint}</p>
+        <p className="text-[10px] text-muted pl-1">{hint}</p>
       )}
     </div>
   );
 }
 
 const inputCls = (hasIcon = true) =>
-  `w-full ${hasIcon ? "pl-11" : "pl-4"} pr-4 py-3 bg-[var(--color-badge-bg)] border border-[var(--color-border)] rounded-xl text-sm font-semibold text-[var(--color-heading)] placeholder:text-[var(--color-muted)] placeholder:font-normal outline-none focus:bg-white focus:border-[var(--color-accent)] focus:ring-4 focus:ring-[var(--color-accent)]/10 transition-all`;
+  `w-full ${hasIcon ? "pl-11" : "pl-4"} pr-4 py-3 bg-badge-bg border border-border rounded-xl text-sm font-semibold text-heading placeholder:text-muted placeholder:font-normal outline-none focus:bg-white focus:border-accent focus:ring-4 focus:ring-accent/10 transition-all`;
 
 export default function RegistrationForm({ locations }: Props) {
   const [isLoading, setIsLoading] = useState(false);
@@ -155,10 +155,10 @@ export default function RegistrationForm({ locations }: Props) {
               <div
                 className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black transition-all ${
                   i < step
-                    ? "bg-[var(--color-success)] text-white"
+                    ? "bg-success text-white"
                     : i === step
-                      ? "bg-[var(--color-accent)] text-white shadow-md shadow-[var(--color-accent)]/30"
-                      : "bg-[var(--color-badge-bg)] text-[var(--color-muted)] border border-[var(--color-border)]"
+                      ? "bg-accent text-white shadow-md shadow-accent/30"
+                      : "bg-badge-bg text-muted border border-border"
                 }`}
               >
                 {i < step ? <CheckCircle2 size={12} /> : i + 1}
@@ -166,19 +166,19 @@ export default function RegistrationForm({ locations }: Props) {
               <span
                 className={`text-[10px] font-bold uppercase tracking-widest hidden sm:block transition-colors ${
                   i === step
-                    ? "text-[var(--color-accent)]"
+                    ? "text-accent"
                     : i < step
-                      ? "text-[var(--color-success)]"
-                      : "text-[var(--color-muted)]"
+                      ? "text-success"
+                      : "text-muted"
                 }`}
               >
                 {s}
               </span>
             </button>
             {i < steps.length - 1 && (
-              <div className="flex-1 mx-3 h-px bg-[var(--color-border)] relative overflow-hidden">
+              <div className="flex-1 mx-3 h-px bg-border relative overflow-hidden">
                 <motion.div
-                  className="absolute inset-y-0 left-0 bg-[var(--color-accent)]"
+                  className="absolute inset-y-0 left-0 bg-accent"
                   animate={{ width: step > i ? "100%" : "0%" }}
                   transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                 />
@@ -199,9 +199,9 @@ export default function RegistrationForm({ locations }: Props) {
           >
             <AlertCircle
               size={14}
-              className="text-[var(--color-error)] flex-shrink-0 mt-0.5"
+              className="text-error flex-shrink-0 mt-0.5"
             />
-            <p className="text-sm text-[var(--color-error)] font-medium">
+            <p className="text-sm text-error font-medium">
               {serverError}
             </p>
           </motion.div>
@@ -259,7 +259,7 @@ export default function RegistrationForm({ locations }: Props) {
                   <button
                     type="button"
                     onClick={() => setShowPassword((v) => !v)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--color-muted)] hover:text-[var(--color-heading)] transition-colors"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-muted hover:text-heading transition-colors"
                   >
                     {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
                   </button>
@@ -279,7 +279,7 @@ export default function RegistrationForm({ locations }: Props) {
                   <button
                     type="button"
                     onClick={() => setShowConfirm((v) => !v)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--color-muted)] hover:text-[var(--color-heading)] transition-colors"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-muted hover:text-heading transition-colors"
                   >
                     {showConfirm ? <EyeOff size={15} /> : <Eye size={15} />}
                   </button>
@@ -289,7 +289,7 @@ export default function RegistrationForm({ locations }: Props) {
               <button
                 type="button"
                 onClick={handleNext}
-                className="w-full flex items-center justify-center gap-2.5 py-3.5 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-white text-sm font-black rounded-xl shadow-lg shadow-[var(--color-accent)]/30 active:scale-[0.98] transition-all mt-2"
+                className="w-full flex items-center justify-center gap-2.5 py-3.5 bg-accent hover:bg-accent-hover text-white text-sm font-black rounded-xl shadow-lg shadow-accent/30 active:scale-[0.98] transition-all mt-2"
               >
                 Continue to Hospital Details
                 <ArrowRight size={16} />
@@ -363,7 +363,7 @@ export default function RegistrationForm({ locations }: Props) {
                   </select>
                   <ChevronDown
                     size={14}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--color-muted)] pointer-events-none"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-muted pointer-events-none"
                   />
                 </InputField>
 
@@ -382,18 +382,18 @@ export default function RegistrationForm({ locations }: Props) {
               </div>
 
               {/* Ayushman Bharat toggle */}
-              <label className="flex items-center gap-3 p-4 rounded-xl bg-[var(--color-badge-bg)] border border-[var(--color-border)] cursor-pointer hover:border-[var(--color-accent)] transition-colors group">
+              <label className="flex items-center gap-3 p-4 rounded-xl bg-badge-bg border border-border cursor-pointer hover:border-accent transition-colors group">
                 <input
                   {...register("has_ayushman_bharat")}
                   id="ayushman"
                   type="checkbox"
-                  className="w-5 h-5 rounded accent-[var(--color-accent)] cursor-pointer"
+                  className="w-5 h-5 rounded accent-accent cursor-pointer"
                 />
                 <div>
-                  <p className="text-sm font-bold text-[var(--color-heading)] group-hover:text-[var(--color-accent)] transition-colors">
+                  <p className="text-sm font-bold text-heading group-hover:text-accent transition-colors">
                     Ayushman Bharat (PM-JAY) Empanelled
                   </p>
-                  <p className="text-[10px] text-[var(--color-muted)] mt-0.5">
+                  <p className="text-[10px] text-muted mt-0.5">
                     Check if your hospital is registered under the scheme
                   </p>
                 </div>
@@ -403,14 +403,14 @@ export default function RegistrationForm({ locations }: Props) {
                 <button
                   type="button"
                   onClick={() => setStep(0)}
-                  className="flex-1 py-3.5 rounded-xl border border-[var(--color-border)] text-sm font-bold text-[var(--color-heading)] hover:bg-[var(--color-badge-bg)] active:scale-[0.98] transition-all"
+                  className="flex-1 py-3.5 rounded-xl border border-border text-sm font-bold text-heading hover:bg-badge-bg active:scale-[0.98] transition-all"
                 >
                   Back
                 </button>
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="flex-[2] flex items-center justify-center gap-2.5 py-3.5 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-white text-sm font-black rounded-xl shadow-lg shadow-[var(--color-accent)]/30 disabled:opacity-60 disabled:cursor-not-allowed active:scale-[0.98] transition-all"
+                  className="flex-[2] flex items-center justify-center gap-2.5 py-3.5 bg-accent hover:bg-accent-hover text-white text-sm font-black rounded-xl shadow-lg shadow-accent/30 disabled:opacity-60 disabled:cursor-not-allowed active:scale-[0.98] transition-all"
                 >
                   {isLoading ? (
                     <>

@@ -70,26 +70,26 @@ export default async function WaitingRoom() {
       <div className="relative z-10 w-full max-w-md">
         <div className="bg-white rounded-3xl shadow-2xl shadow-black/30 overflow-hidden">
           {/* Accent bar */}
-          <div className="h-1.5 w-full bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-link)]" />
+          <div className="h-1.5 w-full bg-gradient-to-r from-accent to-link" />
 
           <div className="p-7 sm:p-9">
             {/* Icon */}
             <div className="flex justify-center mb-6">
               <div className="relative">
-                <div className="w-20 h-20 rounded-2xl bg-[var(--color-badge-bg)] border border-[var(--color-border)] flex items-center justify-center">
+                <div className="w-20 h-20 rounded-2xl bg-badge-bg border border-border flex items-center justify-center">
                   <Clock
                     size={36}
-                    className="text-[var(--color-accent)] animate-pulse"
+                    className="text-accent animate-pulse"
                   />
                 </div>
                 {/* Decorative ring */}
-                <div className="absolute -inset-2 rounded-2xl border-2 border-[var(--color-border)] border-dashed animate-[spin_12s_linear_infinite]" />
+                <div className="absolute -inset-2 rounded-2xl border-2 border-border border-dashed animate-[spin_12s_linear_infinite]" />
               </div>
             </div>
 
             {/* Badge */}
             <div className="flex justify-center mb-5">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--color-badge-bg)] border border-[var(--color-border)] text-[var(--color-accent)] text-[10px] font-bold uppercase tracking-widest">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-badge-bg border border-border text-accent text-[10px] font-bold uppercase tracking-widest">
                 <ShieldCheck size={11} />
                 Verification Pending
               </div>
@@ -97,10 +97,10 @@ export default async function WaitingRoom() {
 
             {/* Heading */}
             <div className="text-center mb-7">
-              <h1 className="text-2xl font-black text-[var(--color-heading)] tracking-tight leading-tight mb-2">
+              <h1 className="text-2xl font-black text-heading tracking-tight leading-tight mb-2">
                 Hang tight, {firstName}!
               </h1>
-              <p className="text-sm text-[var(--color-muted)] leading-relaxed">
+              <p className="text-sm text-muted leading-relaxed">
                 Your hospital registration is under review by our team. We&apos;ll
                 verify your details and get back to you shortly.
               </p>
@@ -108,35 +108,35 @@ export default async function WaitingRoom() {
 
             {/* Info cards */}
             <div className="space-y-3 mb-7">
-              <div className="flex items-start gap-3.5 p-4 rounded-xl bg-[var(--color-badge-bg)] border border-[var(--color-border)]">
-                <div className="w-8 h-8 rounded-lg bg-white border border-[var(--color-border)] flex items-center justify-center flex-shrink-0 mt-0.5">
+              <div className="flex items-start gap-3.5 p-4 rounded-xl bg-badge-bg border border-border">
+                <div className="w-8 h-8 rounded-lg bg-white border border-border flex items-center justify-center flex-shrink-0 mt-0.5">
                   <ShieldCheck
                     size={15}
-                    className="text-[var(--color-accent)]"
+                    className="text-accent"
                   />
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-[var(--color-heading)] mb-0.5">
+                  <p className="text-xs font-bold text-heading mb-0.5">
                     Security Verification
                   </p>
-                  <p className="text-xs text-[var(--color-muted)] leading-relaxed">
+                  <p className="text-xs text-muted leading-relaxed">
                     We validate the legal name, emergency contacts, and
                     credentials of every hospital before approval.
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-start gap-3.5 p-4 rounded-xl bg-[var(--color-badge-bg)] border border-[var(--color-border)]">
-                <div className="w-8 h-8 rounded-lg bg-white border border-[var(--color-border)] flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <Mail size={15} className="text-[var(--color-accent)]" />
+              <div className="flex items-start gap-3.5 p-4 rounded-xl bg-badge-bg border border-border">
+                <div className="w-8 h-8 rounded-lg bg-white border border-border flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <Mail size={15} className="text-accent" />
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-[var(--color-heading)] mb-0.5">
+                  <p className="text-xs font-bold text-heading mb-0.5">
                     Email Notification
                   </p>
-                  <p className="text-xs text-[var(--color-muted)] leading-relaxed">
+                  <p className="text-xs text-muted leading-relaxed">
                     Once approved, you&apos;ll receive a confirmation at{" "}
-                    <span className="font-semibold text-[var(--color-heading)]">
+                    <span className="font-semibold text-heading">
                       {user.email}
                     </span>{" "}
                     with dashboard access details.
@@ -147,18 +147,18 @@ export default async function WaitingRoom() {
 
             {/* Estimated time pill */}
             <div className="flex items-center justify-center gap-2 mb-7">
-              <div className="h-px flex-1 bg-[var(--color-border)]" />
-              <span className="text-[10px] font-bold text-[var(--color-muted)] uppercase tracking-widest whitespace-nowrap px-2">
+              <div className="h-px flex-1 bg-border" />
+              <span className="text-[10px] font-bold text-muted uppercase tracking-widest whitespace-nowrap px-2">
                 Typically within 24 – 48 hrs
               </span>
-              <div className="h-px flex-1 bg-[var(--color-border)]" />
+              <div className="h-px flex-1 bg-border" />
             </div>
 
             {/* Actions */}
             <div className="space-y-3">
               <Link
                 href="/"
-                className="w-full flex items-center justify-center gap-2.5 py-3.5 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-white text-sm font-black rounded-xl shadow-lg shadow-[var(--color-accent)]/30 active:scale-[0.98] transition-all"
+                className="w-full flex items-center justify-center gap-2.5 py-3.5 bg-accent hover:bg-accent-hover text-white text-sm font-black rounded-xl shadow-lg shadow-accent/30 active:scale-[0.98] transition-all"
               >
                 Back to Homepage
                 <ArrowRight size={16} />
@@ -167,7 +167,7 @@ export default async function WaitingRoom() {
               <form action="/api/auth/logout" method="POST">
                 <button
                   type="submit"
-                  className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-[var(--color-border)] text-sm font-bold text-[var(--color-muted)] hover:text-[var(--color-heading)] hover:border-[var(--color-heading)] hover:bg-[var(--color-badge-bg)] active:scale-[0.98] transition-all"
+                  className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-border text-sm font-bold text-muted hover:text-heading hover:border-heading hover:bg-badge-bg active:scale-[0.98] transition-all"
                 >
                   <LogOut size={14} />
                   Sign out & check later
@@ -176,9 +176,9 @@ export default async function WaitingRoom() {
             </div>
 
             {/* Trust footer */}
-            <div className="flex items-center justify-center gap-2 mt-6 pt-5 border-t border-[var(--color-border)]">
-              <ShieldCheck size={12} className="text-[var(--color-muted)]" />
-              <p className="text-[9px] text-[var(--color-muted)] font-bold uppercase tracking-widest">
+            <div className="flex items-center justify-center gap-2 mt-6 pt-5 border-t border-border">
+              <ShieldCheck size={12} className="text-muted" />
+              <p className="text-[9px] text-muted font-bold uppercase tracking-widest">
                 256-bit encrypted · HIPAA compliant
               </p>
             </div>

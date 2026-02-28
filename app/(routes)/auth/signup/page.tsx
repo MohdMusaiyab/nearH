@@ -36,7 +36,7 @@ export default async function SignupPage() {
 
       {/* Top-left logo */}
       <div className="absolute top-8 left-6 sm:left-10 flex items-center gap-2.5 z-20">
-        <div className="w-9 h-9 rounded-xl bg-[var(--color-accent)] flex items-center justify-center shadow-lg shadow-[var(--color-accent)]/40">
+        <div className="w-9 h-9 rounded-xl bg-accent flex items-center justify-center shadow-lg shadow-accent/40">
           <Activity size={18} className="text-white" />
         </div>
         <Link
@@ -80,23 +80,23 @@ export default async function SignupPage() {
       <div className="relative z-20 w-full flex justify-center lg:justify-end lg:pr-20 xl:pr-28 px-4 sm:px-6 py-20 sm:py-24">
         <div className="w-full max-w-sm sm:max-w-md lg:max-w-lg bg-white rounded-3xl shadow-2xl shadow-black/30 overflow-hidden">
           {/* Accent bar */}
-          <div className="h-1.5 w-full bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-link)]" />
+          <div className="h-1.5 w-full bg-gradient-to-r from-accent to-link" />
 
           <div className="p-6 sm:p-8">
             {/* Header */}
             <div className="mb-7">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--color-badge-bg)] border border-[var(--color-border)] text-[var(--color-accent)] text-[10px] font-bold uppercase tracking-widest mb-4">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-badge-bg border border-border text-accent text-[10px] font-bold uppercase tracking-widest mb-4">
                 <ShieldCheck size={11} />
                 Hospital Onboarding
               </div>
-              <h2 className="text-2xl font-black text-[var(--color-heading)] tracking-tight leading-tight">
+              <h2 className="text-2xl font-black text-heading tracking-tight leading-tight">
                 Register your hospital
               </h2>
-              <p className="text-sm text-[var(--color-muted)] mt-1">
+              <p className="text-sm text-muted mt-1">
                 Already registered?{" "}
                 <Link
                   href="/auth/login"
-                  className="font-bold text-[var(--color-accent)] hover:underline"
+                  className="font-bold text-accent hover:underline"
                 >
                   Sign in to dashboard
                 </Link>
@@ -107,9 +107,9 @@ export default async function SignupPage() {
             <RegistrationForm locations={locations || []} />
 
             {/* Trust footer */}
-            <div className="flex items-center justify-center gap-2 mt-6 pt-5 border-t border-[var(--color-border)]">
-              <ShieldCheck size={12} className="text-[var(--color-muted)]" />
-              <p className="text-[9px] text-[var(--color-muted)] font-bold uppercase tracking-widest">
+            <div className="flex items-center justify-center gap-2 mt-6 pt-5 border-t border-border">
+              <ShieldCheck size={12} className="text-muted" />
+              <p className="text-[9px] text-muted font-bold uppercase tracking-widest">
                 256-bit encrypted · HIPAA compliant
               </p>
             </div>

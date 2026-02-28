@@ -41,20 +41,20 @@ export default function NewSpecialtyPage() {
         <div className="flex items-center gap-4">
           <Link
             href="/superadmin/specialties"
-            className="w-9 h-9 rounded-xl border border-[var(--color-border)] bg-white flex items-center justify-center text-[var(--color-muted)] hover:text-[var(--color-heading)] hover:border-[var(--color-accent)]/40 hover:bg-[var(--color-badge-bg)] transition-all flex-shrink-0"
+            className="w-9 h-9 rounded-xl border border-border bg-white flex items-center justify-center text-muted hover:text-heading hover:border-accent/40 hover:bg-badge-bg transition-all flex-shrink-0"
             aria-label="Back to specialties"
           >
             <ArrowLeft size={17} />
           </Link>
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl bg-[var(--color-accent)] flex items-center justify-center shadow-lg shadow-[var(--color-accent)]/25 flex-shrink-0">
+            <div className="w-11 h-11 rounded-2xl bg-accent flex items-center justify-center shadow-lg shadow-accent/25 flex-shrink-0">
               <Award size={20} className="text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-black text-[var(--color-heading)] tracking-tight leading-none">
+              <h1 className="text-2xl font-black text-heading tracking-tight leading-none">
                 Add Specialty
               </h1>
-              <p className="text-sm text-[var(--color-muted)] mt-0.5">
+              <p className="text-sm text-muted mt-0.5">
                 Add a new clinical specialty to the master catalog
               </p>
             </div>
@@ -62,14 +62,14 @@ export default function NewSpecialtyPage() {
         </div>
 
         {/* Divider */}
-        <div className="h-px bg-[var(--color-border)]" />
+        <div className="h-px bg-border" />
 
         {/* ── Form card ── */}
-        <div className="bg-white rounded-2xl border border-[var(--color-border)] overflow-hidden">
+        <div className="bg-white rounded-2xl border border-border overflow-hidden">
           {/* Card header strip */}
-          <div className="px-6 py-4 border-b border-[var(--color-border)] bg-[var(--color-badge-bg)]/50 flex items-center gap-3">
-            <Award size={15} className="text-[var(--color-accent)]" />
-            <span className="text-xs font-bold text-[var(--color-muted)] uppercase tracking-widest">
+          <div className="px-6 py-4 border-b border-border bg-badge-bg/50 flex items-center gap-3">
+            <Award size={15} className="text-accent" />
+            <span className="text-xs font-bold text-muted uppercase tracking-widest">
               Specialty Details
             </span>
           </div>
@@ -78,22 +78,22 @@ export default function NewSpecialtyPage() {
             <div className="space-y-1.5">
               <label
                 htmlFor="specialty_name"
-                className="text-xs font-bold text-[var(--color-heading)] uppercase tracking-widest block"
+                className="text-xs font-bold text-heading uppercase tracking-widest block"
               >
                 Specialty Name{" "}
-                <span className="text-[var(--color-error)]">*</span>
+                <span className="text-error">*</span>
               </label>
               <div className="relative">
                 <Award
                   size={15}
-                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--color-muted)]"
+                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted"
                 />
                 <input
                   id="specialty_name"
                   name="specialty_name"
                   required
                   placeholder="e.g. Oncology, Orthopedics, Neurology"
-                  className="w-full pl-10 pr-4 py-3 bg-[var(--color-badge-bg)] border border-[var(--color-border)] rounded-xl text-sm font-semibold text-[var(--color-heading)] placeholder:text-[var(--color-muted)] placeholder:font-normal outline-none focus:bg-white focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent)]/10 transition-all"
+                  className="w-full pl-10 pr-4 py-3 bg-badge-bg border border-border rounded-xl text-sm font-semibold text-heading placeholder:text-muted placeholder:font-normal outline-none focus:bg-white focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all"
                 />
               </div>
             </div>
@@ -103,7 +103,7 @@ export default function NewSpecialtyPage() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="flex-1 flex items-center justify-center gap-2 py-3 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-white text-sm font-bold rounded-xl shadow-md shadow-[var(--color-accent)]/25 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] transition-all"
+                className="flex-1 flex items-center justify-center gap-2 py-3 bg-accent hover:bg-accent-hover text-white text-sm font-bold rounded-xl shadow-md shadow-accent/25 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] transition-all"
               >
                 {isLoading ? (
                   <>
@@ -120,7 +120,7 @@ export default function NewSpecialtyPage() {
 
               <Link
                 href="/superadmin/specialties"
-                className="px-5 py-3 border border-[var(--color-border)] rounded-xl text-sm font-bold text-[var(--color-body)] hover:bg-[var(--color-badge-bg)] hover:border-[var(--color-accent)]/30 hover:text-[var(--color-heading)] transition-all"
+                className="px-5 py-3 border border-border rounded-xl text-sm font-bold text-body hover:bg-badge-bg hover:border-accent/30 hover:text-heading transition-all"
               >
                 Cancel
               </Link>
@@ -129,17 +129,17 @@ export default function NewSpecialtyPage() {
         </div>
 
         {/* ── Tip card ── */}
-        <div className="flex items-start gap-3 px-5 py-4 bg-[var(--color-badge-bg)] border border-[var(--color-border)] rounded-2xl">
-          <div className="w-8 h-8 rounded-xl bg-[var(--color-accent)]/10 border border-[var(--color-accent)]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-            <Lightbulb size={15} className="text-[var(--color-accent)]" />
+        <div className="flex items-start gap-3 px-5 py-4 bg-badge-bg border border-border rounded-2xl">
+          <div className="w-8 h-8 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+            <Lightbulb size={15} className="text-accent" />
           </div>
-          <p className="text-sm text-[var(--color-body)] leading-relaxed">
+          <p className="text-sm text-body leading-relaxed">
             Specialties appear in the{" "}
-            <span className="font-bold text-[var(--color-heading)]">
+            <span className="font-bold text-heading">
               Hospital Profile
             </span>{" "}
             and the{" "}
-            <span className="font-bold text-[var(--color-heading)]">
+            <span className="font-bold text-heading">
               Explore
             </span>{" "}
             directory filters. Use standard clinical terminology so hospitals

@@ -130,7 +130,8 @@ export async function requestPasswordReset(
 ): Promise<ActionResponse<null>> {
   const supabase = await createClient();
 
-  const redirectTo = `${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/callback?next=/auth/reset-password`;
+  // Append &type=recovery so the callback knows to set the secure cookie
+  const redirectTo = `${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/callback?next=/auth/reset-password&type=recovery`;
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo,
@@ -151,6 +152,8 @@ export async function requestPasswordReset(
   };
 }
 
+import { cookies } from "next/headers";
+
 export async function updateUserPassword(
   password: string,
 ): Promise<ActionResponse<null>> {
@@ -167,6 +170,10 @@ export async function updateUserPassword(
       data: null,
     };
   }
+
+  // Clear the secure recovery cookie
+  const cookieStore = await cookies();
+  cookieStore.delete("awaiting_password_reset");
 
   await supabase.auth.signOut();
 

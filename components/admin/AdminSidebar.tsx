@@ -24,7 +24,7 @@ const navGroups = [
   {
     group: "Operations",
     items: [
-      { name: "Overview", href: "/admin", icon: LayoutDashboard },
+      { name: "Overview", href: "/admin/dashboard", icon: LayoutDashboard },
       { name: "Doctors & OPD", href: "/admin/doctors", icon: Stethoscope },
       { name: "Beds & ICU", href: "/admin/inventory", icon: BedDouble },
       { name: "Blood Bank", href: "/admin/blood-bank", icon: Droplets },
@@ -70,14 +70,14 @@ function NavLink({
         onClick={onClick}
         className={`relative flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group ${
           isActive
-            ? "bg-[var(--color-accent)] text-white shadow-md shadow-[var(--color-accent)]/25"
-            : "text-[var(--color-body)] hover:bg-[var(--color-badge-bg)] hover:text-[var(--color-heading)]"
+            ? "bg-accent text-white shadow-md shadow-accent/25"
+            : "text-body hover:bg-badge-bg hover:text-heading"
         }`}
       >
         {isActive && (
           <motion.div
             layoutId="activeAdminNav"
-            className="absolute inset-0 bg-[var(--color-accent)] rounded-xl -z-10"
+            className="absolute inset-0 bg-accent rounded-xl -z-10"
             transition={{ type: "spring", damping: 30, stiffness: 350 }}
           />
         )}
@@ -86,7 +86,7 @@ function NavLink({
           className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors duration-200 ${
             isActive
               ? "bg-white/20"
-              : "bg-[var(--color-badge-bg)] group-hover:bg-[var(--color-border)]"
+              : "bg-badge-bg group-hover:bg-border"
           }`}
         >
           <Icon
@@ -94,7 +94,7 @@ function NavLink({
             className={
               isActive
                 ? "text-white"
-                : "text-[var(--color-accent)] group-hover:text-[var(--color-heading)]"
+                : "text-accent group-hover:text-heading"
             }
           />
         </div>
@@ -117,14 +117,14 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
       {/* Brand block */}
       <div className="px-5 pt-6 pb-5">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-[var(--color-accent)] rounded-xl flex items-center justify-center shadow-lg shadow-[var(--color-accent)]/30 flex-shrink-0">
+          <div className="w-10 h-10 bg-accent rounded-xl flex items-center justify-center shadow-lg shadow-accent/30 flex-shrink-0">
             <Building2 size={20} className="text-white" />
           </div>
           <div>
-            <p className="font-black text-[var(--color-heading)] text-base tracking-tight leading-none">
+            <p className="font-black text-heading text-base tracking-tight leading-none">
               MediPortal
             </p>
-            <p className="text-[10px] text-[var(--color-accent)] font-bold tracking-[0.15em] uppercase mt-0.5">
+            <p className="text-[10px] text-accent font-bold tracking-[0.15em] uppercase mt-0.5">
               Hospital Console
             </p>
           </div>
@@ -132,13 +132,13 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
       </div>
 
       {/* Divider */}
-      <div className="mx-5 h-px bg-[var(--color-border)] mb-4" />
+      <div className="mx-5 h-px bg-border mb-4" />
 
       {/* Navigation */}
       <nav className="flex-1 px-3 space-y-5 overflow-y-auto">
         {navGroups.map((group) => (
           <div key={group.group}>
-            <p className="px-3 text-[10px] font-bold text-[var(--color-muted)] uppercase tracking-[0.15em] mb-2">
+            <p className="px-3 text-[10px] font-bold text-muted uppercase tracking-[0.15em] mb-2">
               {group.group}
             </p>
             <div className="space-y-1">
@@ -157,33 +157,18 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
 
       {/* Footer */}
       <div className="p-3 mt-auto">
-        <div className="mx-2 h-px bg-[var(--color-border)] mb-3" />
-
-        {/* User card */}
-        <div className="flex items-center gap-3 px-3 py-3 rounded-xl bg-[var(--color-badge-bg)] border border-[var(--color-border)] mb-1">
-          <div className="w-8 h-8 rounded-lg bg-[var(--color-accent)] flex items-center justify-center flex-shrink-0">
-            <Building2 size={15} className="text-white" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-bold text-[var(--color-heading)] truncate">
-              Hospital Admin
-            </p>
-            <p className="text-[11px] text-[var(--color-muted)] truncate">
-              admin@hospital.com
-            </p>
-          </div>
-        </div>
+        <div className="mx-2 h-px bg-border mb-3" />
 
         {/* Sign out */}
         <form action={logoutAction}>
           <button
             type="submit"
-            className="flex items-center gap-3 w-full px-3 py-2.5 text-[var(--color-muted)] hover:text-[var(--color-error)] hover:bg-red-50 rounded-xl transition-all duration-200 group"
+            className="flex items-center gap-3 w-full px-3 py-2.5 text-muted hover:text-error hover:bg-red-50 rounded-xl transition-all duration-200 group"
           >
-            <div className="w-8 h-8 rounded-lg bg-[var(--color-badge-bg)] group-hover:bg-red-100 flex items-center justify-center transition-colors flex-shrink-0">
+            <div className="w-8 h-8 rounded-lg bg-badge-bg group-hover:bg-red-100 flex items-center justify-center transition-colors flex-shrink-0">
               <LogOut
                 size={15}
-                className="group-hover:text-[var(--color-error)] transition-colors"
+                className="group-hover:text-error transition-colors"
               />
             </div>
             <span className="font-semibold text-sm">Sign Out</span>
@@ -201,19 +186,19 @@ const AdminSidebar = () => {
   return (
     <>
       {/* ── Mobile sub-header — sits below global nav (top-20) ── */}
-      <div className="lg:hidden flex items-center gap-3 px-4 py-3 bg-white border-b border-[var(--color-border)] sticky top-20 z-40">
+      <div className="lg:hidden flex items-center gap-3 px-4 py-3 bg-white border-b border-border sticky top-20 z-40">
         <button
           onClick={() => setIsOpen(true)}
-          className="w-9 h-9 rounded-xl border border-[var(--color-border)] bg-[var(--color-badge-bg)] flex items-center justify-center text-[var(--color-heading)] hover:bg-[var(--color-border)] transition-colors"
+          className="w-9 h-9 rounded-xl border border-border bg-badge-bg flex items-center justify-center text-heading hover:bg-border transition-colors"
           aria-label="Open sidebar"
         >
           <AlignJustify size={18} />
         </button>
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 bg-[var(--color-accent)] rounded-md flex items-center justify-center">
+          <div className="w-6 h-6 bg-accent rounded-md flex items-center justify-center">
             <Building2 size={13} className="text-white" />
           </div>
-          <span className="font-bold text-[var(--color-heading)] text-sm">
+          <span className="font-bold text-heading text-sm">
             Hospital Admin
           </span>
         </div>
@@ -228,7 +213,7 @@ const AdminSidebar = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="fixed inset-0 bg-[var(--color-heading)]/30 backdrop-blur-sm z-[90] lg:hidden"
+              className="fixed inset-0 bg-heading/30 backdrop-blur-sm z-[90] lg:hidden"
               onClick={() => setIsOpen(false)}
             />
 
@@ -237,11 +222,11 @@ const AdminSidebar = () => {
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ type: "spring", damping: 28, stiffness: 280 }}
-              className="fixed top-20 left-0 bottom-0 w-72 z-[95] lg:hidden bg-white border-r border-[var(--color-border)] shadow-2xl shadow-[var(--color-heading)]/10 overflow-hidden"
+              className="fixed top-20 left-0 bottom-0 w-72 z-[95] lg:hidden bg-white border-r border-border shadow-2xl shadow-heading/10 overflow-hidden"
             >
               <button
                 onClick={() => setIsOpen(false)}
-                className="absolute top-3 right-3 w-8 h-8 rounded-lg bg-[var(--color-badge-bg)] flex items-center justify-center text-[var(--color-muted)] hover:text-[var(--color-heading)] hover:bg-[var(--color-border)] transition-all z-10"
+                className="absolute top-3 right-3 w-8 h-8 rounded-lg bg-badge-bg flex items-center justify-center text-muted hover:text-heading hover:bg-border transition-all z-10"
                 aria-label="Close sidebar"
               >
                 <X size={15} />
@@ -254,7 +239,7 @@ const AdminSidebar = () => {
       </AnimatePresence>
 
       {/* ── Desktop sidebar ── */}
-      <aside className="hidden lg:flex flex-col w-64 flex-shrink-0 bg-white border-r border-[var(--color-border)] sticky top-24 h-[calc(100vh-6rem)] overflow-hidden">
+      <aside className="hidden lg:flex flex-col w-64 flex-shrink-0 bg-white border-r border-border sticky top-24 h-[calc(100vh-6rem)] overflow-hidden">
         <SidebarContent />
       </aside>
     </>

@@ -57,21 +57,21 @@ function DoctorTableContent({
   const handleDelete = (id: string, name: string) => {
     modal.confirm({
       title: (
-        <span className="font-black text-[var(--color-heading)]">
+        <span className="font-black text-heading">
           Remove Medical Staff
         </span>
       ),
-      icon: <AlertCircle className="text-[var(--color-error)] w-5 h-5" />,
+      icon: <AlertCircle className="text-error w-5 h-5" />,
       content: (
         <div className="pt-1">
-          <p className="text-sm text-[var(--color-body)] mb-2">
+          <p className="text-sm text-body mb-2">
             Are you sure you want to remove{" "}
-            <span className="font-bold text-[var(--color-heading)]">
+            <span className="font-bold text-heading">
               Dr. {name}
             </span>
             ?
           </p>
-          <p className="text-xs text-[var(--color-error)] font-semibold bg-red-50 rounded-lg px-3 py-2 border border-red-100">
+          <p className="text-xs text-error font-semibold bg-red-50 rounded-lg px-3 py-2 border border-red-100">
             ⚠️ This will remove their profile and OPD schedule from the public
             directory.
           </p>
@@ -84,10 +84,10 @@ function DoctorTableContent({
       mask: { closable: true }, // Fixed deprecation: maskClosable -> mask.closable
       okButtonProps: {
         className:
-          "!bg-[var(--color-error)] !border-[var(--color-error)] hover:!bg-[var(--color-error-hover)] !font-bold !text-white !rounded-xl",
+          "!bg-error !border-error hover:!bg-error-hover !font-bold !text-white !rounded-xl",
       },
       cancelButtonProps: {
-        className: "!rounded-xl !font-bold text-[var(--color-muted)]",
+        className: "!rounded-xl !font-bold text-muted",
       },
       async onOk() {
         const previousData = [...data];
@@ -110,14 +110,14 @@ function DoctorTableContent({
   return (
     <div className="flex flex-col bg-white">
       {/* Search Header */}
-      <div className="p-5 border-b border-[var(--color-border)]">
+      <div className="p-5 border-b border-border">
         <div className="relative max-w-md">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-muted)]" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
           <input
             type="text"
             placeholder="Search doctor by name..."
             defaultValue={searchParams.get("search") || ""}
-            className="w-full pl-10 pr-4 py-2.5 bg-[var(--color-badge-bg)]/50 border border-[var(--color-border)] rounded-xl text-sm font-medium outline-none text-[var(--color-heading)] focus:bg-white focus:ring-2 focus:ring-[var(--color-accent)]/10 focus:border-[var(--color-accent)] transition-all"
+            className="w-full pl-10 pr-4 py-2.5 bg-badge-bg/50 border border-border rounded-xl text-sm font-medium outline-none text-heading focus:bg-white focus:ring-2 focus:ring-accent/10 focus:border-accent transition-all"
             onChange={(e) => updateFilters("search", e.target.value)}
           />
         </div>
@@ -127,24 +127,24 @@ function DoctorTableContent({
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="bg-[var(--color-badge-bg)]/40 border-b border-[var(--color-border)]">
-              <th className="px-6 py-4 text-[10px] font-black text-[var(--color-muted)] uppercase tracking-widest">
+            <tr className="bg-badge-bg/40 border-b border-border">
+              <th className="px-6 py-4 text-[10px] font-black text-muted uppercase tracking-widest">
                 Doctor Details
               </th>
-              <th className="px-6 py-4 text-[10px] font-black text-[var(--color-muted)] uppercase tracking-widest">
+              <th className="px-6 py-4 text-[10px] font-black text-muted uppercase tracking-widest">
                 Specialty
               </th>
-              <th className="px-6 py-4 text-[10px] font-black text-[var(--color-muted)] uppercase tracking-widest text-right">
+              <th className="px-6 py-4 text-[10px] font-black text-muted uppercase tracking-widest text-right">
                 Actions
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[var(--color-border)]/50">
+          <tbody className="divide-y divide-border/50">
             {data.length === 0 ? (
               <tr>
                 <td
                   colSpan={3}
-                  className="px-6 py-16 text-center italic text-[var(--color-muted)]"
+                  className="px-6 py-16 text-center italic text-muted"
                 >
                   No doctors found.
                 </td>
@@ -153,18 +153,18 @@ function DoctorTableContent({
               data.map((doc) => (
                 <tr
                   key={doc.id}
-                  className={`hover:bg-[var(--color-badge-bg)]/20 transition-colors group ${isDeletingId === doc.id ? "opacity-50" : ""}`}
+                  className={`hover:bg-badge-bg/20 transition-colors group ${isDeletingId === doc.id ? "opacity-50" : ""}`}
                 >
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 bg-[var(--color-badge-bg)] rounded-full border border-[var(--color-border)] flex items-center justify-center text-[var(--color-accent)]">
+                      <div className="w-10 h-10 bg-badge-bg rounded-full border border-border flex items-center justify-center text-accent">
                         <User className="w-5 h-5" />
                       </div>
                       <div className="min-w-0">
-                        <div className="font-bold text-[var(--color-heading)] truncate text-sm">
+                        <div className="font-bold text-heading truncate text-sm">
                           {doc.name}
                         </div>
-                        <div className="text-[10px] font-bold text-[var(--color-accent)] uppercase flex items-center gap-1 mt-0.5">
+                        <div className="text-[10px] font-bold text-accent uppercase flex items-center gap-1 mt-0.5">
                           <GraduationCap className="w-3 h-3" />{" "}
                           {doc.experience_years} Years Experience
                         </div>
@@ -172,7 +172,7 @@ function DoctorTableContent({
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold bg-[var(--color-badge-bg)] text-[var(--color-badge-text)] border border-[var(--color-border)]">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold bg-badge-bg text-badge-text border border-border">
                       {doc.specialties_list?.specialty_name ||
                         "General Practitioner"}
                     </span>
@@ -181,14 +181,14 @@ function DoctorTableContent({
                     <div className="flex justify-end items-center gap-2">
                       <Link
                         href={`/admin/doctors/edit/${doc.id}`}
-                        className="p-2 text-[var(--color-muted)] hover:text-[var(--color-accent)] hover:bg-[var(--color-badge-bg)] rounded-xl transition-all"
+                        className="p-2 text-muted hover:text-accent hover:bg-badge-bg rounded-xl transition-all"
                       >
                         <Pencil className="w-4 h-4" />
                       </Link>
                       <button
                         onClick={() => handleDelete(doc.id, doc.name)}
                         disabled={!!isDeletingId}
-                        className="p-2 text-[var(--color-muted)] hover:text-[var(--color-error)] hover:bg-red-50 rounded-xl transition-all"
+                        className="p-2 text-muted hover:text-error hover:bg-red-50 rounded-xl transition-all"
                       >
                         {isDeletingId === doc.id ? (
                           <Loader2 className="w-4 h-4 animate-spin" />
@@ -206,8 +206,8 @@ function DoctorTableContent({
       </div>
 
       {/* Pagination Footer */}
-      <div className="px-6 py-4 border-t border-[var(--color-border)] bg-[var(--color-badge-bg)]/20 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <p className="text-xs font-bold text-[var(--color-muted)] uppercase">
+      <div className="px-6 py-4 border-t border-border bg-badge-bg/20 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <p className="text-xs font-bold text-muted uppercase">
           Showing {data.length} of {totalCount} Staff
         </p>
         {totalPages > 1 && (
@@ -215,17 +215,17 @@ function DoctorTableContent({
             <button
               disabled={currentPage <= 1}
               onClick={() => updateFilters("page", currentPage - 1)}
-              className="p-2 rounded-lg border border-[var(--color-border)] bg-white disabled:opacity-30"
+              className="p-2 rounded-lg border border-border bg-white disabled:opacity-30"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
-            <div className="px-4 py-1.5 rounded-lg bg-white border border-[var(--color-border)] text-xs font-black">
+            <div className="px-4 py-1.5 rounded-lg bg-white border border-border text-xs font-black">
               {currentPage} / {totalPages}
             </div>
             <button
               disabled={currentPage >= totalPages}
               onClick={() => updateFilters("page", currentPage + 1)}
-              className="p-2 rounded-lg border border-[var(--color-border)] bg-white disabled:opacity-30"
+              className="p-2 rounded-lg border border-border bg-white disabled:opacity-30"
             >
               <ChevronRight className="w-4 h-4" />
             </button>

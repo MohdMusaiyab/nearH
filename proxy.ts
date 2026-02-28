@@ -44,12 +44,23 @@ export async function proxy(request: NextRequest) {
 
   const { pathname, searchParams } = request.nextUrl;
 
-  // ✅ Detect recovery flow from Supabase email link
-  const isRecoveryFlow = searchParams.get("type") === "recovery";
+  // ✅ Detect recovery flow from the secure cookie we set in callback
+  const isRecoveryFlow = request.cookies.has("awaiting_password_reset");
 
-  // 🚨 If in recovery mode → only allow reset-password page
+  // Skip static & API (Check this early so the reset-password page's assets and APIs load)
+  if (pathname.startsWith("/_next") || pathname.includes("/api/")) {
+    return response;
+  }
+
+  // 🚨 If in recovery mode → forcefully restrict the user to the reset-password page
+  // They must not be allowed anywhere else until they reset their password.
   if (isRecoveryFlow && pathname !== "/auth/reset-password") {
-    return NextResponse.redirect(new URL("/auth/reset-password", request.url));
+    const redirectUrl = new URL("/auth/reset-password", request.url);
+    // Preserve any existing search parameters (like Supabase tokens)
+    request.nextUrl.searchParams.forEach((val, key) =>
+      redirectUrl.searchParams.append(key, val),
+    );
+    return NextResponse.redirect(redirectUrl);
   }
 
   let profile: Profile | null = null;
@@ -85,17 +96,15 @@ export async function proxy(request: NextRequest) {
     }
   }
 
-  // Skip static & API
-  if (pathname.startsWith("/_next") || pathname.includes("/api/")) {
-    return response;
-  }
-
   // ✅ Auth routes redirect if already logged in
   if (user && pathname.startsWith("/auth")) {
     if (pathname === "/auth/waiting-room") return response;
     if (pathname === "/auth/reset-password") return response;
 
-    const dest = profile?.role === "superadmin" ? "/superadmin/dashboard" : "/admin/dashboard";
+    const dest =
+      profile?.role === "superadmin"
+        ? "/superadmin/dashboard"
+        : "/admin/dashboard";
     return NextResponse.redirect(new URL(dest, request.url));
   }
 
@@ -133,6 +142,16 @@ export async function proxy(request: NextRequest) {
     return response;
   }
 
+  // Unauthenticated protection
+  if (
+    !user &&
+    (pathname.startsWith("/admin") ||
+      pathname.startsWith("/superadmin") ||
+      pathname.startsWith("/shared"))
+  ) {
+    return NextResponse.redirect(new URL("/auth/login", request.url));
+  }
+
   // Superadmin guard
   if (pathname.startsWith("/superadmin") && profile?.role !== "superadmin") {
     return NextResponse.redirect(new URL("/", request.url));
@@ -143,14 +162,6 @@ export async function proxy(request: NextRequest) {
     if (profile?.role !== "admin" || profile?.status !== "approved") {
       return NextResponse.redirect(new URL("/", request.url));
     }
-  }
-
-  // Unauthenticated protection
-  if (
-    !user &&
-    (pathname.startsWith("/admin") || pathname.startsWith("/superadmin"))
-  ) {
-    return NextResponse.redirect(new URL("/auth/login", request.url));
   }
 
   return response;

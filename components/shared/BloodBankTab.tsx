@@ -16,16 +16,16 @@ export function BloodBankTab({ bloodBank, canEdit }: Props) {
         <div className="w-20 h-20 rounded-[2rem] bg-red-50 border border-red-100 flex items-center justify-center mb-6 shadow-sm">
           <Droplets className="w-10 h-10 text-red-400 opacity-60" />
         </div>
-        <h3 className="text-xl font-black text-[var(--color-heading)] uppercase tracking-tighter mb-2">
+        <h3 className="text-xl font-black text-heading uppercase tracking-tighter mb-2">
           Hematology Registry Empty
         </h3>
-        <p className="text-sm text-[var(--color-muted)] max-w-xs font-medium leading-relaxed">
+        <p className="text-sm text-muted max-w-xs font-medium leading-relaxed">
           No real-time blood inventory data has been synchronized for this
           facility.
         </p>
 
         {canEdit && (
-          <button className="mt-8 flex items-center gap-2 px-8 py-4 bg-[var(--color-heading)] text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 active:scale-95">
+          <button className="mt-8 flex items-center gap-2 px-8 py-4 bg-heading text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 active:scale-95">
             <Plus size={16} /> Initialize Inventory
           </button>
         )}
@@ -38,22 +38,22 @@ export function BloodBankTab({ bloodBank, canEdit }: Props) {
       {/* ── Header Strategy ── */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-10 pb-6 border-b border-slate-50">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-red-50 border border-red-100 flex items-center justify-center text-[var(--color-error)]">
+          <div className="w-12 h-12 rounded-2xl bg-red-50 border border-red-100 flex items-center justify-center text-error">
             <Droplets size={24} strokeWidth={2.5} />
           </div>
           <div>
-            <h3 className="text-xs font-black text-[var(--color-heading)] uppercase tracking-[0.2em] leading-none">
+            <h3 className="text-xs font-black text-heading uppercase tracking-[0.2em] leading-none">
               Blood Bank Inventory
             </h3>
-            <p className="text-[10px] font-bold text-[var(--color-muted)] uppercase mt-1.5 flex items-center gap-1.5">
-              <Activity size={10} className="text-[var(--color-success)]" />
+            <p className="text-[10px] font-bold text-muted uppercase mt-1.5 flex items-center gap-1.5">
+              <Activity size={10} className="text-success" />
               Live Hematological Stock Levels
             </p>
           </div>
         </div>
 
         {canEdit && (
-          <button className="flex items-center gap-2 px-5 py-3 bg-white border border-[var(--color-border)] text-[var(--color-heading)] rounded-xl font-black text-[10px] uppercase tracking-widest hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] transition-all shadow-sm active:scale-95">
+          <button className="flex items-center gap-2 px-5 py-3 bg-white border border-border text-heading rounded-xl font-black text-[10px] uppercase tracking-widest hover:border-accent hover:text-accent transition-all shadow-sm active:scale-95">
             <RefreshCw
               size={14}
               strokeWidth={3}
@@ -79,7 +79,7 @@ export function BloodBankTab({ bloodBank, canEdit }: Props) {
       </div>
 
       <div className="mt-10 p-5 bg-slate-50 border border-slate-100 rounded-2xl">
-        <p className="text-[9px] font-bold text-[var(--color-muted)] uppercase tracking-widest text-center">
+        <p className="text-[9px] font-bold text-muted uppercase tracking-widest text-center">
           Notice: Blood availability is subject to real-time changes. Please
           contact the ER hotline for emergency reservations.
         </p>

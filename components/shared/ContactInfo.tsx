@@ -27,13 +27,13 @@ export function ContactInfo({ hospital }: Props) {
   if (!hasContactInfo) return null;
 
   return (
-    <section className="bg-white rounded-[2.5rem] border border-[var(--color-border)] shadow-sm overflow-hidden animate-in fade-in slide-in-from-right-4 duration-500">
+    <section className="bg-white rounded-[2.5rem] border border-border shadow-sm overflow-hidden animate-in fade-in slide-in-from-right-4 duration-500">
       {/* Header */}
       <div className="px-6 py-4 border-b border-slate-50 bg-slate-50/30 flex items-center justify-between">
-        <h2 className="text-[10px] font-black text-[var(--color-muted)] uppercase tracking-[0.2em]">
+        <h2 className="text-[10px] font-black text-muted uppercase tracking-[0.2em]">
           Contact Directory
         </h2>
-        <div className="w-1.5 h-1.5 rounded-full bg-[var(--color-success)] animate-pulse" />
+        <div className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
       </div>
 
       {/* The Vertical Stack */}
@@ -111,8 +111,8 @@ function ContactRow({
         <div
           className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm transition-all duration-300 group-hover:rotate-6 ${
             isEmergency
-              ? "bg-red-50 text-[var(--color-error)] border border-red-100"
-              : "bg-[var(--color-badge-bg)] text-[var(--color-accent)] border border-[var(--color-border)]"
+              ? "bg-red-50 text-error border border-red-100"
+              : "bg-badge-bg text-accent border border-border"
           }`}
         >
           {icon}
@@ -123,8 +123,8 @@ function ContactRow({
           <p
             className={`text-[9px] font-black uppercase tracking-widest leading-none mb-1.5 ${
               isEmergency
-                ? "text-[var(--color-error)]"
-                : "text-[var(--color-muted)]"
+                ? "text-error"
+                : "text-muted"
             }`}
           >
             {label}
@@ -133,8 +133,8 @@ function ContactRow({
             <p
               className={`text-xs font-bold truncate ${
                 isEmergency
-                  ? "text-[var(--color-error)]"
-                  : "text-[var(--color-heading)]"
+                  ? "text-error"
+                  : "text-heading"
               }`}
             >
               {value}
@@ -143,8 +143,8 @@ function ContactRow({
               size={12}
               className={`opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all ${
                 isEmergency
-                  ? "text-[var(--color-error)]"
-                  : "text-[var(--color-accent)]"
+                  ? "text-error"
+                  : "text-accent"
               }`}
             />
           </div>

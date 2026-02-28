@@ -39,33 +39,33 @@ export default async function HospitalProfilePage() {
       {/* ── Page Header (NearH Pattern) ── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-[var(--color-accent)] flex items-center justify-center shadow-lg shadow-[var(--color-accent)]/20 flex-shrink-0">
+          <div className="w-12 h-12 rounded-2xl bg-accent flex items-center justify-center shadow-lg shadow-accent/20 flex-shrink-0">
             <Settings size={24} className="text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-black text-[var(--color-heading)] tracking-tight leading-none">
+            <h1 className="text-2xl font-black text-heading tracking-tight leading-none">
               Hospital Profile
             </h1>
-            <p className="text-sm text-[var(--color-muted)] mt-1">
+            <p className="text-sm text-muted mt-1">
               Manage your facility&apos;s public identity and medical services
             </p>
           </div>
         </div>
       </div>
 
-      <div className="h-px bg-[var(--color-border)]" />
+      <div className="h-px bg-border" />
 
       {/* ── Metric Summary ── */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-        <div className="bg-white rounded-2xl border border-[var(--color-border)] p-4 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[var(--color-badge-bg)] border border-[var(--color-border)] flex items-center justify-center">
-            <Activity size={18} className="text-[var(--color-accent)]" />
+        <div className="bg-white rounded-2xl border border-border p-4 flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-badge-bg border border-border flex items-center justify-center">
+            <Activity size={18} className="text-accent" />
           </div>
           <div>
-            <p className="text-[10px] font-black text-[var(--color-muted)] uppercase tracking-widest">
+            <p className="text-[10px] font-black text-muted uppercase tracking-widest">
               Selected Facilities
             </p>
-            <p className="text-xl font-black text-[var(--color-heading)]">
+            <p className="text-xl font-black text-heading">
               {selectedCount}
             </p>
           </div>

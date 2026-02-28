@@ -58,10 +58,10 @@ const COLOR_MAP: Record<
   { wrap: string; icon: string; value: string; dot: string }
 > = {
   blue: {
-    wrap: "bg-[var(--color-badge-bg)] border-[var(--color-border)]",
-    icon: "bg-[var(--color-accent)]/10 text-[var(--color-accent)]",
-    value: "text-[var(--color-accent)]",
-    dot: "bg-[var(--color-accent)]",
+    wrap: "bg-badge-bg border-border",
+    icon: "bg-accent/10 text-accent",
+    value: "text-accent",
+    dot: "bg-accent",
   },
   green: {
     wrap: "bg-emerald-50 border-emerald-200",
@@ -76,10 +76,10 @@ const COLOR_MAP: Record<
     dot: "bg-amber-500",
   },
   red: {
-    wrap: "bg-red-50 border-[var(--color-error)]/20",
-    icon: "bg-red-100 text-[var(--color-error)]",
-    value: "text-[var(--color-error)]",
-    dot: "bg-[var(--color-error)]",
+    wrap: "bg-red-50 border-error/20",
+    icon: "bg-red-100 text-error",
+    value: "text-error",
+    dot: "bg-error",
   },
   violet: {
     wrap: "bg-violet-50 border-violet-200",
@@ -103,7 +103,7 @@ function StatCard({ label, value, sub, color, icon }: StatCardProps) {
     >
       <div className={`${c.icon} rounded-xl p-2.5 flex-shrink-0`}>{icon}</div>
       <div className="min-w-0">
-        <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-muted)] mb-1">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-muted mb-1">
           {label}
         </p>
         <p
@@ -112,7 +112,7 @@ function StatCard({ label, value, sub, color, icon }: StatCardProps) {
           {value}
         </p>
         {sub && (
-          <p className="text-xs text-[var(--color-muted)] mt-1.5 truncate">
+          <p className="text-xs text-muted mt-1.5 truncate">
             {sub}
           </p>
         )}
@@ -135,9 +135,9 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <div className="bg-white rounded-2xl border border-[var(--color-border)] overflow-hidden">
-      <div className="px-5 py-4 border-b border-[var(--color-border)] flex items-center justify-between gap-4">
-        <h2 className="text-sm font-bold text-[var(--color-heading)] tracking-tight">
+    <div className="bg-white rounded-2xl border border-border overflow-hidden">
+      <div className="px-5 py-4 border-b border-border flex items-center justify-between gap-4">
+        <h2 className="text-sm font-bold text-heading tracking-tight">
           {title}
         </h2>
         {action}
@@ -157,13 +157,13 @@ type ReferralStatus = "Pending" | "Accepted" | "Rejected" | "Completed";
 const PRIORITY_STYLES: Record<PriorityLevel, string> = {
   Routine: "bg-slate-100 text-slate-600",
   Urgent: "bg-amber-100 text-amber-700",
-  Critical: "bg-red-100 text-[var(--color-error)]",
+  Critical: "bg-red-100 text-error",
 };
 const STATUS_STYLES: Record<ReferralStatus, string> = {
   Pending: "bg-amber-100 text-amber-700",
   Accepted: "bg-emerald-100 text-emerald-700",
-  Rejected: "bg-red-100 text-[var(--color-error)]",
-  Completed: "bg-[var(--color-badge-bg)] text-[var(--color-badge-text)]",
+  Rejected: "bg-red-100 text-error",
+  Completed: "bg-badge-bg text-badge-text",
 };
 
 function Badge({
@@ -207,11 +207,11 @@ function GrowthChart({ data }: { data: MonthlyGrowthPoint[] }) {
               key={point.month}
               className="flex-1 flex flex-col items-center gap-1.5 group relative"
             >
-              <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-[var(--color-heading)] text-white text-xs rounded-lg px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10">
+              <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-heading text-white text-xs rounded-lg px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10">
                 {point.count} hospital{point.count !== 1 ? "s" : ""}
               </div>
               <div
-                className="w-full rounded-t-lg bg-[var(--color-accent)] group-hover:bg-[var(--color-accent-hover)] transition-colors"
+                className="w-full rounded-t-lg bg-accent group-hover:bg-accent-hover transition-colors"
                 style={{ height: `${pct}%` }}
               />
             </div>
@@ -222,7 +222,7 @@ function GrowthChart({ data }: { data: MonthlyGrowthPoint[] }) {
         {data.map((point) => (
           <div
             key={point.month}
-            className="flex-1 text-center text-[9px] md:text-[10px] text-[var(--color-muted)] font-medium truncate"
+            className="flex-1 text-center text-[9px] md:text-[10px] text-muted font-medium truncate"
           >
             {point.month}
           </div>
@@ -243,21 +243,21 @@ function OccupancyChart({ data }: { data: BedOccupancyPoint[] }) {
       {data.map((item) => {
         const color =
           item.occupancyPercent >= 90
-            ? "bg-[var(--color-error)]"
+            ? "bg-error"
             : item.occupancyPercent >= 70
-              ? "bg-[var(--color-warning)]"
-              : "bg-[var(--color-success)]";
+              ? "bg-warning"
+              : "bg-success";
         return (
           <div key={item.hospital}>
             <div className="flex justify-between items-center mb-1.5">
-              <span className="text-xs font-semibold text-[var(--color-body)] truncate max-w-[65%]">
+              <span className="text-xs font-semibold text-body truncate max-w-[65%]">
                 {item.hospital}
               </span>
-              <span className="text-xs font-bold text-[var(--color-heading)]">
+              <span className="text-xs font-bold text-heading">
                 {item.occupancyPercent}%
               </span>
             </div>
-            <div className="h-2 bg-[var(--color-badge-bg)] rounded-full overflow-hidden">
+            <div className="h-2 bg-badge-bg rounded-full overflow-hidden">
               <div
                 className={`h-full rounded-full transition-all ${color}`}
                 style={{ width: `${item.occupancyPercent}%` }}
@@ -279,20 +279,20 @@ function ReferralsTable({ referrals }: { referrals: RecentReferralItem[] }) {
   return (
     <>
       {/* Mobile: cards */}
-      <div className="divide-y divide-[var(--color-border)] md:hidden">
+      <div className="divide-y divide-border md:hidden">
         {referrals.map((r) => (
           <div key={r.id} className="px-5 py-4 space-y-2">
             <div className="flex items-start justify-between gap-2">
-              <p className="font-semibold text-sm text-[var(--color-heading)]">
+              <p className="font-semibold text-sm text-heading">
                 {r.patientName}
               </p>
-              <span className="text-xs text-[var(--color-muted)] flex-shrink-0">
+              <span className="text-xs text-muted flex-shrink-0">
                 {formatRelativeTime(r.createdAt)}
               </span>
             </div>
-            <p className="text-xs text-[var(--color-body)]">
+            <p className="text-xs text-body">
               <span className="font-medium">{r.fromHospital ?? "—"}</span>
-              <span className="mx-1.5 text-[var(--color-muted)]">→</span>
+              <span className="mx-1.5 text-muted">→</span>
               <span className="font-medium">{r.toHospital ?? "—"}</span>
             </p>
             <div className="flex gap-2">
@@ -307,12 +307,12 @@ function ReferralsTable({ referrals }: { referrals: RecentReferralItem[] }) {
       <div className="hidden md:block overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-[var(--color-border)] bg-[var(--color-badge-bg)]/40">
+            <tr className="border-b border-border bg-badge-bg/40">
               {["Patient", "From → To", "Priority", "Status", "When"].map(
                 (h, i) => (
                   <th
                     key={h}
-                    className={`text-left px-5 py-3 text-xs font-bold text-[var(--color-muted)] uppercase tracking-wider ${i === 4 ? "text-right hidden lg:table-cell" : ""} ${i === 1 ? "hidden lg:table-cell" : ""}`}
+                    className={`text-left px-5 py-3 text-xs font-bold text-muted uppercase tracking-wider ${i === 4 ? "text-right hidden lg:table-cell" : ""} ${i === 1 ? "hidden lg:table-cell" : ""}`}
                   >
                     {h}
                   </th>
@@ -320,35 +320,35 @@ function ReferralsTable({ referrals }: { referrals: RecentReferralItem[] }) {
               )}
             </tr>
           </thead>
-          <tbody className="divide-y divide-[var(--color-border)]/50">
+          <tbody className="divide-y divide-border/50">
             {referrals.map((r) => (
               <tr
                 key={r.id}
-                className="hover:bg-[var(--color-badge-bg)]/40 transition-colors"
+                className="hover:bg-badge-bg/40 transition-colors"
               >
-                <td className="px-5 py-3.5 font-semibold text-[var(--color-heading)]">
+                <td className="px-5 py-3.5 font-semibold text-heading">
                   {r.patientName}
                 </td>
-                <td className="px-5 py-3.5 text-[var(--color-body)] hidden lg:table-cell">
+                <td className="px-5 py-3.5 text-body hidden lg:table-cell">
                   <span className="font-medium">{r.fromHospital ?? "—"}</span>
-                  <span className="mx-1.5 text-[var(--color-muted)]">→</span>
+                  <span className="mx-1.5 text-muted">→</span>
                   <span className="font-medium">{r.toHospital ?? "—"}</span>
                 </td>
                 <td className="px-5 py-3.5">
                   {r.priority ? (
                     <Badge label={r.priority} variant="priority" />
                   ) : (
-                    <span className="text-[var(--color-muted)]">—</span>
+                    <span className="text-muted">—</span>
                   )}
                 </td>
                 <td className="px-5 py-3.5">
                   {r.status ? (
                     <Badge label={r.status} variant="status" />
                   ) : (
-                    <span className="text-[var(--color-muted)]">—</span>
+                    <span className="text-muted">—</span>
                   )}
                 </td>
-                <td className="px-5 py-3.5 text-right text-xs text-[var(--color-muted)] hidden lg:table-cell">
+                <td className="px-5 py-3.5 text-right text-xs text-muted hidden lg:table-cell">
                   {formatRelativeTime(r.createdAt)}
                 </td>
               </tr>
@@ -368,31 +368,31 @@ function PendingAdminsList({ admins }: { admins: PendingAdminItem[] }) {
   if (!admins.length)
     return <EmptyState message="No pending admin approvals" />;
   return (
-    <ul className="divide-y divide-[var(--color-border)]/50">
+    <ul className="divide-y divide-border/50">
       {admins.map((admin) => (
         <li
           key={admin.id}
-          className="px-5 py-4 flex items-center gap-3 hover:bg-[var(--color-badge-bg)]/40 transition-colors"
+          className="px-5 py-4 flex items-center gap-3 hover:bg-badge-bg/40 transition-colors"
         >
-          <div className="w-9 h-9 rounded-xl bg-[var(--color-badge-bg)] border border-[var(--color-border)] flex items-center justify-center flex-shrink-0">
-            <span className="text-[var(--color-accent)] font-bold text-sm">
+          <div className="w-9 h-9 rounded-xl bg-badge-bg border border-border flex items-center justify-center flex-shrink-0">
+            <span className="text-accent font-bold text-sm">
               {(admin.name ?? admin.email).charAt(0).toUpperCase()}
             </span>
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-semibold text-[var(--color-heading)] truncate">
+            <p className="text-sm font-semibold text-heading truncate">
               {admin.name ?? "Unnamed"}
             </p>
-            <p className="text-xs text-[var(--color-muted)] truncate">
+            <p className="text-xs text-muted truncate">
               {admin.email}
             </p>
             {admin.hospitalName && (
-              <p className="text-xs text-[var(--color-accent)] font-medium truncate mt-0.5">
+              <p className="text-xs text-accent font-medium truncate mt-0.5">
                 🏥 {admin.hospitalName}
               </p>
             )}
           </div>
-          <span className="text-xs text-[var(--color-muted)] flex-shrink-0">
+          <span className="text-xs text-muted flex-shrink-0">
             {formatRelativeTime(admin.requestedAt)}
           </span>
         </li>
@@ -453,10 +453,10 @@ function HospitalsTable({ hospitals }: { hospitals: HospitalListItem[] }) {
   return (
     <div>
       {/* Filter bar */}
-      <div className="px-5 py-4 border-b border-[var(--color-border)] flex flex-col sm:flex-row gap-3">
+      <div className="px-5 py-4 border-b border-border flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
           <svg
-            className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-muted)]"
+            className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -473,7 +473,7 @@ function HospitalsTable({ hospitals }: { hospitals: HospitalListItem[] }) {
             placeholder="Search hospitals or location…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 text-sm border border-[var(--color-border)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]/30 focus:border-[var(--color-accent)] text-[var(--color-body)] placeholder:text-[var(--color-muted)] bg-white"
+            className="w-full pl-9 pr-4 py-2 text-sm border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent text-body placeholder:text-muted bg-white"
           />
         </div>
         <div className="flex gap-1.5 flex-wrap">
@@ -483,14 +483,14 @@ function HospitalsTable({ hospitals }: { hospitals: HospitalListItem[] }) {
               onClick={() => setStatusFilter(f)}
               className={`px-3 py-1.5 text-xs font-bold rounded-lg capitalize transition-colors ${
                 statusFilter === f
-                  ? "bg-[var(--color-accent)] text-white"
-                  : "bg-[var(--color-badge-bg)] text-[var(--color-body)] hover:bg-[var(--color-border)]"
+                  ? "bg-accent text-white"
+                  : "bg-badge-bg text-body hover:bg-border"
               }`}
             >
               {f}
             </button>
           ))}
-          <span className="text-xs text-[var(--color-muted)] self-center ml-1">
+          <span className="text-xs text-muted self-center ml-1">
             {filtered.length}/{hospitals.length}
           </span>
         </div>
@@ -501,52 +501,52 @@ function HospitalsTable({ hospitals }: { hospitals: HospitalListItem[] }) {
         <EmptyState message="No hospitals match your filters" />
       ) : (
         <>
-          <div className="divide-y divide-[var(--color-border)]/50 md:hidden">
+          <div className="divide-y divide-border/50 md:hidden">
             {filtered.map((h) => (
               <div key={h.id} className="px-5 py-4 space-y-2">
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <p className="font-bold text-sm text-[var(--color-heading)]">
+                    <p className="font-bold text-sm text-heading">
                       {h.name}
                     </p>
-                    <p className="text-xs text-[var(--color-muted)] mt-0.5">
+                    <p className="text-xs text-muted mt-0.5">
                       {h.location}
                     </p>
                   </div>
                   <div className="flex flex-col items-end gap-1">
                     <span
-                      className={`inline-flex items-center gap-1 text-xs font-semibold ${h.isActive ? "text-emerald-700" : "text-[var(--color-error)]"}`}
+                      className={`inline-flex items-center gap-1 text-xs font-semibold ${h.isActive ? "text-emerald-700" : "text-error"}`}
                     >
                       <span
-                        className={`w-1.5 h-1.5 rounded-full ${h.isActive ? "bg-emerald-500" : "bg-[var(--color-error)]"}`}
+                        className={`w-1.5 h-1.5 rounded-full ${h.isActive ? "bg-emerald-500" : "bg-error"}`}
                       />
                       {h.isActive ? "Active" : "Inactive"}
                     </span>
                     {h.isVerified && (
-                      <span className="text-xs font-semibold text-[var(--color-accent)]">
+                      <span className="text-xs font-semibold text-accent">
                         ✓ Verified
                       </span>
                     )}
                   </div>
                 </div>
-                <div className="flex gap-4 text-xs text-[var(--color-muted)]">
+                <div className="flex gap-4 text-xs text-muted">
                   <span>
                     🛏{" "}
-                    <span className="font-semibold text-[var(--color-body)]">
+                    <span className="font-semibold text-body">
                       {h.metrics.bedsAvailable}
                     </span>{" "}
                     beds
                   </span>
                   <span>
                     🏥{" "}
-                    <span className="font-semibold text-[var(--color-body)]">
+                    <span className="font-semibold text-body">
                       {h.metrics.icuAvailable}
                     </span>{" "}
                     ICU
                   </span>
                   <span>
                     👤{" "}
-                    <span className="font-semibold text-[var(--color-body)]">
+                    <span className="font-semibold text-body">
                       {h.adminCount}
                     </span>{" "}
                     admins
@@ -560,105 +560,105 @@ function HospitalsTable({ hospitals }: { hospitals: HospitalListItem[] }) {
           <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-[var(--color-border)] bg-[var(--color-badge-bg)]/40">
+                <tr className="border-b border-border bg-badge-bg/40">
                   <th
-                    className="text-left px-5 py-3 text-xs font-bold text-[var(--color-muted)] uppercase tracking-wider cursor-pointer hover:text-[var(--color-heading)] select-none"
+                    className="text-left px-5 py-3 text-xs font-bold text-muted uppercase tracking-wider cursor-pointer hover:text-heading select-none"
                     onClick={() => toggle("name")}
                   >
                     Hospital <SortAscIcon k="name" />
                   </th>
-                  <th className="text-left px-5 py-3 text-xs font-bold text-[var(--color-muted)] uppercase tracking-wider hidden lg:table-cell">
+                  <th className="text-left px-5 py-3 text-xs font-bold text-muted uppercase tracking-wider hidden lg:table-cell">
                     Location
                   </th>
-                  <th className="text-left px-5 py-3 text-xs font-bold text-[var(--color-muted)] uppercase tracking-wider">
+                  <th className="text-left px-5 py-3 text-xs font-bold text-muted uppercase tracking-wider">
                     Status
                   </th>
                   <th
-                    className="text-center px-5 py-3 text-xs font-bold text-[var(--color-muted)] uppercase tracking-wider cursor-pointer hover:text-[var(--color-heading)] select-none hidden lg:table-cell"
+                    className="text-center px-5 py-3 text-xs font-bold text-muted uppercase tracking-wider cursor-pointer hover:text-heading select-none hidden lg:table-cell"
                     onClick={() => toggle("bedsAvailable")}
                   >
                     Beds <SortAscIcon k="bedsAvailable" />
                   </th>
                   <th
-                    className="text-center px-5 py-3 text-xs font-bold text-[var(--color-muted)] uppercase tracking-wider cursor-pointer hover:text-[var(--color-heading)] select-none hidden lg:table-cell"
+                    className="text-center px-5 py-3 text-xs font-bold text-muted uppercase tracking-wider cursor-pointer hover:text-heading select-none hidden lg:table-cell"
                     onClick={() => toggle("icuAvailable")}
                   >
                     ICU <SortAscIcon k="icuAvailable" />
                   </th>
                   <th
-                    className="text-center px-5 py-3 text-xs font-bold text-[var(--color-muted)] uppercase tracking-wider cursor-pointer hover:text-[var(--color-heading)] select-none hidden xl:table-cell"
+                    className="text-center px-5 py-3 text-xs font-bold text-muted uppercase tracking-wider cursor-pointer hover:text-heading select-none hidden xl:table-cell"
                     onClick={() => toggle("adminCount")}
                   >
                     Admins <SortAscIcon k="adminCount" />
                   </th>
-                  <th className="text-right px-5 py-3 text-xs font-bold text-[var(--color-muted)] uppercase tracking-wider hidden xl:table-cell">
+                  <th className="text-right px-5 py-3 text-xs font-bold text-muted uppercase tracking-wider hidden xl:table-cell">
                     Updated
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[var(--color-border)]/50">
+              <tbody className="divide-y divide-border/50">
                 {filtered.map((h) => (
                   <tr
                     key={h.id}
-                    className="hover:bg-[var(--color-badge-bg)]/40 transition-colors"
+                    className="hover:bg-badge-bg/40 transition-colors"
                   >
                     <td className="px-5 py-4">
-                      <p className="font-semibold text-[var(--color-heading)] truncate max-w-[200px]">
+                      <p className="font-semibold text-heading truncate max-w-[200px]">
                         {h.name}
                       </p>
-                      <p className="text-xs text-[var(--color-muted)] mt-0.5">
+                      <p className="text-xs text-muted mt-0.5">
                         {h.metrics.bloodGroupsOnFile} blood group
                         {h.metrics.bloodGroupsOnFile !== 1 ? "s" : ""}
                       </p>
                     </td>
-                    <td className="px-5 py-4 text-[var(--color-body)] hidden lg:table-cell">
+                    <td className="px-5 py-4 text-body hidden lg:table-cell">
                       {h.location}
                     </td>
                     <td className="px-5 py-4">
                       <div className="flex flex-col gap-1">
                         <span
-                          className={`inline-flex items-center gap-1.5 text-xs font-semibold ${h.isActive ? "text-emerald-700" : "text-[var(--color-error)]"}`}
+                          className={`inline-flex items-center gap-1.5 text-xs font-semibold ${h.isActive ? "text-emerald-700" : "text-error"}`}
                         >
                           <span
-                            className={`w-1.5 h-1.5 rounded-full ${h.isActive ? "bg-emerald-500" : "bg-[var(--color-error)]"}`}
+                            className={`w-1.5 h-1.5 rounded-full ${h.isActive ? "bg-emerald-500" : "bg-error"}`}
                           />
                           {h.isActive ? "Active" : "Inactive"}
                         </span>
                         {h.isVerified ? (
-                          <span className="text-xs font-semibold text-[var(--color-accent)]">
+                          <span className="text-xs font-semibold text-accent">
                             ✓ Verified
                           </span>
                         ) : (
-                          <span className="text-xs text-[var(--color-muted)]">
+                          <span className="text-xs text-muted">
                             Unverified
                           </span>
                         )}
                       </div>
                     </td>
                     <td className="px-5 py-4 text-center hidden lg:table-cell">
-                      <span className="font-bold text-[var(--color-heading)]">
+                      <span className="font-bold text-heading">
                         {h.metrics.bedsAvailable}
                       </span>
-                      <span className="text-[var(--color-muted)] text-xs">
+                      <span className="text-muted text-xs">
                         {" "}
                         avail
                       </span>
                     </td>
                     <td className="px-5 py-4 text-center hidden lg:table-cell">
-                      <span className="font-bold text-[var(--color-heading)]">
+                      <span className="font-bold text-heading">
                         {h.metrics.icuAvailable}
                       </span>
-                      <span className="text-[var(--color-muted)] text-xs">
+                      <span className="text-muted text-xs">
                         {" "}
                         avail
                       </span>
                     </td>
                     <td className="px-5 py-4 text-center hidden xl:table-cell">
-                      <span className="font-bold text-[var(--color-heading)]">
+                      <span className="font-bold text-heading">
                         {h.adminCount}
                       </span>
                     </td>
-                    <td className="px-5 py-4 text-right text-xs text-[var(--color-muted)] hidden xl:table-cell">
+                    <td className="px-5 py-4 text-right text-xs text-muted hidden xl:table-cell">
                       {formatDate(h.lastUpdated)}
                     </td>
                   </tr>
@@ -679,9 +679,9 @@ function HospitalsTable({ hospitals }: { hospitals: HospitalListItem[] }) {
 function EmptyState({ message }: { message: string }) {
   return (
     <div className="px-6 py-12 text-center">
-      <div className="w-12 h-12 rounded-2xl bg-[var(--color-badge-bg)] border border-[var(--color-border)] flex items-center justify-center mx-auto mb-3">
+      <div className="w-12 h-12 rounded-2xl bg-badge-bg border border-border flex items-center justify-center mx-auto mb-3">
         <svg
-          className="w-5 h-5 text-[var(--color-muted)]"
+          className="w-5 h-5 text-muted"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -694,7 +694,7 @@ function EmptyState({ message }: { message: string }) {
           />
         </svg>
       </div>
-      <p className="text-sm text-[var(--color-muted)]">{message}</p>
+      <p className="text-sm text-muted">{message}</p>
     </div>
   );
 }
@@ -740,10 +740,10 @@ export default function SuperAdminDashboardClient({
       <div className="mb-6">
         <div className="flex items-center justify-between gap-4 mb-5">
           <div>
-            <h1 className="text-2xl font-black text-[var(--color-heading)] tracking-tight">
+            <h1 className="text-2xl font-black text-heading tracking-tight">
               Dashboard
             </h1>
-            <p className="text-sm text-[var(--color-muted)] mt-0.5">
+            <p className="text-sm text-muted mt-0.5">
               System-wide overview & management
             </p>
           </div>
@@ -754,15 +754,15 @@ export default function SuperAdminDashboardClient({
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-1 border-b border-[var(--color-border)] overflow-x-auto scrollbar-none">
+        <div className="flex gap-1 border-b border-border overflow-x-auto scrollbar-none">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-2 px-4 py-2.5 text-sm font-bold border-b-2 transition-colors whitespace-nowrap -mb-px ${
                 activeTab === tab.id
-                  ? "border-[var(--color-accent)] text-[var(--color-accent)]"
-                  : "border-transparent text-[var(--color-muted)] hover:text-[var(--color-heading)] hover:border-[var(--color-border)]"
+                  ? "border-accent text-accent"
+                  : "border-transparent text-muted hover:text-heading hover:border-border"
               }`}
             >
               {tab.label}
@@ -770,8 +770,8 @@ export default function SuperAdminDashboardClient({
                 <span
                   className={`inline-flex items-center justify-center min-w-[20px] h-5 rounded-full text-xs font-bold px-1.5 ${
                     activeTab === tab.id
-                      ? "bg-[var(--color-badge-bg)] text-[var(--color-accent)]"
-                      : "bg-slate-100 text-[var(--color-muted)]"
+                      ? "bg-badge-bg text-accent"
+                      : "bg-slate-100 text-muted"
                   }`}
                 >
                   {tab.badge}
@@ -975,21 +975,21 @@ export default function SuperAdminDashboardClient({
                 {recentActivity.newHospitals.length === 0 ? (
                   <EmptyState message="No hospitals registered yet" />
                 ) : (
-                  <ul className="divide-y divide-[var(--color-border)]/50">
+                  <ul className="divide-y divide-border/50">
                     {recentActivity.newHospitals.map((h) => (
                       <li
                         key={h.id}
-                        className="px-5 py-4 flex items-center justify-between gap-4 hover:bg-[var(--color-badge-bg)]/40 transition-colors"
+                        className="px-5 py-4 flex items-center justify-between gap-4 hover:bg-badge-bg/40 transition-colors"
                       >
                         <div className="min-w-0">
-                          <p className="font-semibold text-sm text-[var(--color-heading)] truncate">
+                          <p className="font-semibold text-sm text-heading truncate">
                             {h.name}
                           </p>
-                          <p className="text-xs text-[var(--color-muted)] mt-0.5">
+                          <p className="text-xs text-muted mt-0.5">
                             {h.location}
                           </p>
                         </div>
-                        <span className="text-xs text-[var(--color-muted)] flex-shrink-0">
+                        <span className="text-xs text-muted flex-shrink-0">
                           {formatRelativeTime(h.joinedAt)}
                         </span>
                       </li>

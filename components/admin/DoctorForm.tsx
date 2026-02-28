@@ -84,11 +84,11 @@ function DoctorFormContent({ specialties, initialData }: Props) {
   const handleCancel = () => {
     modal.confirm({
       title: (
-        <span className="font-black text-[var(--color-heading)]">
+        <span className="font-black text-heading">
           Discard Changes?
         </span>
       ),
-      icon: <AlertCircle className="text-[var(--color-warning)]" />,
+      icon: <AlertCircle className="text-warning" />,
       content:
         "Any unsaved information will be lost. Are you sure you want to go back?",
       okText: "Yes, Discard",
@@ -104,17 +104,17 @@ function DoctorFormContent({ specialties, initialData }: Props) {
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
       {/* ── Basic Information Card ── */}
-      <div className="bg-white p-6 md:p-8 rounded-2xl border border-[var(--color-border)] shadow-sm space-y-6">
+      <div className="bg-white p-6 md:p-8 rounded-2xl border border-border shadow-sm space-y-6">
         <div className="flex items-center gap-2 pb-2 border-b border-slate-50">
-          <User className="w-4 h-4 text-[var(--color-accent)]" />
-          <h2 className="text-sm font-black text-[var(--color-heading)] uppercase tracking-widest">
+          <User className="w-4 h-4 text-accent" />
+          <h2 className="text-sm font-black text-heading uppercase tracking-widest">
             General Information
           </h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="md:col-span-2 space-y-2">
-            <label className="text-xs font-black text-[var(--color-muted)] uppercase tracking-tighter">
+            <label className="text-xs font-black text-muted uppercase tracking-tighter">
               Full Name
             </label>
             <div className="relative">
@@ -123,20 +123,20 @@ function DoctorFormContent({ specialties, initialData }: Props) {
                 required
                 defaultValue={initialData?.name}
                 placeholder="Dr. Shrusti Patil"
-                className="w-full pl-4 pr-4 py-3 bg-[var(--color-badge-bg)]/30 border border-[var(--color-border)] rounded-xl focus:bg-white focus:ring-2 focus:ring-[var(--color-accent)]/10 focus:border-[var(--color-accent)] outline-none text-[var(--color-heading)] font-bold transition-all"
+                className="w-full pl-4 pr-4 py-3 bg-badge-bg/30 border border-border rounded-xl focus:bg-white focus:ring-2 focus:ring-accent/10 focus:border-accent outline-none text-heading font-bold transition-all"
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-black text-[var(--color-muted)] uppercase tracking-tighter">
+            <label className="text-xs font-black text-muted uppercase tracking-tighter">
               Specialty
             </label>
             <select
               name="specialty_id"
               required
               defaultValue={initialData?.specialty_id || ""}
-              className="w-full px-4 py-3 bg-[var(--color-badge-bg)]/30 border border-[var(--color-border)] rounded-xl focus:bg-white focus:ring-2 focus:ring-[var(--color-accent)]/10 focus:border-[var(--color-accent)] outline-none text-[var(--color-heading)] font-bold appearance-none transition-all"
+              className="w-full px-4 py-3 bg-badge-bg/30 border border-border rounded-xl focus:bg-white focus:ring-2 focus:ring-accent/10 focus:border-accent outline-none text-heading font-bold appearance-none transition-all"
             >
               <option value="">Select Specialty</option>
               {specialties.map((s) => (
@@ -148,7 +148,7 @@ function DoctorFormContent({ specialties, initialData }: Props) {
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-black text-[var(--color-muted)] uppercase tracking-tighter">
+            <label className="text-xs font-black text-muted uppercase tracking-tighter">
               Years of Experience
             </label>
             <div className="relative">
@@ -164,14 +164,14 @@ function DoctorFormContent({ specialties, initialData }: Props) {
                     e.preventDefault();
                   }
                 }}
-                className="w-full pl-4 pr-10 py-3 bg-[var(--color-badge-bg)]/30 border border-[var(--color-border)] rounded-xl focus:bg-white focus:ring-2 focus:ring-[var(--color-accent)]/10 focus:border-[var(--color-accent)] outline-none text-[var(--color-heading)] font-bold transition-all"
+                className="w-full pl-4 pr-10 py-3 bg-badge-bg/30 border border-border rounded-xl focus:bg-white focus:ring-2 focus:ring-accent/10 focus:border-accent outline-none text-heading font-bold transition-all"
               />
-              <Briefcase className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-muted)]" />
+              <Briefcase className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
             </div>
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-black text-[var(--color-muted)] uppercase tracking-tighter">
+            <label className="text-xs font-black text-muted uppercase tracking-tighter">
               OPD Room Number
             </label>
             <div className="relative">
@@ -179,9 +179,9 @@ function DoctorFormContent({ specialties, initialData }: Props) {
                 name="room_number"
                 defaultValue={initialData?.room_number || ""}
                 placeholder="e.g. 204-B"
-                className="w-full px-4 py-3 bg-[var(--color-badge-bg)]/30 border border-[var(--color-border)] rounded-xl focus:bg-white focus:ring-2 focus:ring-[var(--color-accent)]/10 focus:border-[var(--color-accent)] outline-none text-[var(--color-heading)] font-bold transition-all"
+                className="w-full px-4 py-3 bg-badge-bg/30 border border-border rounded-xl focus:bg-white focus:ring-2 focus:ring-accent/10 focus:border-accent outline-none text-heading font-bold transition-all"
               />
-              <MapPin className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-muted)]" />
+              <MapPin className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
             </div>
           </div>
 
@@ -194,10 +194,10 @@ function DoctorFormContent({ specialties, initialData }: Props) {
                 defaultChecked={initialData?.is_available ?? true}
                 className="sr-only peer"
               />
-              <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[var(--color-success)]"></div>
+              <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-success"></div>
               <label
                 htmlFor="is_available"
-                className="ml-3 text-sm font-bold text-[var(--color-heading)]"
+                className="ml-3 text-sm font-bold text-heading"
               >
                 Active on Directory
               </label>
@@ -207,23 +207,23 @@ function DoctorFormContent({ specialties, initialData }: Props) {
       </div>
 
       {/* ── Schedule Card ── */}
-      <div className="bg-white p-6 md:p-8 rounded-2xl border border-[var(--color-border)] shadow-sm space-y-6">
+      <div className="bg-white p-6 md:p-8 rounded-2xl border border-border shadow-sm space-y-6">
         <div className="flex items-center gap-2 pb-2 border-b border-slate-50">
-          <Calendar className="w-4 h-4 text-[var(--color-accent)]" />
-          <h2 className="text-sm font-black text-[var(--color-heading)] uppercase tracking-widest">
+          <Calendar className="w-4 h-4 text-accent" />
+          <h2 className="text-sm font-black text-heading uppercase tracking-widest">
             OPD Schedule
           </h2>
         </div>
 
         <div className="space-y-4">
-          <label className="text-xs font-black text-[var(--color-muted)] uppercase tracking-widest">
+          <label className="text-xs font-black text-muted uppercase tracking-widest">
             Select Available Days
           </label>
           <div className="flex flex-wrap gap-2">
             {DAYS.map((day) => (
               <label
                 key={day}
-                className="relative flex items-center justify-center px-4 py-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-badge-bg)]/20 cursor-pointer hover:border-[var(--color-accent)]/40 transition-all has-[:checked]:bg-[var(--color-accent)] has-[:checked]:text-white has-[:checked]:border-[var(--color-accent)] group"
+                className="relative flex items-center justify-center px-4 py-2 rounded-xl border border-border bg-badge-bg/20 cursor-pointer hover:border-accent/40 transition-all has-[:checked]:bg-accent has-[:checked]:text-white has-[:checked]:border-accent group"
               >
                 <input
                   type="checkbox"
@@ -240,14 +240,14 @@ function DoctorFormContent({ specialties, initialData }: Props) {
           </div>
 
           <div className="pt-2">
-            <label className="text-xs font-black text-[var(--color-muted)] uppercase tracking-widest block mb-2">
+            <label className="text-xs font-black text-muted uppercase tracking-widest block mb-2">
               Timing Notes
             </label>
             <textarea
               name="schedule_notes"
               placeholder="e.g. 10:00 AM - 02:00 PM (Monday & Wednesday)"
               defaultValue={schedule.notes || ""}
-              className="w-full px-4 py-3 bg-[var(--color-badge-bg)]/30 border border-[var(--color-border)] rounded-xl text-sm font-medium outline-none focus:bg-white focus:ring-2 focus:ring-[var(--color-accent)]/10 focus:border-[var(--color-accent)] transition-all"
+              className="w-full px-4 py-3 bg-badge-bg/30 border border-border rounded-xl text-sm font-medium outline-none focus:bg-white focus:ring-2 focus:ring-accent/10 focus:border-accent transition-all"
               rows={3}
             />
           </div>
@@ -259,7 +259,7 @@ function DoctorFormContent({ specialties, initialData }: Props) {
         <button
           type="submit"
           disabled={isLoading}
-          className="flex-1 flex items-center justify-center gap-2 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-white font-black py-4 rounded-2xl transition-all shadow-lg shadow-[var(--color-accent)]/20 disabled:opacity-50"
+          className="flex-1 flex items-center justify-center gap-2 bg-accent hover:bg-accent-hover text-white font-black py-4 rounded-2xl transition-all shadow-lg shadow-accent/20 disabled:opacity-50"
         >
           {isLoading ? (
             <Loader2 className="w-5 h-5 animate-spin" />
@@ -273,7 +273,7 @@ function DoctorFormContent({ specialties, initialData }: Props) {
         <button
           type="button"
           onClick={handleCancel}
-          className="px-10 py-4 bg-white border border-[var(--color-border)] text-[var(--color-muted)] font-bold rounded-2xl hover:bg-slate-50 hover:text-[var(--color-heading)] transition-all"
+          className="px-10 py-4 bg-white border border-border text-muted font-bold rounded-2xl hover:bg-slate-50 hover:text-heading transition-all"
         >
           Cancel
         </button>

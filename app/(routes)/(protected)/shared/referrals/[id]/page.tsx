@@ -42,21 +42,21 @@ export default async function SharedReferralDetailPage({ params }: Props) {
         {/* ── Page Header (NearH Pattern) ── */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-[var(--color-heading)] flex items-center justify-center shadow-lg shadow-slate-200 flex-shrink-0">
+            <div className="w-12 h-12 rounded-2xl bg-heading flex items-center justify-center shadow-lg shadow-slate-200 flex-shrink-0">
               <FileSearch size={24} className="text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-black text-[var(--color-heading)] tracking-tight leading-none uppercase">
+              <h1 className="text-2xl font-black text-heading tracking-tight leading-none uppercase">
                 Referral Dossier
               </h1>
-              <p className="text-sm text-[var(--color-muted)] mt-1 font-medium">
+              <p className="text-sm text-muted mt-1 font-medium">
                 Case study and clinical status for Ref ID: {id.slice(0, 8)}
               </p>
             </div>
           </div>
         </div>
 
-        <div className="h-px bg-[var(--color-border)]" />
+        <div className="h-px bg-border" />
 
         <ReferralDetailView referral={referral} userRole={userRole} />
       </div>

@@ -67,8 +67,8 @@ export function TabNavigation({
                 transition-all duration-300 whitespace-nowrap border
                 ${
                   isActive
-                    ? "bg-[var(--color-badge-bg)] text-[var(--color-accent)] border-[var(--color-accent)]/40 shadow-sm ring-4 ring-[var(--color-accent)]/5"
-                    : "bg-white text-[var(--color-muted)] border-[var(--color-border)] hover:border-[var(--color-accent)]/40 hover:bg-slate-50/50"
+                    ? "bg-badge-bg text-accent border-accent/40 shadow-sm ring-4 ring-accent/5"
+                    : "bg-white text-muted border-border hover:border-accent/40 hover:bg-slate-50/50"
                 }
               `}
             >
@@ -76,18 +76,18 @@ export function TabNavigation({
                 size={14}
                 className={`transition-colors duration-300 ${
                   isActive
-                    ? "text-[var(--color-accent)]"
-                    : "text-[var(--color-muted)]"
+                    ? "text-accent"
+                    : "text-muted"
                 }`}
                 strokeWidth={isActive ? 3 : 2}
               />
-              <span className={isActive ? "text-[var(--color-heading)]" : ""}>
+              <span className={isActive ? "text-heading" : ""}>
                 {tab.label}
               </span>
 
               {/* Live indicator dot - matches 'Explore' availability logic */}
               {isActive && (
-                <span className="flex h-1.5 w-1.5 rounded-full bg-[var(--color-accent)] animate-pulse ml-0.5" />
+                <span className="flex h-1.5 w-1.5 rounded-full bg-accent animate-pulse ml-0.5" />
               )}
             </button>
           );

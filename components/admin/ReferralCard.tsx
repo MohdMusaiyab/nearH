@@ -31,15 +31,15 @@ export const ReferralCard = memo(
     const priorityStyles: Record<Priority, string> = {
       Routine: "bg-blue-50 text-blue-700 border-blue-100",
       Urgent:
-        "bg-[var(--color-badge-bg)] text-[var(--color-badge-text)] border-[var(--color-border)]",
-      Critical: "bg-red-50 text-[var(--color-error)] border-red-100",
+        "bg-badge-bg text-badge-text border-border",
+      Critical: "bg-red-50 text-error border-red-100",
     };
 
     const handleAction = (status: Status) => {
       if (status === "Rejected") {
         Modal.confirm({
           title: (
-            <span className="font-black text-[var(--color-heading)]">
+            <span className="font-black text-heading">
               Decline Referral
             </span>
           ),
@@ -90,7 +90,7 @@ export const ReferralCard = memo(
             />
           )}
 
-          <div className="bg-white p-5 md:p-6 rounded-[2rem] border border-[var(--color-border)] shadow-sm hover:shadow-md transition-all group relative overflow-hidden">
+          <div className="bg-white p-5 md:p-6 rounded-[2rem] border border-border shadow-sm hover:shadow-md transition-all group relative overflow-hidden">
             {/* Top Priority/Time Row */}
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-3">
@@ -99,15 +99,15 @@ export const ReferralCard = memo(
                 >
                   {priorityKey}
                 </span>
-                <span className="text-[10px] font-bold text-[var(--color-muted)] uppercase flex items-center gap-1.5">
+                <span className="text-[10px] font-bold text-muted uppercase flex items-center gap-1.5">
                   <Clock className="w-3.5 h-3.5" />
                   {format(dateValue, "MMM d, h:mm a")}
                 </span>
               </div>
 
-              <div className="flex items-center gap-1.5 px-3 py-1 bg-[var(--color-badge-bg)]/40 rounded-lg border border-[var(--color-border)]">
-                <Hospital className="w-3 h-3 text-[var(--color-accent)]" />
-                <span className="text-[10px] font-black text-[var(--color-heading)] uppercase tracking-tight">
+              <div className="flex items-center gap-1.5 px-3 py-1 bg-badge-bg/40 rounded-lg border border-border">
+                <Hospital className="w-3 h-3 text-accent" />
+                <span className="text-[10px] font-black text-heading uppercase tracking-tight">
                   {referral.direction === "inbound"
                     ? "Inbound Request"
                     : "Outbound Sent"}
@@ -119,14 +119,14 @@ export const ReferralCard = memo(
               <div className="flex-1 space-y-4">
                 {/* Patient Info */}
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-[var(--color-badge-bg)] rounded-2xl flex items-center justify-center text-[var(--color-accent)] border border-[var(--color-border)] flex-shrink-0">
+                  <div className="w-12 h-12 bg-badge-bg rounded-2xl flex items-center justify-center text-accent border border-border flex-shrink-0">
                     <User className="w-6 h-6" />
                   </div>
                   <div className="min-w-0">
-                    <h3 className="text-xl font-black text-[var(--color-heading)] truncate tracking-tight">
+                    <h3 className="text-xl font-black text-heading truncate tracking-tight">
                       {referral.patient_name}
                     </h3>
-                    <p className="text-xs font-bold text-[var(--color-muted)] uppercase mt-0.5">
+                    <p className="text-xs font-bold text-muted uppercase mt-0.5">
                       {referral.patient_age} Years • {referral.patient_gender} •{" "}
                       {referral.specialty?.specialty_name || "General Medicine"}
                     </p>
@@ -134,31 +134,31 @@ export const ReferralCard = memo(
                 </div>
 
                 {/* Medical Reason */}
-                <div className="p-4 bg-slate-50/80 rounded-2xl border border-slate-100 group-hover:bg-white group-hover:border-[var(--color-accent)]/20 transition-all">
-                  <p className="text-[10px] font-black text-[var(--color-muted)] uppercase mb-1.5 tracking-widest">
+                <div className="p-4 bg-slate-50/80 rounded-2xl border border-slate-100 group-hover:bg-white group-hover:border-accent/20 transition-all">
+                  <p className="text-[10px] font-black text-muted uppercase mb-1.5 tracking-widest">
                     Clinical Reason
                   </p>
-                  <p className="text-sm text-[var(--color-body)] leading-relaxed line-clamp-2 italic font-medium">
+                  <p className="text-sm text-body leading-relaxed line-clamp-2 italic font-medium">
                     &ldquo;{referral.medical_reason}&rdquo;
                   </p>
                 </div>
               </div>
 
               {/* Hospital & Actions Column */}
-              <div className="flex flex-col justify-between items-end border-t lg:border-t-0 lg:border-l border-[var(--color-border)] pt-6 lg:pt-0 lg:pl-8 min-w-[240px]">
+              <div className="flex flex-col justify-between items-end border-t lg:border-t-0 lg:border-l border-border pt-6 lg:pt-0 lg:pl-8 min-w-[240px]">
                 <div className="text-right w-full">
-                  <p className="text-[10px] font-black text-[var(--color-muted)] uppercase tracking-widest mb-1">
+                  <p className="text-[10px] font-black text-muted uppercase tracking-widest mb-1">
                     {referral.direction === "inbound"
                       ? "Originating Hospital"
                       : "Target Hospital"}
                   </p>
-                  <div className="flex items-center justify-end gap-2 text-[var(--color-heading)]">
+                  <div className="flex items-center justify-end gap-2 text-heading">
                     <span className="font-black text-sm">
                       {referral.direction === "inbound"
                         ? referral.from_hospital?.name
                         : referral.to_hospital?.name}
                     </span>
-                    <ArrowRight className="w-3.5 h-3.5 text-[var(--color-accent)]" />
+                    <ArrowRight className="w-3.5 h-3.5 text-accent" />
                   </div>
                 </div>
 
@@ -169,7 +169,7 @@ export const ReferralCard = memo(
                       <button
                         disabled={isPending}
                         onClick={() => handleAction("Accepted")}
-                        className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-[var(--color-success)] text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-100 disabled:opacity-50"
+                        className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-success text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-100 disabled:opacity-50"
                       >
                         {isPending ? (
                           <Loader2 className="w-4 h-4 animate-spin" />
@@ -181,21 +181,21 @@ export const ReferralCard = memo(
                       <button
                         disabled={isPending}
                         onClick={() => handleAction("Rejected")}
-                        className="px-4 py-3 bg-white border border-[var(--color-border)] text-[var(--color-error)] rounded-xl text-xs font-black uppercase tracking-widest hover:bg-red-50 hover:border-red-200 transition-all disabled:opacity-50"
+                        className="px-4 py-3 bg-white border border-border text-error rounded-xl text-xs font-black uppercase tracking-widest hover:bg-red-50 hover:border-red-200 transition-all disabled:opacity-50"
                       >
                         Decline
                       </button>
                     </>
                   ) : (
-                    <div className="w-full flex items-center justify-between px-4 py-3 bg-[var(--color-badge-bg)]/40 rounded-xl border border-[var(--color-border)]">
-                      <span className="text-[10px] font-black text-[var(--color-muted)] uppercase">
+                    <div className="w-full flex items-center justify-between px-4 py-3 bg-badge-bg/40 rounded-xl border border-border">
+                      <span className="text-[10px] font-black text-muted uppercase">
                         Transfer Status
                       </span>
                       <div className="flex items-center gap-2">
                         <div
-                          className={`w-1.5 h-1.5 rounded-full ${referral.status === "Accepted" ? "bg-[var(--color-success)] animate-pulse" : "bg-slate-400"}`}
+                          className={`w-1.5 h-1.5 rounded-full ${referral.status === "Accepted" ? "bg-success animate-pulse" : "bg-slate-400"}`}
                         />
-                        <span className="text-xs font-black text-[var(--color-heading)] uppercase">
+                        <span className="text-xs font-black text-heading uppercase">
                           {referral.status}
                         </span>
                       </div>

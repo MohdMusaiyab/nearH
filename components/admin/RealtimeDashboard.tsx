@@ -21,6 +21,7 @@ import {
   RefreshCw,
   TrendingUp,
 } from "lucide-react";
+import Link from "next/link";
 
 type Inventory = Database["public"]["Tables"]["hospital_inventory"]["Row"];
 type BloodBank = Database["public"]["Tables"]["blood_bank"]["Row"];
@@ -46,8 +47,8 @@ function SectionHeader({
 }) {
   return (
     <div className="flex items-center justify-between mb-4 px-1">
-      <h2 className="text-sm font-bold text-[var(--color-heading)] uppercase tracking-widest flex items-center gap-2">
-        <Icon className="w-4 h-4 text-[var(--color-accent)]" /> {title}
+      <h2 className="text-sm font-bold text-heading uppercase tracking-widest flex items-center gap-2">
+        <Icon className="w-4 h-4 text-accent" /> {title}
       </h2>
       {right}
     </div>
@@ -100,13 +101,13 @@ function EditableField({
           type="number"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
-          className="w-16 px-2 py-1 bg-white border border-[var(--color-accent)] rounded-lg text-sm font-black text-[var(--color-heading)] focus:outline-none"
+          className="w-16 px-2 py-1 bg-white border border-accent rounded-lg text-sm font-black text-heading focus:outline-none"
           autoFocus
         />
         <button
           onClick={handleSave}
           disabled={isSaving || isPending}
-          className="p-1.5 bg-[var(--color-success)]/10 text-[var(--color-success)] rounded-lg hover:bg-[var(--color-success)]/20 transition-colors"
+          className="p-1.5 bg-success/10 text-success rounded-lg hover:bg-success/20 transition-colors"
         >
           {isSaving ? (
             <Loader2 className="w-3 h-3 animate-spin" />
@@ -116,7 +117,7 @@ function EditableField({
         </button>
         <button
           onClick={() => setIsEditing(false)}
-          className="p-1.5 bg-[var(--color-error)]/10 text-[var(--color-error)] rounded-lg hover:bg-[var(--color-error)]/20 transition-colors"
+          className="p-1.5 bg-error/10 text-error rounded-lg hover:bg-error/20 transition-colors"
         >
           <X className="w-3 h-3" />
         </button>
@@ -127,18 +128,18 @@ function EditableField({
   return (
     <div className="flex items-center gap-2 group">
       <span
-        className={`${size === "lg" ? "text-3xl" : "text-lg"} font-black text-[var(--color-heading)] tabular-nums`}
+        className={`${size === "lg" ? "text-3xl" : "text-lg"} font-black text-heading tabular-nums`}
       >
         {value}
       </span>
       {unit && (
-        <span className="text-[10px] font-bold text-[var(--color-muted)] uppercase">
+        <span className="text-[10px] font-bold text-muted uppercase">
           {unit}
         </span>
       )}
       <button
         onClick={() => setIsEditing(true)}
-        className="p-1 text-[var(--color-muted)] opacity-0 group-hover:opacity-100 hover:text-[var(--color-accent)] transition-all"
+        className="p-1 text-muted opacity-0 group-hover:opacity-100 hover:text-accent transition-all"
       >
         <Edit3 className="w-3.5 h-3.5" />
       </button>
@@ -170,23 +171,17 @@ function BedCard({
   const occupied = total - available;
   const pct = total > 0 ? (occupied / total) * 100 : 0;
   const colorClass =
-    pct >= 90
-      ? "bg-[var(--color-error)]"
-      : pct >= 70
-        ? "bg-[var(--color-warning)]"
-        : "bg-[var(--color-success)]";
+    pct >= 90 ? "bg-error" : pct >= 70 ? "bg-warning" : "bg-success";
 
   return (
-    <div className="bg-white p-5 rounded-2xl border border-[var(--color-border)] hover:shadow-sm transition-shadow">
+    <div className="bg-white p-5 rounded-2xl border border-border hover:shadow-sm transition-shadow">
       <div className="flex justify-between items-start mb-4">
         <div>
-          <h3 className="text-sm font-bold text-[var(--color-heading)]">
-            {title}
-          </h3>
-          <p className="text-xs text-[var(--color-muted)]">{description}</p>
+          <h3 className="text-sm font-bold text-heading">{title}</h3>
+          <p className="text-xs text-muted">{description}</p>
         </div>
-        <div className="bg-[var(--color-badge-bg)] px-2 py-1 rounded-lg">
-          <span className="text-[10px] font-bold text-[var(--color-badge-text)] uppercase">
+        <div className="bg-badge-bg px-2 py-1 rounded-lg">
+          <span className="text-[10px] font-bold text-badge-text uppercase">
             Capacity: {total}
           </span>
         </div>
@@ -207,7 +202,7 @@ function BedCard({
           >
             {pct.toFixed(0)}% Occupied
           </span>
-          <span className="text-[10px] font-bold text-[var(--color-muted)]">
+          <span className="text-[10px] font-bold text-muted">
             {available} Free / {occupied} Filled
           </span>
         </div>
@@ -225,7 +220,7 @@ function BedCard({
             key={v}
             disabled={isPending || available + v < 0 || available + v > total}
             onClick={() => onUpdate(available + v)}
-            className="flex-1 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-[10px] font-bold text-[var(--color-body)] hover:bg-[var(--color-badge-bg)] hover:border-[var(--color-border)] disabled:opacity-30 transition-colors"
+            className="flex-1 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-[10px] font-bold text-body hover:bg-badge-bg hover:border-border disabled:opacity-30 transition-colors"
           >
             {v > 0 ? `+${v}` : v}
           </button>
@@ -324,35 +319,69 @@ export default function RealtimeDashboard({
         );
     });
   };
-
-  if (!inventory)
+  if (!inventory) {
     return (
-      <div className="p-12 text-center text-[var(--color-muted)] font-bold animate-pulse">
-        Establishing Secure Connection...
+      <div
+        className="max-w-xl mx-auto mt-16 bg-white p-10 rounded-3xl text-center border shadow-sm"
+        style={{ borderColor: "var(--color-border)" }}
+      >
+        <div
+          className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 border"
+          style={{
+            backgroundColor: "var(--color-badge-bg)",
+            borderColor: "var(--color-border)",
+          }}
+        >
+          <Activity
+            className="w-8 h-8 animate-pulse"
+            style={{ color: "var(--color-accent)" }}
+          />
+        </div>
+        <h2
+          className="text-2xl font-black tracking-tight mb-2 uppercase"
+          style={{ color: "var(--color-heading)" }}
+        >
+          Inventory Not Initialized
+        </h2>
+        <p
+          className="text-sm font-medium mb-8 max-w-sm mx-auto leading-relaxed"
+          style={{ color: "var(--color-muted)" }}
+        >
+          Your hospital's inventory systems have not been configured yet. Please
+          head over to the inventory management section to set up your
+          capacities.
+        </p>
+        <Link
+          href="/admin/inventory"
+          className="inline-flex items-center justify-center gap-2.5 px-8 py-3.5 bg-accent hover:bg-accent-hover text-white font-black rounded-xl shadow-lg shadow-accent/20 transition-all text-sm uppercase tracking-wider"
+        >
+          Go to Inventory Setup
+        </Link>
       </div>
     );
+  }
 
   return (
     <div className="max-w-7xl mx-auto space-y-6 pb-12">
       {/* Header Info Bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-[var(--color-border)] shadow-sm">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-border shadow-sm">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[var(--color-accent)]/10 flex items-center justify-center">
-            <TrendingUp className="w-5 h-5 text-[var(--color-accent)]" />
+          <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
+            <TrendingUp className="w-5 h-5 text-accent" />
           </div>
           <div>
-            <h1 className="text-lg font-black text-[var(--color-heading)] leading-none tracking-tight">
+            <h1 className="text-lg font-black text-heading leading-none tracking-tight">
               Inventory Terminal
             </h1>
-            <p className="text-[10px] font-bold text-[var(--color-muted)] uppercase mt-1 flex items-center gap-1">
-              <span className="w-1.5 h-1.5 bg-[var(--color-success)] rounded-full animate-pulse" />
+            <p className="text-[10px] font-bold text-muted uppercase mt-1 flex items-center gap-1">
+              <span className="w-1.5 h-1.5 bg-success rounded-full animate-pulse" />
               Live Sync Active • {lastUpdated || "Connected"}
             </p>
           </div>
         </div>
         <button
           onClick={() => window.location.reload()}
-          className="flex items-center justify-center gap-2 px-4 py-2 bg-slate-50 hover:bg-[var(--color-badge-bg)] text-[var(--color-heading)] text-xs font-bold rounded-xl border border-[var(--color-border)] transition-all"
+          className="flex items-center justify-center gap-2 px-4 py-2 bg-slate-50 hover:bg-badge-bg text-heading text-xs font-bold rounded-xl border border-border transition-all"
         >
           <RefreshCw
             className={`w-3.5 h-3.5 ${isPending ? "animate-spin" : ""}`}
@@ -398,8 +427,8 @@ export default function RealtimeDashboard({
         {/* Right: Blood Bank Management */}
         <div className="lg:col-span-4 space-y-4">
           <SectionHeader title="Blood Bank" icon={Droplets} />
-          <div className="bg-white rounded-2xl border border-[var(--color-border)] overflow-hidden shadow-sm">
-            <div className="divide-y divide-[var(--color-border)]/50">
+          <div className="bg-white rounded-2xl border border-border overflow-hidden shadow-sm">
+            <div className="divide-y divide-border/50">
               {bloodBank.map((blood) => {
                 const units = blood.units_available ?? 0;
                 const isLow = units < 5;
@@ -411,7 +440,7 @@ export default function RealtimeDashboard({
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
                         <span
-                          className={`w-9 h-9 rounded-lg flex items-center justify-center text-xs font-black ${isLow ? "bg-red-100 text-red-600" : "bg-[var(--color-badge-bg)] text-[var(--color-badge-text)]"}`}
+                          className={`w-9 h-9 rounded-lg flex items-center justify-center text-xs font-black ${isLow ? "bg-red-100 text-red-600" : "bg-badge-bg text-badge-text"}`}
                         >
                           {blood.blood_group}
                         </span>
@@ -427,7 +456,7 @@ export default function RealtimeDashboard({
                           onClick={() =>
                             handleBloodUpdate(blood.blood_group, units - 1)
                           }
-                          className="p-1 bg-white border border-[var(--color-border)] rounded-md text-[var(--color-muted)] hover:text-[var(--color-error)]"
+                          className="p-1 bg-white border border-border rounded-md text-muted hover:text-error"
                         >
                           <Minus className="w-3 h-3" />
                         </button>
@@ -449,7 +478,7 @@ export default function RealtimeDashboard({
                           onClick={() =>
                             handleBloodUpdate(blood.blood_group, units + 1)
                           }
-                          className="p-1 bg-white border border-[var(--color-border)] rounded-md text-[var(--color-muted)] hover:text-[var(--color-success)]"
+                          className="p-1 bg-white border border-border rounded-md text-muted hover:text-success"
                         >
                           <Plus className="w-3 h-3" />
                         </button>
@@ -458,7 +487,7 @@ export default function RealtimeDashboard({
                     {/* Visual Progress Bar for Blood */}
                     <div className="h-1 w-full bg-slate-100 rounded-full overflow-hidden">
                       <div
-                        className={`h-full transition-all duration-500 ${isLow ? "bg-[var(--color-error)]" : "bg-[var(--color-success)]"}`}
+                        className={`h-full transition-all duration-500 ${isLow ? "bg-error" : "bg-success"}`}
                         style={{
                           width: `${Math.min(100, (units / 20) * 100)}%`,
                         }}

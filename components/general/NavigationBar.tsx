@@ -242,7 +242,7 @@ export function Navigation() {
                               className={`flex items-center gap-3 px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
                                 dashboardHref === "#"
                                   ? "opacity-50 cursor-not-allowed"
-                                  : "text-[var(--color-heading)] hover:bg-[var(--color-badge-bg)] hover:text-[var(--color-accent)]"
+                                  : "text-heading hover:bg-badge-bg hover:text-accent"
                               }`}
                             >
                               <LayoutDashboard
@@ -382,7 +382,7 @@ export function Navigation() {
                       className={`flex items-center gap-3 px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
                         dashboardHref === "#"
                           ? "opacity-50 cursor-not-allowed"
-                          : "text-[var(--color-heading)] hover:bg-[var(--color-badge-bg)] hover:text-[var(--color-accent)]"
+                          : "text-heading hover:bg-badge-bg hover:text-accent"
                       }`}
                     >
                       <LayoutDashboard size={15} className="text-accent" />

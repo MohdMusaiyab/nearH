@@ -35,6 +35,9 @@ type RawJoinResult = Database["public"]["Tables"]["hospitals"]["Row"] & {
   }[];
 };
 
+import { rateLimit } from "@/utils/rateLimit";
+import { headers } from "next/headers";
+
 export async function getExploreHospitals({
   page,
   query,
@@ -44,6 +47,21 @@ export async function getExploreHospitals({
 }: ExploreParams): Promise<
   ActionResponse<{ hospitals: ExploreHospital[]; totalCount: number }>
 > {
+  const headersList = await headers();
+  const ip = headersList.get("x-forwarded-for") || "127.0.0.1";
+  const { success: isRateLimitOk } = await rateLimit(ip, {
+    limit: 30,
+    windowInSeconds: 60,
+    namespace: "explore-hospitals",
+  });
+  if (!isRateLimitOk) {
+    return {
+      success: false,
+      message: "Too many requests. Please try again later.",
+      data: null,
+    };
+  }
+
   const supabase = await createClient();
   const pageSize = 20;
   const from = (page - 1) * pageSize;

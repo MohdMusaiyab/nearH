@@ -16,6 +16,9 @@ type RawDoctorJoin = Database["public"]["Tables"]["doctors"]["Row"] & {
     location: { city: string; state: string } | null;
   } | null;
 };
+import { rateLimit } from "@/utils/rateLimit";
+import { headers } from "next/headers";
+
 export async function getDoctorDirectory({
   page,
   query,
@@ -23,6 +26,21 @@ export async function getDoctorDirectory({
 }: DoctorQueryParams): Promise<
   ActionResponse<{ doctors: DoctorDirectoryEntry[]; totalCount: number }>
 > {
+  const headersList = await headers();
+  const ip = headersList.get("x-forwarded-for") || "127.0.0.1";
+  const { success: isRateLimitOk } = await rateLimit(ip, {
+    limit: 30,
+    windowInSeconds: 60,
+    namespace: "explore-doctors",
+  });
+  if (!isRateLimitOk) {
+    return {
+      success: false,
+      message: "Too many requests. Please try again later.",
+      data: null,
+    };
+  }
+
   const supabase = await createClient();
   const pageSize = 20;
   const from = (page - 1) * pageSize;

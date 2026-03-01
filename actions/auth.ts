@@ -6,7 +6,27 @@ import { revalidatePath } from "next/cache";
 import { invalidateUserCache } from "@/utils/authCache";
 import { redirect } from "next/navigation";
 import { redis } from "@/lib/redis";
+import { rateLimit } from "@/utils/rateLimit";
+import { headers } from "next/headers";
 export async function login(formData: unknown): Promise<ActionResponse<null>> {
+  const headersList = await headers();
+  const ip = headersList.get("x-forwarded-for") || "127.0.0.1";
+
+  const { success: isRateLimitOk } = await rateLimit(ip, {
+    limit: 5,
+    windowInSeconds: 300,
+
+    namespace: "login",
+  });
+
+  if (!isRateLimitOk) {
+    return {
+      success: false,
+      message: "Too many login attempts. Please try again later.",
+      data: null,
+    };
+  }
+
   const validatedFields = LoginSchema.safeParse(formData);
   if (!validatedFields.success) {
     return {
@@ -37,7 +57,6 @@ export async function login(formData: unknown): Promise<ActionResponse<null>> {
 
   revalidatePath("/", "layout");
 
-  // Redirect server-side — cookies are guaranteed to be set at this point
   if (profile?.role === "superadmin") {
     redirect("/superadmin/dashboard");
   } else if (profile?.role === "admin" && profile?.status === "approved") {
@@ -49,7 +68,26 @@ export async function login(formData: unknown): Promise<ActionResponse<null>> {
   }
   return { success: true, message: "Logged in successfully", data: null };
 }
+
 export async function signup(formData: unknown): Promise<ActionResponse<null>> {
+  const headersList = await headers();
+  const ip = headersList.get("x-forwarded-for") || "127.0.0.1";
+
+  const { success: isRateLimitOk } = await rateLimit(ip, {
+    limit: 3,
+    windowInSeconds: 3600,
+
+    namespace: "signup",
+  });
+
+  if (!isRateLimitOk) {
+    return {
+      success: false,
+      message: "Too many signup attempts from this IP. Please try again later.",
+      data: null,
+    };
+  }
+
   const validatedFields = AdminSignupSchema.safeParse(formData);
   if (!validatedFields.success) {
     return {
@@ -128,9 +166,26 @@ export async function signup(formData: unknown): Promise<ActionResponse<null>> {
 export async function requestPasswordReset(
   email: string,
 ): Promise<ActionResponse<null>> {
+  const headersList = await headers();
+  const ip = headersList.get("x-forwarded-for") || "127.0.0.1";
+
+  const { success: isRateLimitOk } = await rateLimit(ip, {
+    limit: 3,
+    windowInSeconds: 3600,
+
+    namespace: "request-password-reset",
+  });
+
+  if (!isRateLimitOk) {
+    return {
+      success: false,
+      message: "Too many password reset requests. Please try again later.",
+      data: null,
+    };
+  }
+
   const supabase = await createClient();
 
-  // Append &type=recovery so the callback knows to set the secure cookie
   const redirectTo = `${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/callback?next=/auth/reset-password&type=recovery`;
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
@@ -157,6 +212,24 @@ import { cookies } from "next/headers";
 export async function updateUserPassword(
   password: string,
 ): Promise<ActionResponse<null>> {
+  const headersList = await headers();
+  const ip = headersList.get("x-forwarded-for") || "127.0.0.1";
+
+  const { success: isRateLimitOk } = await rateLimit(ip, {
+    limit: 5,
+    windowInSeconds: 3600,
+
+    namespace: "update-user-password",
+  });
+
+  if (!isRateLimitOk) {
+    return {
+      success: false,
+      message: "Too many password reset attempts. Please try again later.",
+      data: null,
+    };
+  }
+
   const supabase = await createClient();
 
   const { error } = await supabase.auth.updateUser({
@@ -171,7 +244,6 @@ export async function updateUserPassword(
     };
   }
 
-  // Clear the secure recovery cookie
   const cookieStore = await cookies();
   cookieStore.delete("awaiting_password_reset");
 
@@ -187,28 +259,18 @@ export async function updateUserPassword(
 export async function logoutAction() {
   const supabase = await createClient();
 
-  // 1. Get user ID before we kill the session
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // 2. Terminate Supabase Session (Clears Auth Cookies)
   await supabase.auth.signOut();
 
-  // 3. WIPE REDIS CACHE
-  // This ensures the Middleware doesn't see the "Pending" or "Approved" cache
   if (user?.id) {
     const cacheKey = `user:profile:${user.id}`;
     await redis.del(cacheKey);
   }
 
-  /**
-   * 4. BUST NEXT.JS CACHE
-   * revalidatePath('/', 'layout') tells Next.js that the
-   * entire UI (including Navigation) is now stale.
-   */
   revalidatePath("/", "layout");
 
-  // 5. Hard Redirect
   redirect("/auth/login");
 }

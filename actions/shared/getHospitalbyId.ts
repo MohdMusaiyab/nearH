@@ -8,6 +8,9 @@ import {
   SuperAdminHospitalProfile,
 } from "@/types/hospital";
 import { getAuthenticatedProfile } from "@/utils/authCache";
+import { rateLimit } from "@/utils/rateLimit";
+import { headers } from "next/headers";
+
 export async function getHospitalProfile(
   hospitalId: string,
 ): Promise<
@@ -15,6 +18,21 @@ export async function getHospitalProfile(
     PublicHospitalProfile | PrivateHospitalProfile | SuperAdminHospitalProfile
   >
 > {
+  const headersList = await headers();
+  const ip = headersList.get("x-forwarded-for") || "127.0.0.1";
+  const { success: isRateLimitOk } = await rateLimit(ip, {
+    limit: 30,
+    windowInSeconds: 60,
+    namespace: "hospital-profile",
+  });
+  if (!isRateLimitOk) {
+    return {
+      success: false,
+      message: "Too many requests. Please try again later.",
+      data: null,
+    };
+  }
+
   if (!hospitalId) {
     return { success: false, message: "Hospital ID is required", data: null };
   }

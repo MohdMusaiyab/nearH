@@ -28,9 +28,11 @@ import {
 interface Admin {
   id: string;
   full_name: string | null;
-  email: string | null; // Make nullable
-  status: string | null; // Make nullable
-  created_at: string | null; // Make nullable
+  email: string | null;
+
+  status: string | null;
+
+  created_at: string | null;
 }
 
 interface Props {
@@ -38,7 +40,6 @@ interface Props {
   admins: Admin[];
 }
 
-// Type guard to check if hospital has private fields
 const hasPrivateFields = (
   hospital: HospitalProfile,
 ): hospital is PrivateHospitalProfile | SuperAdminHospitalProfile => {
@@ -53,10 +54,7 @@ export default function SuperAdminHospitalClient({ hospital, admins }: Props) {
   const [isUpdating, setIsUpdating] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
-  // Since this is a superadmin page, we can assert that hospital has private fields
-  // But let's handle it safely with a type guard
   if (!hasPrivateFields(hospital)) {
-    // This should never happen on superadmin page, but handle it gracefully
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
         <div className="bg-white rounded-3xl p-8 text-center">
@@ -70,7 +68,6 @@ export default function SuperAdminHospitalClient({ hospital, admins }: Props) {
     );
   }
 
-  // Now TypeScript knows hospital has is_active and is_verified
   const hospitalWithPrivate = hospital;
 
   const handleStatusToggle = async () => {
@@ -109,7 +106,7 @@ export default function SuperAdminHospitalClient({ hospital, admins }: Props) {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* Superadmin Bar */}
+      {}
       <div className="bg-indigo-600 text-white sticky top-0 z-50 shadow-lg">
         <div className="max-w-7xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
@@ -128,7 +125,7 @@ export default function SuperAdminHospitalClient({ hospital, admins }: Props) {
             </div>
 
             <div className="flex items-center gap-3">
-              {/* Status Badges */}
+              {}
               <div className="flex items-center gap-2 px-4 py-2 bg-indigo-500 rounded-xl">
                 <span className="text-sm font-bold">Status:</span>
                 {hospital.is_active ? (
@@ -157,7 +154,7 @@ export default function SuperAdminHospitalClient({ hospital, admins }: Props) {
         </div>
       </div>
 
-      {/* Control Panel */}
+      {}
       <div className="bg-white border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
@@ -165,7 +162,7 @@ export default function SuperAdminHospitalClient({ hospital, admins }: Props) {
               Management Controls
             </h2>
             <div className="flex gap-3">
-              {/* Toggle Active Status */}
+              {}
               <button
                 onClick={() => setShowConfirm(true)}
                 disabled={isUpdating}
@@ -191,7 +188,7 @@ export default function SuperAdminHospitalClient({ hospital, admins }: Props) {
                 )}
               </button>
 
-              {/* Toggle Verification */}
+              {}
               <button
                 onClick={handleVerifyToggle}
                 disabled={isUpdating}
@@ -217,7 +214,7 @@ export default function SuperAdminHospitalClient({ hospital, admins }: Props) {
         </div>
       </div>
 
-      {/* Confirmation Modal */}
+      {}
       {showConfirm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-3xl max-w-md w-full p-6">
@@ -253,15 +250,15 @@ export default function SuperAdminHospitalClient({ hospital, admins }: Props) {
         </div>
       )}
 
-      {/* Hero Section */}
+      {}
       <HeroSection hospital={hospital} />
 
-      {/* Main Content */}
+      {}
       <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Contact Info */}
+        {}
         <ContactInfo hospital={hospitalWithPrivate} />
 
-        {/* Quick Stats for Superadmin */}
+        {}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           <div className="bg-white rounded-2xl p-4 border border-slate-200">
             <div className="flex items-center gap-3">
@@ -310,7 +307,7 @@ export default function SuperAdminHospitalClient({ hospital, admins }: Props) {
           </div>
         </div>
 
-        {/* Tabs */}
+        {}
         <div className="flex gap-2 mb-8 overflow-x-auto pb-2">
           {[
             { id: "overview", label: "Overview" },
@@ -334,7 +331,7 @@ export default function SuperAdminHospitalClient({ hospital, admins }: Props) {
           ))}
         </div>
 
-        {/* Tab Content */}
+        {}
         <div className="bg-white rounded-3xl p-8 shadow-sm border border-slate-200">
           {activeTab === "overview" && <OverviewTab hospital={hospital} />}
 

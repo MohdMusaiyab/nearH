@@ -17,7 +17,7 @@ interface Props {
 export function OverviewTab({ hospital }: Props) {
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
-      {/* ── Real-time Capacity Grid ── */}
+      {}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <OverviewStat
           icon={BedDouble}
@@ -39,7 +39,7 @@ export function OverviewTab({ hospital }: Props) {
         />
       </div>
 
-      {/* ── Status Bar ── */}
+      {}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-4 px-6 bg-badge-bg/30 border border-border rounded-2xl">
         <div className="flex items-center gap-2">
           <Clock size={14} className="text-accent" />
@@ -60,7 +60,7 @@ export function OverviewTab({ hospital }: Props) {
         )}
       </div>
 
-      {/* ── Critical Hotline Card ── */}
+      {}
       <div className="relative group overflow-hidden bg-red-50/50 border border-red-100 rounded-[2rem] p-6 md:p-8 transition-all hover:bg-white hover:border-red-200">
         <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
           <AlertTriangle size={80} className="text-red-600" />
@@ -97,7 +97,6 @@ export function OverviewTab({ hospital }: Props) {
 }
 
 {
-  /* ── Internal Styled Stat Component ── */
 }
 function OverviewStat({
   icon: Icon,

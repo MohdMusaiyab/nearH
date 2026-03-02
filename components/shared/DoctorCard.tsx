@@ -1,4 +1,3 @@
-// components/hospital/profile/DoctorCard.tsx
 import { Calendar, CheckCircle, XCircle, MapPin } from "lucide-react";
 import {
   PublicHospitalProfile,

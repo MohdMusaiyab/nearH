@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -21,16 +20,13 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import { toast } from "sonner";
-
 type Specialty = Database["public"]["Tables"]["specialties_list"]["Row"];
 type Location = Database["public"]["Tables"]["locations"]["Row"];
 type Priority = Database["public"]["Enums"]["priority_level"];
-
 interface Props {
   specialties: Specialty[];
   locations: Location[];
 }
-
 export default function NewReferralForm({ specialties, locations }: Props) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -40,13 +36,11 @@ export default function NewReferralForm({ specialties, locations }: Props) {
   const [selectedHospital, setSelectedHospital] = useState<SearchResult | null>(
     null,
   );
-
   const handleSearch = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSearching(true);
     const formData = new FormData(e.currentTarget);
     const cityId = formData.get("city") as string;
-
     const res = await searchHospitals({ cityId });
     if (res.success) {
       setSearchResults(res.data || []);
@@ -55,12 +49,10 @@ export default function NewReferralForm({ specialties, locations }: Props) {
     }
     setSearching(false);
   };
-
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!selectedHospital) return;
     const formData = new FormData(e.currentTarget);
-
     startTransition(async () => {
       const res = await sendReferral({
         to_hospital_id: selectedHospital.id,
@@ -72,7 +64,6 @@ export default function NewReferralForm({ specialties, locations }: Props) {
         priority: formData.get("priority") as Priority,
         status: "Pending",
       });
-
       if (res.success) {
         toast.success("Referral Dispatched", {
           description: `Request sent to ${selectedHospital.name}`,
@@ -84,10 +75,9 @@ export default function NewReferralForm({ specialties, locations }: Props) {
       }
     });
   };
-
   return (
     <div className="max-w-5xl mx-auto space-y-8">
-      {/* ── Step 1: Hospital Discovery ── */}
+      {}
       {step === 1 && (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
           <section className="bg-white p-6 md:p-8 rounded-[2rem] border border-border shadow-sm">
@@ -99,7 +89,6 @@ export default function NewReferralForm({ specialties, locations }: Props) {
                 Select Target Facility
               </h2>
             </div>
-
             <form
               onSubmit={handleSearch}
               className="flex flex-col sm:flex-row gap-4"
@@ -117,7 +106,7 @@ export default function NewReferralForm({ specialties, locations }: Props) {
                     </option>
                   ))}
                 </select>
-                {/* Custom Chevron */}
+                {}
                 <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted group-hover:text-heading transition-colors">
                   <ChevronDown size={18} strokeWidth={3} />
                 </div>
@@ -136,7 +125,6 @@ export default function NewReferralForm({ specialties, locations }: Props) {
               </button>
             </form>
           </section>
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {searchResults.length === 0 && !searching && (
               <div className="md:col-span-2 py-20 text-center bg-badge-bg/20 rounded-[2.5rem] border-2 border-dashed border-border">
@@ -149,7 +137,6 @@ export default function NewReferralForm({ specialties, locations }: Props) {
                 </p>
               </div>
             )}
-
             {searchResults.map((h) => (
               <button
                 key={h.id}
@@ -175,7 +162,6 @@ export default function NewReferralForm({ specialties, locations }: Props) {
                     <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
                   </div>
                 </div>
-
                 <div className="grid grid-cols-2 gap-3">
                   <div className="p-3 bg-emerald-50 rounded-2xl border border-emerald-100">
                     <p className="text-[9px] font-black text-emerald-600 uppercase tracking-widest">
@@ -199,8 +185,7 @@ export default function NewReferralForm({ specialties, locations }: Props) {
           </div>
         </div>
       )}
-
-      {/* ── Step 2: Clinical Data Entry ── */}
+      {}
       {step === 2 && selectedHospital && (
         <form
           onSubmit={onSubmit}
@@ -227,12 +212,10 @@ export default function NewReferralForm({ specialties, locations }: Props) {
                 Change
               </button>
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
               <div className="md:col-span-2 space-y-2">
                 <label className="text-[10px] font-black text-muted uppercase tracking-widest ml-1 flex items-center gap-2">
-                  <User size={12} className="text-accent" />{" "}
-                  Patient Full Name
+                  <User size={12} className="text-accent" /> Patient Full Name
                 </label>
                 <input
                   name="patient_name"
@@ -241,7 +224,6 @@ export default function NewReferralForm({ specialties, locations }: Props) {
                   className="w-full px-5 py-4 bg-badge-bg/30 border border-border rounded-2xl outline-none focus:bg-white focus:ring-2 focus:ring-accent/10 focus:border-accent font-bold text-heading transition-all"
                 />
               </div>
-
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-muted uppercase tracking-widest ml-1">
@@ -276,14 +258,10 @@ export default function NewReferralForm({ specialties, locations }: Props) {
                   </div>
                 </div>
               </div>
-
               <div className="space-y-2">
                 <label className="text-[10px] font-black text-muted uppercase tracking-widest ml-1 flex items-center gap-2">
-                  <Stethoscope
-                    size={12}
-                    className="text-accent"
-                  />{" "}
-                  Required Specialty
+                  <Stethoscope size={12} className="text-accent" /> Required
+                  Specialty
                 </label>
                 <div className="relative">
                   <select
@@ -303,14 +281,10 @@ export default function NewReferralForm({ specialties, locations }: Props) {
                   />
                 </div>
               </div>
-
               <div className="space-y-2">
                 <label className="text-[10px] font-black text-muted uppercase tracking-widest ml-1 flex items-center gap-2">
-                  <AlertTriangle
-                    size={12}
-                    className="text-error"
-                  />{" "}
-                  Priority Level
+                  <AlertTriangle size={12} className="text-error" /> Priority
+                  Level
                 </label>
                 <div className="relative">
                   <select
@@ -327,7 +301,6 @@ export default function NewReferralForm({ specialties, locations }: Props) {
                   />
                 </div>
               </div>
-
               <div className="md:col-span-2 space-y-2">
                 <label className="text-[10px] font-black text-muted uppercase tracking-widest ml-1">
                   Clinical Reason / Notes
@@ -341,7 +314,6 @@ export default function NewReferralForm({ specialties, locations }: Props) {
                 />
               </div>
             </div>
-
             <button
               type="submit"
               disabled={isPending}

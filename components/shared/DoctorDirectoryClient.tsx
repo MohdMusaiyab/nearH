@@ -87,7 +87,7 @@ export default function DoctorDirectoryClient({
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-12 space-y-10">
-      {/* Header & Filters */}
+      {}
       <div className="flex flex-col md:flex-row justify-between items-end gap-6">
         <div className="space-y-2">
           <h1 className="text-5xl font-black text-slate-900 tracking-tight">
@@ -128,7 +128,7 @@ export default function DoctorDirectoryClient({
         </div>
       </div>
 
-      {/* Grid */}
+      {}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {doctors.map((doctor) => (
           <div
@@ -179,7 +179,7 @@ export default function DoctorDirectoryClient({
               </div>
             </div>
 
-            {/* Timings */}
+            {}
             <div className="mt-8 pt-6 border-t border-slate-50">
               <div className="flex items-center gap-2 mb-4">
                 <Clock className="w-4 h-4 text-slate-400" />
@@ -210,7 +210,7 @@ export default function DoctorDirectoryClient({
         ))}
       </div>
 
-      {/* Pagination */}
+      {}
       <div className="flex justify-between items-center pt-8 border-t border-slate-100">
         <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
           Total Doctors: {count}

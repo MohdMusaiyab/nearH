@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { deleteDoctor, type DoctorWithSpecialty } from "@/actions/admin/doctor";
 import {
@@ -18,15 +17,11 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
 import { Modal, ConfigProvider, App } from "antd";
-
 interface DoctorTableProps {
   initialData: DoctorWithSpecialty[];
   totalCount: number;
   pageSize: number;
 }
-
-// ── Internal Table Component ──
-// We move the logic here so it can consume the 'App' context correctly.
 function DoctorTableContent({
   initialData,
   totalCount,
@@ -34,18 +29,14 @@ function DoctorTableContent({
 }: DoctorTableProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { modal } = App.useApp(); // This is the secret sauce for the theme to work
-
+  const { modal } = App.useApp();
   const [data, setData] = useState<DoctorWithSpecialty[]>(initialData);
   const [isDeletingId, setIsDeletingId] = useState<string | null>(null);
-
   const currentPage = Number(searchParams.get("page")) || 1;
   const totalPages = Math.ceil(totalCount / pageSize);
-
   useEffect(() => {
     setData(initialData);
   }, [initialData]);
-
   const updateFilters = (key: string, value: string | number) => {
     const params = new URLSearchParams(searchParams.toString());
     if (value) params.set(key, value.toString());
@@ -53,23 +44,17 @@ function DoctorTableContent({
     if (key === "search") params.set("page", "1");
     router.push(`?${params.toString()}`);
   };
-
   const handleDelete = (id: string, name: string) => {
     modal.confirm({
       title: (
-        <span className="font-black text-heading">
-          Remove Medical Staff
-        </span>
+        <span className="font-black text-heading">Remove Medical Staff</span>
       ),
       icon: <AlertCircle className="text-error w-5 h-5" />,
       content: (
         <div className="pt-1">
           <p className="text-sm text-body mb-2">
             Are you sure you want to remove{" "}
-            <span className="font-bold text-heading">
-              Dr. {name}
-            </span>
-            ?
+            <span className="font-bold text-heading">Dr. {name}</span>?
           </p>
           <p className="text-xs text-error font-semibold bg-red-50 rounded-lg px-3 py-2 border border-red-100">
             ⚠️ This will remove their profile and OPD schedule from the public
@@ -81,7 +66,7 @@ function DoctorTableContent({
       okType: "danger",
       cancelText: "Cancel",
       centered: true,
-      mask: { closable: true }, // Fixed deprecation: maskClosable -> mask.closable
+      mask: { closable: true },
       okButtonProps: {
         className:
           "!bg-error !border-error hover:!bg-error-hover !font-bold !text-white !rounded-xl",
@@ -93,9 +78,7 @@ function DoctorTableContent({
         const previousData = [...data];
         setData((current) => current.filter((d) => d.id !== id));
         setIsDeletingId(id);
-
         const res = await deleteDoctor(id);
-
         if (res.success) {
           toast.success(`Dr. ${name} has been removed.`);
         } else {
@@ -106,10 +89,9 @@ function DoctorTableContent({
       },
     });
   };
-
   return (
     <div className="flex flex-col bg-white">
-      {/* Search Header */}
+      {}
       <div className="p-5 border-b border-border">
         <div className="relative max-w-md">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
@@ -122,8 +104,7 @@ function DoctorTableContent({
           />
         </div>
       </div>
-
-      {/* Table Content */}
+      {}
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
@@ -204,8 +185,7 @@ function DoctorTableContent({
           </tbody>
         </table>
       </div>
-
-      {/* Pagination Footer */}
+      {}
       <div className="px-6 py-4 border-t border-border bg-badge-bg/20 flex flex-col sm:flex-row items-center justify-between gap-4">
         <p className="text-xs font-bold text-muted uppercase">
           Showing {data.length} of {totalCount} Staff
@@ -235,8 +215,6 @@ function DoctorTableContent({
     </div>
   );
 }
-
-// ── Wrapper Component ──
 export default function DoctorTable(props: DoctorTableProps) {
   return (
     <ConfigProvider

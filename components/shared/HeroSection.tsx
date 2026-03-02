@@ -22,7 +22,7 @@ export function HeroSection({ hospital }: Props) {
       className="relative overflow-hidden rounded-[3rem] border border-border shadow-sm"
       style={{ background: "var(--gradient-hero)" }}
     >
-      {/* ── Background Textures ── */}
+      {}
       <div
         className="absolute inset-0 opacity-[0.25] pointer-events-none"
         style={{
@@ -35,11 +35,11 @@ export function HeroSection({ hospital }: Props) {
       />
       <div className="absolute -top-24 -right-24 w-96 h-96 bg-accent/5 rounded-full blur-3xl" />
 
-      {/* ── Main Layout ── */}
+      {}
       <div className="relative z-10 p-8 md:p-12">
         <div className="flex flex-col lg:flex-row gap-10 items-center lg:items-end justify-between">
           <div className="flex-1 space-y-6">
-            {/* Status Badges */}
+            {}
             <div className="flex flex-wrap gap-2">
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-border text-accent text-[10px] font-black uppercase tracking-widest shadow-sm">
                 <span className="w-2 h-2 rounded-full bg-success animate-pulse" />
@@ -53,7 +53,7 @@ export function HeroSection({ hospital }: Props) {
               )}
             </div>
 
-            {/* Title & Location */}
+            {}
             <div className="space-y-3">
               <h1 className="text-5xl md:text-6xl font-black text-heading tracking-tighter leading-[0.9] uppercase">
                 {hospital.name}
@@ -74,7 +74,7 @@ export function HeroSection({ hospital }: Props) {
             </div>
           </div>
 
-          {/* ── Real-time Inventory Chips (The "Explore Grid" Logic) ── */}
+          {}
           <div className="grid grid-cols-2 gap-3 w-full lg:w-auto min-w-[320px]">
             <div className="p-5 bg-white rounded-[2rem] border border-border shadow-sm">
               <div className="flex items-center gap-2 mb-2">
@@ -120,7 +120,7 @@ export function HeroSection({ hospital }: Props) {
         </div>
       </div>
 
-      {/* ── Image Integration (Subtle, to maintain lightness) ── */}
+      {}
       {hospital.primary_image && (
         <div className="absolute right-0 top-0 bottom-0 w-1/3 opacity-10 pointer-events-none">
           <Image

@@ -72,9 +72,7 @@ function InputField({
           </motion.p>
         )}
       </AnimatePresence>
-      {hint && !error && (
-        <p className="text-[10px] text-muted pl-1">{hint}</p>
-      )}
+      {hint && !error && <p className="text-[10px] text-muted pl-1">{hint}</p>}
     </div>
   );
 }
@@ -143,7 +141,7 @@ export default function RegistrationForm({ locations }: Props) {
 
   return (
     <div className="w-full">
-      {/* Step indicator */}
+      {}
       <div className="flex items-center gap-0 mb-7">
         {steps.map((s, i) => (
           <div key={s} className="flex items-center flex-1">
@@ -188,7 +186,7 @@ export default function RegistrationForm({ locations }: Props) {
         ))}
       </div>
 
-      {/* Server error */}
+      {}
       <AnimatePresence>
         {serverError && (
           <motion.div
@@ -201,9 +199,7 @@ export default function RegistrationForm({ locations }: Props) {
               size={14}
               className="text-error flex-shrink-0 mt-0.5"
             />
-            <p className="text-sm text-error font-medium">
-              {serverError}
-            </p>
+            <p className="text-sm text-error font-medium">{serverError}</p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -381,7 +377,7 @@ export default function RegistrationForm({ locations }: Props) {
                 </InputField>
               </div>
 
-              {/* Ayushman Bharat toggle */}
+              {}
               <label className="flex items-center gap-3 p-4 rounded-xl bg-badge-bg border border-border cursor-pointer hover:border-accent transition-colors group">
                 <input
                   {...register("has_ayushman_bharat")}

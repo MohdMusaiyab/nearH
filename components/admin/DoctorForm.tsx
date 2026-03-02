@@ -83,11 +83,7 @@ function DoctorFormContent({ specialties, initialData }: Props) {
 
   const handleCancel = () => {
     modal.confirm({
-      title: (
-        <span className="font-black text-heading">
-          Discard Changes?
-        </span>
-      ),
+      title: <span className="font-black text-heading">Discard Changes?</span>,
       icon: <AlertCircle className="text-warning" />,
       content:
         "Any unsaved information will be lost. Are you sure you want to go back?",
@@ -156,10 +152,9 @@ function DoctorFormContent({ specialties, initialData }: Props) {
                 name="experience_years"
                 type="number"
                 required
-                min="0" // Prevents negative values in the browser
+                min="0"
                 defaultValue={initialData?.experience_years || 0}
                 onKeyDown={(e) => {
-                  // Prevents the user from typing '-' or 'e' manually
                   if (e.key === "-" || e.key === "e") {
                     e.preventDefault();
                   }

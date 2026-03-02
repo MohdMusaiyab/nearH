@@ -68,7 +68,6 @@ function HospitalProfileFormContent({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
-      {/* SECTION: Basic Information */}
       <section className="bg-white p-6 md:p-8 rounded-3xl border border-border shadow-sm space-y-6">
         <div className="flex items-center gap-2 pb-2 border-b border-slate-50">
           <Building2 className="w-4 h-4 text-accent" />
@@ -78,7 +77,7 @@ function HospitalProfileFormContent({
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Hospital Name */}
+          {}
           <div className="space-y-2">
             <label className="text-[10px] font-black text-muted uppercase tracking-widest px-1">
               Hospital Name
@@ -91,7 +90,7 @@ function HospitalProfileFormContent({
             />
           </div>
 
-          {/* Official Phone */}
+          {}
           <div className="space-y-2">
             <label className="text-[10px] font-black text-muted uppercase tracking-widest px-1">
               Official Phone
@@ -107,7 +106,7 @@ function HospitalProfileFormContent({
             </div>
           </div>
 
-          {/* Location Dropdown */}
+          {}
           <div className="space-y-2">
             <label className="text-[10px] font-black text-muted uppercase tracking-widest px-1">
               Operating City
@@ -130,7 +129,7 @@ function HospitalProfileFormContent({
             </div>
           </div>
 
-          {/* Website URL */}
+          {}
           <div className="space-y-2">
             <label className="text-[10px] font-black text-muted uppercase tracking-widest px-1">
               Website URL
@@ -148,7 +147,7 @@ function HospitalProfileFormContent({
         </div>
       </section>
 
-      {/* SECTION: Services Selector */}
+      {}
       <section className="bg-white p-6 md:p-8 rounded-3xl border border-border shadow-sm space-y-6">
         <div className="flex items-center gap-2 pb-2 border-b border-slate-50">
           <Activity className="w-4 h-4 text-accent" />
@@ -181,9 +180,7 @@ function HospitalProfileFormContent({
                 />
                 <div
                   className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
-                    isSelected
-                      ? "bg-accent border-accent"
-                      : "border-border"
+                    isSelected ? "bg-accent border-accent" : "border-border"
                   }`}
                 >
                   {isSelected && (

@@ -35,7 +35,7 @@ export function BloodBankTab({ bloodBank, canEdit }: Props) {
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-      {/* ── Header Strategy ── */}
+      {}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-10 pb-6 border-b border-slate-50">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-2xl bg-red-50 border border-red-100 flex items-center justify-center text-error">
@@ -64,10 +64,8 @@ export function BloodBankTab({ bloodBank, canEdit }: Props) {
         )}
       </div>
 
-      {/* ── Inventory Grid ── */}
-      {/* Using grid-cols-2 for mobile to prevent text overlap, 
-        expanding to 4 columns on larger screens for high-density viewing.
-      */}
+      {}
+      {}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6">
         {bloodBank.map((item) => (
           <BloodGroupCard

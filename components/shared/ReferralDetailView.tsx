@@ -32,8 +32,7 @@ export default function ReferralDetailView({ referral, userRole }: Props) {
 
   const statusColors: Record<Status, string> = {
     Pending: "bg-amber-50 text-amber-700 border-amber-200",
-    Accepted:
-      "bg-badge-bg text-accent border-border",
+    Accepted: "bg-badge-bg text-accent border-border",
     Rejected: "bg-red-50 text-error border-red-200",
     Completed: "bg-green-50 text-green-700 border-green-200",
   };
@@ -58,7 +57,7 @@ export default function ReferralDetailView({ referral, userRole }: Props) {
       </Link>
 
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
-        {/* ── Clinical Section ── */}
+        {}
         <div className="xl:col-span-8 space-y-6">
           <section className="bg-white p-6 md:p-8 rounded-[2.5rem] border border-border shadow-sm">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10 pb-6 border-b border-slate-50">
@@ -87,8 +86,8 @@ export default function ReferralDetailView({ referral, userRole }: Props) {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
               <div className="p-5 bg-badge-bg/30 rounded-2xl border border-border">
                 <p className="text-[9px] font-black text-muted uppercase tracking-widest mb-2 flex items-center gap-1.5">
-                  <Activity size={12} className="text-accent" />{" "}
-                  Requested Specialty
+                  <Activity size={12} className="text-accent" /> Requested
+                  Specialty
                 </p>
                 <div className="text-sm font-black text-heading uppercase">
                   {referral.specialty?.specialty_name || "General Care"}
@@ -109,8 +108,7 @@ export default function ReferralDetailView({ referral, userRole }: Props) {
 
             <div className="space-y-4">
               <p className="text-[10px] font-black text-muted uppercase tracking-widest flex items-center gap-2 px-1">
-                <FileText size={14} className="text-accent" />{" "}
-                Clinical Reason
+                <FileText size={14} className="text-accent" /> Clinical Reason
               </p>
               <div className="p-8 bg-slate-50/80 rounded-[2rem] border border-slate-100 text-body leading-relaxed font-medium whitespace-pre-wrap text-sm italic shadow-inner">
                 &ldquo;{referral.medical_reason}&rdquo;
@@ -119,7 +117,7 @@ export default function ReferralDetailView({ referral, userRole }: Props) {
           </section>
         </div>
 
-        {/* ── Tracking Sidebar ── */}
+        {}
         <div className="xl:col-span-4 space-y-6">
           <HospitalBriefCard
             title="Sending Facility"
@@ -162,10 +160,7 @@ export default function ReferralDetailView({ referral, userRole }: Props) {
               {isSuperadmin && (
                 <div className="pt-2 px-1">
                   <div className="flex items-center gap-2 px-3 py-2 bg-badge-bg rounded-xl border border-border">
-                    <ShieldCheck
-                      size={14}
-                      className="text-accent"
-                    />
+                    <ShieldCheck size={14} className="text-accent" />
                     <span className="text-[9px] font-black text-accent uppercase">
                       Privileged Audit View
                     </span>

@@ -49,9 +49,7 @@ export function TabNavigation({
 
   return (
     <div className="w-full overflow-hidden">
-      {/* - overflow-x-auto + scrollbar-none: Allows horizontal swiping on mobile.
-         - px-1: Prevents the focus ring/border from being clipped.
-      */}
+      {}
       <div className="flex items-center gap-2 overflow-x-auto scrollbar-none flex-nowrap py-1 px-1">
         {allTabs.map((tab) => {
           const Icon = tab.icon;
@@ -75,9 +73,7 @@ export function TabNavigation({
               <Icon
                 size={14}
                 className={`transition-colors duration-300 ${
-                  isActive
-                    ? "text-accent"
-                    : "text-muted"
+                  isActive ? "text-accent" : "text-muted"
                 }`}
                 strokeWidth={isActive ? 3 : 2}
               />
@@ -85,7 +81,7 @@ export function TabNavigation({
                 {tab.label}
               </span>
 
-              {/* Live indicator dot - matches 'Explore' availability logic */}
+              {}
               {isActive && (
                 <span className="flex h-1.5 w-1.5 rounded-full bg-accent animate-pulse ml-0.5" />
               )}

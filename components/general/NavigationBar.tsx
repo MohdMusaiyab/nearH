@@ -35,16 +35,15 @@ export function Navigation() {
   const supabase = createClient();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // ── Dynamic Dashboard Route Logic ──
   const dashboardHref = useMemo(() => {
-    if (isLoading) return "#"; // Or a loading state
+    if (isLoading) return "#";
+
     if (!profile) return "/auth/login";
     if (profile.role === "superadmin") return "/superadmin/dashboard";
     if (profile.role === "admin") return "/admin/dashboard";
     return "/profile";
   }, [profile, isLoading]);
 
-  // ── Real-Time Auth & Profile Sync ──
   useEffect(() => {
     const supabase = createClient();
 
@@ -63,11 +62,10 @@ export function Navigation() {
       }
     };
 
-    // This handles the case where session already exists on mount (after redirect)
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
         setUser(session.user);
-        fetchProfile(); // 👈 always fetch profile if session exists
+        fetchProfile();
       } else {
         setIsLoading(false);
       }
@@ -87,7 +85,8 @@ export function Navigation() {
     });
 
     return () => subscription.unsubscribe();
-  }, [pathname]); // 👈 KEY CHANGE: pathname as dependency so it re-runs on every navigation
+  }, [pathname]);
+
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 40);
     window.addEventListener("scroll", handleScroll);
@@ -119,7 +118,7 @@ export function Navigation() {
       await supabase.auth.signOut();
       setIsOpen(false);
       setDropdownOpen(false);
-      // router.refresh is called in the auth listener above
+
       router.push("/auth/login");
     } catch (error) {
       console.error("Logout failed:", error);
@@ -152,7 +151,7 @@ export function Navigation() {
       >
         <div className="w-full px-4 lg:px-0">
           <div className="flex justify-between items-center">
-            {/* LEFT: Logo & Nav Links */}
+            {}
             <div className="flex items-center ">
               <Link
                 href="/"
@@ -188,7 +187,7 @@ export function Navigation() {
               </div>
             </div>
 
-            {/* RIGHT: Desktop Auth */}
+            {}
             <div className="hidden lg:flex items-center px-6">
               {!isLoading &&
                 (user ? (
@@ -272,7 +271,7 @@ export function Navigation() {
                 ))}
             </div>
 
-            {/* MOBILE: Hamburger */}
+            {}
             <button
               onClick={() => setIsOpen((v) => !v)}
               className="lg:hidden relative w-10 h-10 flex flex-col items-center justify-center gap-[6px] group"

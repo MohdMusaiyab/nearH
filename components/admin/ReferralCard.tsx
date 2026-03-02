@@ -27,11 +27,9 @@ export const ReferralCard = memo(
     const [isPending, startTransition] = useTransition();
     const [showModal, setShowModal] = useState(false);
 
-    // Mapping to NearH Semantic Theme Variables
     const priorityStyles: Record<Priority, string> = {
       Routine: "bg-blue-50 text-blue-700 border-blue-100",
-      Urgent:
-        "bg-badge-bg text-badge-text border-border",
+      Urgent: "bg-badge-bg text-badge-text border-border",
       Critical: "bg-red-50 text-error border-red-100",
     };
 
@@ -39,9 +37,7 @@ export const ReferralCard = memo(
       if (status === "Rejected") {
         Modal.confirm({
           title: (
-            <span className="font-black text-heading">
-              Decline Referral
-            </span>
+            <span className="font-black text-heading">Decline Referral</span>
           ),
           content: `Are you sure you want to decline the referral for ${referral.patient_name}?`,
           okText: "Decline",
@@ -91,7 +87,7 @@ export const ReferralCard = memo(
           )}
 
           <div className="bg-white p-5 md:p-6 rounded-[2rem] border border-border shadow-sm hover:shadow-md transition-all group relative overflow-hidden">
-            {/* Top Priority/Time Row */}
+            {}
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-3">
                 <span
@@ -117,7 +113,7 @@ export const ReferralCard = memo(
 
             <div className="flex flex-col lg:flex-row justify-between gap-6">
               <div className="flex-1 space-y-4">
-                {/* Patient Info */}
+                {}
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 bg-badge-bg rounded-2xl flex items-center justify-center text-accent border border-border flex-shrink-0">
                     <User className="w-6 h-6" />
@@ -133,7 +129,7 @@ export const ReferralCard = memo(
                   </div>
                 </div>
 
-                {/* Medical Reason */}
+                {}
                 <div className="p-4 bg-slate-50/80 rounded-2xl border border-slate-100 group-hover:bg-white group-hover:border-accent/20 transition-all">
                   <p className="text-[10px] font-black text-muted uppercase mb-1.5 tracking-widest">
                     Clinical Reason
@@ -144,7 +140,7 @@ export const ReferralCard = memo(
                 </div>
               </div>
 
-              {/* Hospital & Actions Column */}
+              {}
               <div className="flex flex-col justify-between items-end border-t lg:border-t-0 lg:border-l border-border pt-6 lg:pt-0 lg:pl-8 min-w-[240px]">
                 <div className="text-right w-full">
                   <p className="text-[10px] font-black text-muted uppercase tracking-widest mb-1">

@@ -47,7 +47,7 @@ export function AdminBar({ hospitalId, isOwner, isSuperadmin }: Props) {
             : "bg-white/60 border-emerald-500/10"
         }`}
       >
-        {/* Subtle accent gradient overlay */}
+        {}
         <div
           className={`absolute inset-0 opacity-5 pointer-events-none transition-opacity group-hover:opacity-10 ${
             isSuperadmin ? "bg-accent" : "bg-emerald-600"
@@ -55,7 +55,7 @@ export function AdminBar({ hospitalId, isOwner, isSuperadmin }: Props) {
         />
 
         <div className="px-4 py-2.5 flex items-center justify-between relative z-10">
-          {/* ── Status Section ── */}
+          {}
           <div className="flex items-center gap-4">
             <div
               className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-lg transition-transform group-hover:scale-105 ${
@@ -80,9 +80,7 @@ export function AdminBar({ hospitalId, isOwner, isSuperadmin }: Props) {
               </div>
               <h2
                 className={`text-[11px] font-black uppercase tracking-tight ${
-                  isSuperadmin
-                    ? "text-heading"
-                    : "text-emerald-800"
+                  isSuperadmin ? "text-heading" : "text-emerald-800"
                 }`}
               >
                 {isSuperadmin ? "Superadmin Control" : "Facility Management"}
@@ -90,7 +88,7 @@ export function AdminBar({ hospitalId, isOwner, isSuperadmin }: Props) {
             </div>
           </div>
 
-          {/* ── Desktop Actions ── */}
+          {}
           <div className="flex items-center gap-2">
             {isOwner && editUrl && (
               <button
@@ -140,7 +138,7 @@ export function AdminBar({ hospitalId, isOwner, isSuperadmin }: Props) {
                   />
                 </button>
 
-                {/* Dossier Style Menu */}
+                {}
                 {showAdminMenu && (
                   <div className="absolute right-0 mt-4 w-64 bg-white rounded-[1.5rem] shadow-2xl border border-border py-3 z-50 animate-in fade-in zoom-in-95 duration-300 origin-top-right">
                     <div className="px-5 py-2 mb-2">
@@ -151,10 +149,7 @@ export function AdminBar({ hospitalId, isOwner, isSuperadmin }: Props) {
                     <div className="px-2 space-y-1">
                       <button className="w-full px-3 py-3 text-left hover:bg-badge-bg rounded-xl flex items-center gap-3 text-heading group transition-all">
                         <div className="w-8 h-8 rounded-lg bg-white border border-border flex items-center justify-center shadow-sm group-hover:border-accent/20">
-                          <UserCog
-                            size={14}
-                            className="text-accent"
-                          />
+                          <UserCog size={14} className="text-accent" />
                         </div>
                         <span className="font-black text-[10px] uppercase tracking-wide">
                           Manage Authorities

@@ -21,8 +21,8 @@ export function DoctorsTab({ doctors, canViewPrivate, canEdit }: Props) {
           Clinical Staff Pending
         </h3>
         <p className="text-sm text-muted max-w-xs font-medium leading-relaxed">
-          There are currently no practitioners associated with this facility&apos;s
-          digital registry.
+          There are currently no practitioners associated with this
+          facility&apos;s digital registry.
         </p>
 
         {canEdit && (
@@ -36,7 +36,7 @@ export function DoctorsTab({ doctors, canViewPrivate, canEdit }: Props) {
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-      {/* ── Tab Header ── */}
+      {}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 pb-6 border-b border-slate-50">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-badge-bg flex items-center justify-center text-accent border border-accent/10">
@@ -59,7 +59,7 @@ export function DoctorsTab({ doctors, canViewPrivate, canEdit }: Props) {
         )}
       </div>
 
-      {/* ── Responsive Staff Grid ── */}
+      {}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         {doctors.map((doctor) => (
           <DoctorCard

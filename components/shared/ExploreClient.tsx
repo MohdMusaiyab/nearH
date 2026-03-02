@@ -66,11 +66,17 @@ export default function ExploreClient({
   const locationId = searchParams.get("locationId") || "";
   const specialtyId = searchParams.get("specialtyId") || "";
   const serviceId = searchParams.get("serviceId") || "";
-  const activeFilterCount = [locationId, specialtyId, serviceId, searchParams.get("query")].filter(Boolean).length;
+  const activeFilterCount = [
+    locationId,
+    specialtyId,
+    serviceId,
+    searchParams.get("query"),
+  ].filter(Boolean).length;
   const totalPages = Math.ceil(count / 20);
 
   const getDestinationPath = (hospitalId: string) => {
-    if (profile?.role === "superadmin") return `/superadmin/hospitals/${hospitalId}`;
+    if (profile?.role === "superadmin")
+      return `/superadmin/hospitals/${hospitalId}`;
     return `/hospitals/${hospitalId}`;
   };
 
@@ -84,22 +90,37 @@ export default function ExploreClient({
       if (!updates.page) params.set("page", "1");
       router.push(`?${params.toString()}`, { scroll: false });
     },
-    [router]
+    [router],
   );
 
   const clearAll = () => {
     setSearchTerm("");
-    updateFilters({ locationId: "", specialtyId: "", serviceId: "", query: "" });
+    updateFilters({
+      locationId: "",
+      specialtyId: "",
+      serviceId: "",
+      query: "",
+    });
   };
 
   useEffect(() => {
-    if (isInitialMount.current) { isInitialMount.current = false; return; }
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
     const currentQuery = searchParams.get("query") || "";
-    if (debouncedSearch !== currentQuery) updateFilters({ query: debouncedSearch });
+    if (debouncedSearch !== currentQuery)
+      updateFilters({ query: debouncedSearch });
   }, [debouncedSearch, searchParams, updateFilters]);
 
   useEffect(() => {
-    const currentParams = JSON.stringify({ page: currentPage, query: searchParams.get("query"), locationId, specialtyId, serviceId });
+    const currentParams = JSON.stringify({
+      page: currentPage,
+      query: searchParams.get("query"),
+      locationId,
+      specialtyId,
+      serviceId,
+    });
     if (prevParamsRef.current === currentParams) return;
     prevParamsRef.current = currentParams;
 
@@ -117,22 +138,19 @@ export default function ExploreClient({
         setCount(res.data.totalCount);
       }
     });
-    return () => { isMounted = false; };
+    return () => {
+      isMounted = false;
+    };
   }, [currentPage, locationId, specialtyId, serviceId, searchParams]);
 
   return (
-    /*
-      No pt here — the root layout (or page wrapper) already applies pt-20 lg:pt-24
-      to clear the fixed Navigation. This component just fills its container.
-    */
     <div className="min-h-screen bg-slate-50">
-
-      {/* ── Hero — LIGHT background so transparent nav text stays readable ── */}
+      {}
       <div
         className="relative overflow-hidden pb-14 pt-10 lg:pt-18 lg:pb-20"
         style={{ background: "var(--gradient-hero)" }}
       >
-        {/* Soft grid texture */}
+        {}
         <div
           className="absolute inset-0 opacity-[0.35] pointer-events-none"
           style={{
@@ -143,22 +161,21 @@ export default function ExploreClient({
             backgroundSize: "40px 40px",
           }}
         />
-        {/* Accent blob top-right */}
+        {}
         <div className="absolute -top-20 -right-20 w-80 h-80 bg-accent/8 rounded-full blur-3xl pointer-events-none" />
-        {/* Second blob bottom-left */}
+        {}
         <div className="absolute -bottom-10 -left-10 w-60 h-60 bg-border/60 rounded-full blur-3xl pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 lg:gap-16">
-
-            {/* Title block */}
+            {}
             <motion.div
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
               className="max-w-xl"
             >
-              {/* Live badge */}
+              {}
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-border text-accent text-[10px] font-bold uppercase tracking-widest mb-5 shadow-sm">
                 <span className="w-2 h-2 rounded-full bg-success animate-pulse" />
                 Live Healthcare Grid
@@ -168,23 +185,41 @@ export default function ExploreClient({
                 Find{" "}
                 <span className="relative inline-block">
                   <span className="text-accent">Care.</span>
-                  {/* Underline squiggle */}
-                  <svg className="absolute -bottom-1.5 left-0 w-full" viewBox="0 0 140 8" fill="none" preserveAspectRatio="none">
-                    <path d="M2 6 Q35 1 70 5 Q105 9 138 3" stroke="var(--color-accent)" strokeOpacity="0.35" strokeWidth="2.5" strokeLinecap="round" />
+                  {}
+                  <svg
+                    className="absolute -bottom-1.5 left-0 w-full"
+                    viewBox="0 0 140 8"
+                    fill="none"
+                    preserveAspectRatio="none"
+                  >
+                    <path
+                      d="M2 6 Q35 1 70 5 Q105 9 138 3"
+                      stroke="var(--color-accent)"
+                      strokeOpacity="0.35"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                    />
                   </svg>
                 </span>
               </h1>
 
               <p className="text-muted text-base md:text-lg font-medium mt-3">
-                <span className="font-black text-heading">{count.toLocaleString()}</span> verified medical facilities — real-time bed &amp; ICU data.
+                <span className="font-black text-heading">
+                  {count.toLocaleString()}
+                </span>{" "}
+                verified medical facilities — real-time bed &amp; ICU data.
               </p>
             </motion.div>
 
-            {/* Search bar */}
+            {}
             <motion.div
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+              transition={{
+                duration: 0.5,
+                delay: 0.1,
+                ease: [0.22, 1, 0.36, 1],
+              }}
               className="w-full lg:max-w-sm"
             >
               <div className="relative group">
@@ -200,15 +235,21 @@ export default function ExploreClient({
                   className="w-full pl-11 pr-11 py-4 bg-white border border-border rounded-2xl text-heading placeholder:text-muted font-semibold text-sm outline-none focus:border-accent focus:ring-4 focus:ring-accent/10 transition-all shadow-sm"
                 />
                 {isPending ? (
-                  <Loader2 size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-accent animate-spin" />
+                  <Loader2
+                    size={16}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-accent animate-spin"
+                  />
                 ) : searchTerm ? (
-                  <button onClick={() => setSearchTerm("")} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted hover:text-heading transition-colors">
+                  <button
+                    onClick={() => setSearchTerm("")}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-muted hover:text-heading transition-colors"
+                  >
                     <X size={16} />
                   </button>
                 ) : null}
               </div>
 
-              {/* Quick stat chips below search */}
+              {}
               <div className="flex items-center gap-2 mt-3">
                 <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white rounded-xl border border-border text-[10px] font-bold text-body shadow-sm">
                   <BedDouble size={11} className="text-accent" />
@@ -224,21 +265,19 @@ export default function ExploreClient({
         </div>
       </div>
 
-      {/* ── Sticky Filter Bar ── */}
-      {/*
-        top-0 here — the component is rendered inside the layout's pt-20 lg:pt-24
-        container, so sticky top-0 means it sticks just below where the nav ends.
-      */}
+      {}
+      {}
       <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-border shadow-sm">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="flex items-center gap-2.5 py-3 overflow-x-auto scrollbar-none">
-
-            {/* Filter icon label */}
-            <div className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-bold flex-shrink-0 transition-colors ${
-              activeFilterCount > 0
-                ? "bg-heading text-white"
-                : "bg-badge-bg text-heading border border-border"
-            }`}>
+            {}
+            <div
+              className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-bold flex-shrink-0 transition-colors ${
+                activeFilterCount > 0
+                  ? "bg-heading text-white"
+                  : "bg-badge-bg text-heading border border-border"
+              }`}
+            >
               <SlidersHorizontal size={13} />
               Filters
               {activeFilterCount > 0 && (
@@ -248,7 +287,7 @@ export default function ExploreClient({
               )}
             </div>
 
-            {/* Location select */}
+            {}
             <select
               value={locationId}
               onChange={(e) => updateFilters({ locationId: e.target.value })}
@@ -260,11 +299,13 @@ export default function ExploreClient({
             >
               <option value="">📍 All Locations</option>
               {filters.locations.map((loc) => (
-                <option key={loc.id} value={loc.id}>{loc.city}</option>
+                <option key={loc.id} value={loc.id}>
+                  {loc.city}
+                </option>
               ))}
             </select>
 
-            {/* Specialty select */}
+            {}
             <select
               value={specialtyId}
               onChange={(e) => updateFilters({ specialtyId: e.target.value })}
@@ -276,14 +317,16 @@ export default function ExploreClient({
             >
               <option value="">🩺 All Specialties</option>
               {filters.specialties.map((spec) => (
-                <option key={spec.id} value={spec.id}>{spec.specialty_name}</option>
+                <option key={spec.id} value={spec.id}>
+                  {spec.specialty_name}
+                </option>
               ))}
             </select>
 
-            {/* Divider */}
+            {}
             <div className="w-px h-5 bg-border flex-shrink-0 mx-1" />
 
-            {/* Result count */}
+            {}
             <span className="text-xs font-semibold text-muted flex-shrink-0 whitespace-nowrap">
               {isPending ? (
                 <span className="flex items-center gap-1.5">
@@ -295,7 +338,7 @@ export default function ExploreClient({
               )}
             </span>
 
-            {/* Clear all — pushed to end */}
+            {}
             {activeFilterCount > 0 && (
               <button
                 onClick={clearAll}
@@ -308,10 +351,9 @@ export default function ExploreClient({
         </div>
       </div>
 
-      {/* ── Hospital Grid ── */}
+      {}
       <div className="max-w-7xl mx-auto px-6 lg:px-12 pt-8 pb-6">
-
-        {/* Loading overlay */}
+        {}
         <AnimatePresence>
           {isPending && (
             <motion.div
@@ -322,13 +364,15 @@ export default function ExploreClient({
             >
               <div className="bg-white rounded-2xl shadow-xl border border-border px-5 py-3.5 flex items-center gap-3">
                 <Loader2 size={16} className="animate-spin text-accent" />
-                <span className="text-sm font-bold text-heading">Updating…</span>
+                <span className="text-sm font-bold text-heading">
+                  Updating…
+                </span>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Empty state */}
+        {}
         {hospitals.length === 0 ? (
           <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -338,8 +382,12 @@ export default function ExploreClient({
             <div className="w-16 h-16 rounded-2xl bg-badge-bg border border-border flex items-center justify-center mb-4">
               <Hospital size={28} className="text-muted" />
             </div>
-            <h3 className="text-lg font-bold text-heading mb-2">No hospitals found</h3>
-            <p className="text-sm text-muted mb-6 max-w-xs">Try adjusting your filters or searching with a different keyword.</p>
+            <h3 className="text-lg font-bold text-heading mb-2">
+              No hospitals found
+            </h3>
+            <p className="text-sm text-muted mb-6 max-w-xs">
+              Try adjusting your filters or searching with a different keyword.
+            </p>
             <button
               onClick={clearAll}
               className="px-5 py-2.5 bg-accent text-white rounded-xl font-bold text-sm hover:opacity-90 transition-opacity"
@@ -348,7 +396,10 @@ export default function ExploreClient({
             </button>
           </motion.div>
         ) : (
-          <motion.div layout className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+          <motion.div
+            layout
+            className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5"
+          >
             <AnimatePresence mode="popLayout">
               {hospitals.map((hospital, i) => (
                 <motion.div
@@ -356,23 +407,30 @@ export default function ExploreClient({
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.97 }}
-                  transition={{ delay: i * 0.04, duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                  transition={{
+                    delay: i * 0.04,
+                    duration: 0.3,
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
                 >
                   <Link
                     href={getDestinationPath(hospital.id)}
                     className="group flex flex-col bg-white rounded-3xl border border-border hover:border-accent/40 hover:shadow-xl hover:shadow-accent/8 transition-all duration-300 overflow-hidden h-full"
                   >
-                    {/* Top accent line — reveals on hover */}
+                    {}
                     <div className="h-[3px] w-full bg-gradient-to-r from-accent to-link opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                     <div className="p-6 flex flex-col flex-1">
-                      {/* Header row */}
+                      {}
                       <div className="flex items-start justify-between gap-3 mb-5">
                         <div className="w-11 h-11 rounded-2xl bg-badge-bg border border-border flex items-center justify-center flex-shrink-0 group-hover:bg-accent group-hover:border-accent transition-all duration-300 shadow-sm">
-                          <Hospital size={20} className="text-accent group-hover:text-white transition-colors duration-300" />
+                          <Hospital
+                            size={20}
+                            className="text-accent group-hover:text-white transition-colors duration-300"
+                          />
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0">
-                          {/* Live availability dot */}
+                          {}
                           {(hospital.inventory?.available_beds ?? 0) > 0 ? (
                             <span className="flex items-center gap-1.5 text-success text-[9px] font-black uppercase tracking-wide">
                               <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
@@ -387,28 +445,36 @@ export default function ExploreClient({
                           {hospital.is_verified && (
                             <div className="flex items-center gap-1 px-2 py-1 bg-amber-50 text-amber-600 rounded-full border border-amber-100">
                               <Award size={11} />
-                              <span className="text-[9px] font-black uppercase">Verified</span>
+                              <span className="text-[9px] font-black uppercase">
+                                Verified
+                              </span>
                             </div>
                           )}
                         </div>
                       </div>
 
-                      {/* Name */}
+                      {}
                       <h3 className="text-lg font-heading font-black text-heading group-hover:text-accent transition-colors leading-snug mb-1.5">
                         {hospital.name}
                       </h3>
 
-                      {/* Location */}
+                      {}
                       <p className="flex items-center gap-1.5 text-muted text-xs font-semibold mb-4">
-                        <MapPin size={12} className="text-accent flex-shrink-0" />
+                        <MapPin
+                          size={12}
+                          className="text-accent flex-shrink-0"
+                        />
                         {hospital.location?.city}, {hospital.location?.state}
                       </p>
 
-                      {/* Specialty chips */}
+                      {}
                       {hospital.specialties.length > 0 && (
                         <div className="flex flex-wrap gap-1.5 mb-5">
                           {hospital.specialties.slice(0, 3).map((s) => (
-                            <span key={s} className="px-2.5 py-1 bg-badge-bg text-badge-text text-[9px] font-black uppercase tracking-wider rounded-lg border border-border">
+                            <span
+                              key={s}
+                              className="px-2.5 py-1 bg-badge-bg text-badge-text text-[9px] font-black uppercase tracking-wider rounded-lg border border-border"
+                            >
                               {s}
                             </span>
                           ))}
@@ -420,31 +486,47 @@ export default function ExploreClient({
                         </div>
                       )}
 
-                      {/* Inventory stats */}
+                      {}
                       <div className="grid grid-cols-2 gap-2.5 mt-auto pt-4 border-t border-border">
                         <div className="p-3.5 bg-badge-bg rounded-2xl border border-border">
                           <div className="flex items-center gap-1.5 mb-1.5">
                             <BedDouble size={11} className="text-accent" />
-                            <p className="text-[9px] font-black text-muted uppercase tracking-widest">General</p>
+                            <p className="text-[9px] font-black text-muted uppercase tracking-widest">
+                              General
+                            </p>
                           </div>
                           <p className="text-2xl font-black text-heading tabular-nums leading-none">
                             {hospital.inventory?.available_beds ?? 0}
                           </p>
-                          <p className="text-[9px] text-muted mt-0.5">beds free</p>
+                          <p className="text-[9px] text-muted mt-0.5">
+                            beds free
+                          </p>
                         </div>
-                        <div className="p-3.5 rounded-2xl border" style={{ background: "color-mix(in srgb, var(--color-accent) 6%, white)", borderColor: "color-mix(in srgb, var(--color-accent) 18%, transparent)" }}>
+                        <div
+                          className="p-3.5 rounded-2xl border"
+                          style={{
+                            background:
+                              "color-mix(in srgb, var(--color-accent) 6%, white)",
+                            borderColor:
+                              "color-mix(in srgb, var(--color-accent) 18%, transparent)",
+                          }}
+                        >
                           <div className="flex items-center gap-1.5 mb-1.5">
                             <Activity size={11} className="text-accent" />
-                            <p className="text-[9px] font-black text-accent uppercase tracking-widest">ICU</p>
+                            <p className="text-[9px] font-black text-accent uppercase tracking-widest">
+                              ICU
+                            </p>
                           </div>
                           <p className="text-2xl font-black text-accent tabular-nums leading-none">
                             {hospital.inventory?.icu_beds_available ?? 0}
                           </p>
-                          <p className="text-[9px] text-muted mt-0.5">units free</p>
+                          <p className="text-[9px] text-muted mt-0.5">
+                            units free
+                          </p>
                         </div>
                       </div>
 
-                      {/* View details */}
+                      {}
                       <div className="mt-4 flex items-center justify-end gap-1 text-accent text-[10px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all duration-200 translate-x-1 group-hover:translate-x-0">
                         View Details <ArrowRight size={12} />
                       </div>
@@ -456,15 +538,16 @@ export default function ExploreClient({
           </motion.div>
         )}
 
-        {/* ── Pagination ── */}
+        {}
         {count > 20 && (
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-12 pt-8 border-t border-border">
             <p className="text-sm font-semibold text-muted">
               Page{" "}
-              <span className="text-heading font-black">{currentPage}</span>
-              {" "}of{" "}
+              <span className="text-heading font-black">{currentPage}</span> of{" "}
               <span className="text-heading font-black">{totalPages}</span>
-              <span className="ml-2 text-muted/60">· {count.toLocaleString()} total</span>
+              <span className="ml-2 text-muted/60">
+                · {count.toLocaleString()} total
+              </span>
             </p>
 
             <div className="flex items-center gap-2">
@@ -476,10 +559,11 @@ export default function ExploreClient({
                 <ChevronLeft size={15} /> Prev
               </button>
 
-              {/* Page number pills */}
+              {}
               <div className="hidden sm:flex items-center gap-1">
                 {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                  const page = Math.max(1, Math.min(currentPage - 2, totalPages - 4)) + i;
+                  const page =
+                    Math.max(1, Math.min(currentPage - 2, totalPages - 4)) + i;
                   if (page < 1 || page > totalPages) return null;
                   return (
                     <button

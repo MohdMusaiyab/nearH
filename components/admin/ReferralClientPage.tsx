@@ -63,7 +63,7 @@ export default function ReferralClientPage({ initialData, hospitalId }: Props) {
 
   return (
     <div className="space-y-6">
-      {/* ── Filter & Action Bar ── */}
+      {}
       <div className="flex flex-col md:flex-row gap-4 justify-between items-center bg-white p-3 rounded-2xl border border-border shadow-sm">
         <div className="flex p-1 bg-badge-bg/50 rounded-xl w-full md:w-auto">
           {[
@@ -93,7 +93,7 @@ export default function ReferralClientPage({ initialData, hospitalId }: Props) {
         </Link>
       </div>
 
-      {/* ── Cards List ── */}
+      {}
       <div className="space-y-4">
         {filteredData.length === 0 ? (
           <div className="py-24 text-center bg-white rounded-3xl border border-border border-dashed">
@@ -120,7 +120,7 @@ export default function ReferralClientPage({ initialData, hospitalId }: Props) {
         )}
       </div>
 
-      {/* ── Pagination ── */}
+      {}
       {totalPages > 1 && (
         <div className="flex items-center justify-center gap-2 pt-4">
           <button
@@ -132,8 +132,7 @@ export default function ReferralClientPage({ initialData, hospitalId }: Props) {
           </button>
 
           <div className="px-6 py-2 rounded-xl bg-white border border-border text-xs font-black text-heading shadow-sm">
-            {currentPage}{" "}
-            <span className="text-muted mx-1">/</span>{" "}
+            {currentPage} <span className="text-muted mx-1">/</span>{" "}
             {totalPages}
           </div>
 

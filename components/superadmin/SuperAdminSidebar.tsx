@@ -19,7 +19,6 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { logoutAction } from "@/actions/auth";
 
-/* ─── Nav config ─────────────────────────────────────────── */
 const navGroups = [
   {
     group: "Overview",
@@ -52,7 +51,6 @@ const navGroups = [
   },
 ];
 
-/* ─── Single nav link ─────────────────────────────────────── */
 type NavItemDef = { name: string; href: string; icon: React.ElementType };
 
 function NavLink({
@@ -97,17 +95,13 @@ function NavLink({
 
         <div
           className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors duration-200 ${
-            isActive
-              ? "bg-white/20"
-              : "bg-badge-bg group-hover:bg-border"
+            isActive ? "bg-white/20" : "bg-badge-bg group-hover:bg-border"
           }`}
         >
           <Icon
             size={16}
             className={
-              isActive
-                ? "text-white"
-                : "text-accent group-hover:text-heading"
+              isActive ? "text-white" : "text-accent group-hover:text-heading"
             }
           />
         </div>
@@ -122,12 +116,11 @@ function NavLink({
   );
 }
 
-/* ─── Shared sidebar body ─────────────────────────────────── */
 function SidebarContent({ onClose }: { onClose?: () => void }) {
   let idx = 0;
   return (
     <div className="flex flex-col h-full">
-      {/* Brand block */}
+      {}
       <div className="px-5 pt-6 pb-5">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-accent rounded-xl flex items-center justify-center shadow-lg shadow-accent/30 flex-shrink-0">
@@ -144,10 +137,10 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
         </div>
       </div>
 
-      {/* Divider */}
+      {}
       <div className="mx-5 h-px bg-border mb-4" />
 
-      {/* Navigation */}
+      {}
       <nav className="flex-1 px-3 space-y-5 overflow-y-auto">
         {navGroups.map((group) => (
           <div key={group.group}>
@@ -168,11 +161,11 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
         ))}
       </nav>
 
-      {/* Footer */}
+      {}
       <div className="p-3 mt-auto">
         <div className="mx-2 h-px bg-border mb-3" />
 
-        {/* Sign out */}
+        {}
         <form action={logoutAction}>
           <button
             type="submit"
@@ -192,13 +185,12 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
   );
 }
 
-/* ─── Main export ─────────────────────────────────────────── */
 const SuperAdminSidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <>
-      {/* ── Mobile sub-header — sits inside layout below global nav ── */}
+      {}
       <div className="lg:hidden flex items-center gap-3 px-4 py-3 bg-white border-b border-border sticky top-20 z-40">
         <button
           onClick={() => setIsOpen(true)}
@@ -217,7 +209,7 @@ const SuperAdminSidebar = () => {
         </div>
       </div>
 
-      {/* ── Mobile drawer — opens below global nav ── */}
+      {}
       <AnimatePresence>
         {isOpen && (
           <>
@@ -235,7 +227,6 @@ const SuperAdminSidebar = () => {
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ type: "spring", damping: 28, stiffness: 280 }}
-              /* top-20 = 5rem, matches the global Navigation h-20 on mobile */
               className="fixed top-20 left-0 bottom-0 w-72 z-[95] lg:hidden bg-white border-r border-border shadow-2xl shadow-heading/10 overflow-hidden"
             >
               <button
@@ -252,11 +243,8 @@ const SuperAdminSidebar = () => {
         )}
       </AnimatePresence>
 
-      {/* ── Desktop sidebar ── */}
-      {/*
-        sticky top-24   → starts exactly below the global nav (h-20 lg:h-24)
-        h-[calc(100vh-6rem)] → fills remaining viewport height (6rem = 24 * 0.25rem)
-      */}
+      {}
+      {}
       <aside className="hidden lg:flex flex-col w-64 flex-shrink-0 bg-white border-r border-border sticky top-24 h-[calc(100vh-6rem)] overflow-hidden">
         <SidebarContent />
       </aside>

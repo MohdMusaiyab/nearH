@@ -1,15 +1,25 @@
 "use client";
 
-import { FileText, ArrowUpRight, ArrowDownLeft, Calendar, User, Building2 } from "lucide-react";
+import {
+  FileText,
+  ArrowUpRight,
+  ArrowDownLeft,
+  Calendar,
+  User,
+  Building2,
+} from "lucide-react";
 import {
   PrivateHospitalProfile,
   SuperAdminHospitalProfile,
 } from "@/types/hospital";
 import { format } from "date-fns";
 
-// Defining the specific referral types from your hospital profile
-type ReferralDetailFrom = NonNullable<PrivateHospitalProfile["referrals_as_from"]>[number];
-type ReferralDetailTo = NonNullable<PrivateHospitalProfile["referrals_as_to"]>[number];
+type ReferralDetailFrom = NonNullable<
+  PrivateHospitalProfile["referrals_as_from"]
+>[number];
+type ReferralDetailTo = NonNullable<
+  PrivateHospitalProfile["referrals_as_to"]
+>[number];
 type ReferralDetail = ReferralDetailFrom | ReferralDetailTo;
 
 interface Props {
@@ -48,7 +58,7 @@ export function ReferralsTab({ hospital }: Props) {
 
   return (
     <div className="space-y-12 animate-in fade-in duration-700">
-      {/* ── Outgoing Section ── */}
+      {}
       {fromReferrals.length > 0 && (
         <section className="space-y-6">
           <div className="flex items-center gap-3 px-1">
@@ -67,17 +77,17 @@ export function ReferralsTab({ hospital }: Props) {
 
           <div className="grid grid-cols-1 gap-4">
             {fromReferrals.map((referral) => (
-              <ReferralItem 
-                key={referral.id} 
-                referral={referral} 
-                type="outgoing" 
+              <ReferralItem
+                key={referral.id}
+                referral={referral}
+                type="outgoing"
               />
             ))}
           </div>
         </section>
       )}
 
-      {/* ── Incoming Section ── */}
+      {}
       {toReferrals.length > 0 && (
         <section className="space-y-6 pt-4">
           <div className="flex items-center gap-3 px-1">
@@ -96,10 +106,10 @@ export function ReferralsTab({ hospital }: Props) {
 
           <div className="grid grid-cols-1 gap-4">
             {toReferrals.map((referral) => (
-              <ReferralItem 
-                key={referral.id} 
-                referral={referral} 
-                type="incoming" 
+              <ReferralItem
+                key={referral.id}
+                referral={referral}
+                type="incoming"
               />
             ))}
           </div>
@@ -109,16 +119,24 @@ export function ReferralsTab({ hospital }: Props) {
   );
 }
 
-function ReferralItem({ referral, type }: { referral: ReferralDetail; type: 'incoming' | 'outgoing' }) {
-  const hospitalName = type === 'outgoing' 
-    ? ((referral as ReferralDetailFrom).to_hospital as { name?: string })?.name 
-    : ((referral as ReferralDetailTo).from_hospital as { name?: string })?.name;
+function ReferralItem({
+  referral,
+  type,
+}: {
+  referral: ReferralDetail;
+  type: "incoming" | "outgoing";
+}) {
+  const hospitalName =
+    type === "outgoing"
+      ? ((referral as ReferralDetailFrom).to_hospital as { name?: string })
+          ?.name
+      : ((referral as ReferralDetailTo).from_hospital as { name?: string })
+          ?.name;
 
   return (
     <div className="group bg-white p-6 rounded-[2rem] border border-border hover:border-accent/40 hover:shadow-xl hover:shadow-accent/5 transition-all duration-300">
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
-        
-        {/* Patient & Facility Info */}
+        {}
         <div className="flex items-center gap-5 min-w-0">
           <div className="w-12 h-12 rounded-2xl bg-badge-bg border border-border flex items-center justify-center text-accent group-hover:bg-accent group-hover:text-white transition-all shadow-sm">
             <User size={20} strokeWidth={2.5} />
@@ -130,29 +148,36 @@ function ReferralItem({ referral, type }: { referral: ReferralDetail; type: 'inc
             <div className="flex items-center gap-2 text-[10px] font-bold text-muted uppercase">
               <Building2 size={12} className="text-accent" />
               <span className="truncate">
-                {type === 'outgoing' ? 'Target' : 'Origin'}: {hospitalName || "Unspecified Facility"}
+                {type === "outgoing" ? "Target" : "Origin"}:{" "}
+                {hospitalName || "Unspecified Facility"}
               </span>
             </div>
           </div>
         </div>
 
-        {/* Meta Stats Stack */}
+        {}
         <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto">
           <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 border border-slate-100 rounded-xl">
             <Calendar size={12} className="text-accent" />
             <span className="text-[9px] font-black text-muted uppercase tracking-wider">
-              {referral.created_at ? format(new Date(referral.created_at), "dd MMM yyyy") : "N/A"}
+              {referral.created_at
+                ? format(new Date(referral.created_at), "dd MMM yyyy")
+                : "N/A"}
             </span>
           </div>
 
           {referral.priority && (
-            <span className={`px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest border ${priorityColors[referral.priority]}`}>
+            <span
+              className={`px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest border ${priorityColors[referral.priority]}`}
+            >
               {referral.priority}
             </span>
           )}
 
           {referral.status && (
-            <span className={`px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest border shadow-sm ${statusColors[referral.status]}`}>
+            <span
+              className={`px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest border shadow-sm ${statusColors[referral.status]}`}
+            >
               {referral.status}
             </span>
           )}

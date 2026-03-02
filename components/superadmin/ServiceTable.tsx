@@ -95,7 +95,7 @@ export default function ServiceTable({
 
   return (
     <div className="flex flex-col">
-      {/* ── Search bar ── */}
+      {}
       <div className="px-5 py-4 border-b border-border">
         <div className="relative max-w-sm">
           <Search
@@ -119,7 +119,7 @@ export default function ServiceTable({
         </div>
       </div>
 
-      {/* Empty state */}
+      {}
       {filteredData.length === 0 && (
         <div className="flex flex-col items-center justify-center py-16 text-center px-6">
           <div className="w-12 h-12 rounded-2xl bg-badge-bg border border-border flex items-center justify-center mb-3">
@@ -138,7 +138,7 @@ export default function ServiceTable({
 
       {filteredData.length > 0 && (
         <>
-          {/* ── Desktop table ── */}
+          {}
           <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-left">
               <thead>
@@ -159,7 +159,7 @@ export default function ServiceTable({
                       key={service.id}
                       className="hover:bg-badge-bg/40 transition-colors group"
                     >
-                      {/* Name */}
+                      {}
                       <td className="px-5 py-4">
                         {isEditing ? (
                           <input
@@ -175,10 +175,7 @@ export default function ServiceTable({
                         ) : (
                           <div className="flex items-center gap-3">
                             <div className="w-8 h-8 rounded-lg bg-badge-bg border border-border flex items-center justify-center flex-shrink-0">
-                              <Activity
-                                size={14}
-                                className="text-accent"
-                              />
+                              <Activity size={14} className="text-accent" />
                             </div>
                             <span className="text-sm font-bold text-heading">
                               {service.service_name}
@@ -187,7 +184,7 @@ export default function ServiceTable({
                         )}
                       </td>
 
-                      {/* Actions */}
+                      {}
                       <td className="px-5 py-4">
                         <div className="flex items-center justify-end gap-2">
                           {isEditing ? (
@@ -241,7 +238,7 @@ export default function ServiceTable({
             </table>
           </div>
 
-          {/* ── Mobile cards ── */}
+          {}
           <div className="md:hidden divide-y divide-border/60">
             {filteredData.map((service) => {
               const isEditing = editingId === service.id;
@@ -287,10 +284,7 @@ export default function ServiceTable({
                     <div className="flex items-center justify-between gap-3">
                       <div className="flex items-center gap-3 min-w-0">
                         <div className="w-9 h-9 rounded-xl bg-badge-bg border border-border flex items-center justify-center flex-shrink-0">
-                          <Activity
-                            size={15}
-                            className="text-accent"
-                          />
+                          <Activity size={15} className="text-accent" />
                         </div>
                         <span className="text-sm font-bold text-heading truncate">
                           {service.service_name}
@@ -322,7 +316,7 @@ export default function ServiceTable({
             })}
           </div>
 
-          {/* Row count footer */}
+          {}
           <div className="px-5 py-3.5 border-t border-border bg-badge-bg/40">
             <p className="text-xs font-semibold text-muted">
               {filteredData.length === data.length

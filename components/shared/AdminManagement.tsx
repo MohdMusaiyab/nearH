@@ -50,7 +50,7 @@ export function AdminManagement({ hospital }: Props) {
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      {/* ── Section Header ── */}
+      {}
       <div className="flex items-center gap-3 px-1">
         <div className="w-10 h-10 rounded-xl bg-heading flex items-center justify-center text-white shadow-lg shadow-slate-200">
           <ShieldCheck size={20} strokeWidth={2.5} />
@@ -96,7 +96,7 @@ export function AdminManagement({ hospital }: Props) {
               )}
             </div>
 
-            {/* Timeline / Metadata Gutter */}
+            {}
             {admin.created_at && (
               <div className="mt-5 pt-4 border-t border-slate-50 flex items-center justify-between">
                 <div className="flex items-center gap-2 text-[9px] font-black text-muted uppercase tracking-widest">

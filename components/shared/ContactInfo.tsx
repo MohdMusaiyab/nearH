@@ -28,7 +28,7 @@ export function ContactInfo({ hospital }: Props) {
 
   return (
     <section className="bg-white rounded-[2.5rem] border border-border shadow-sm overflow-hidden animate-in fade-in slide-in-from-right-4 duration-500">
-      {/* Header */}
+      {}
       <div className="px-6 py-4 border-b border-slate-50 bg-slate-50/30 flex items-center justify-between">
         <h2 className="text-[10px] font-black text-muted uppercase tracking-[0.2em]">
           Contact Directory
@@ -36,9 +36,9 @@ export function ContactInfo({ hospital }: Props) {
         <div className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
       </div>
 
-      {/* The Vertical Stack */}
+      {}
       <div className="flex flex-col divide-y divide-slate-50">
-        {/* Emergency - Priority Top */}
+        {}
         {hospital.emergency_contact && (
           <ContactRow
             label="Emergency Hotline"
@@ -49,7 +49,7 @@ export function ContactInfo({ hospital }: Props) {
           />
         )}
 
-        {/* Primary Phone */}
+        {}
         {hospital.official_phone && (
           <ContactRow
             label="Reception / Admin"
@@ -59,7 +59,7 @@ export function ContactInfo({ hospital }: Props) {
           />
         )}
 
-        {/* Official Email */}
+        {}
         {hospital.official_email && (
           <ContactRow
             label="Official Email"
@@ -69,7 +69,7 @@ export function ContactInfo({ hospital }: Props) {
           />
         )}
 
-        {/* Digital Portal */}
+        {}
         {hospital.website_url && (
           <ContactRow
             label="Hospital Website"
@@ -107,7 +107,7 @@ function ContactRow({
       className="group flex flex-col p-5 hover:bg-slate-50/80 transition-all duration-300"
     >
       <div className="flex items-center gap-4">
-        {/* Icon Left */}
+        {}
         <div
           className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm transition-all duration-300 group-hover:rotate-6 ${
             isEmergency
@@ -118,13 +118,11 @@ function ContactRow({
           {icon}
         </div>
 
-        {/* Info Right */}
+        {}
         <div className="min-w-0 flex-1">
           <p
             className={`text-[9px] font-black uppercase tracking-widest leading-none mb-1.5 ${
-              isEmergency
-                ? "text-error"
-                : "text-muted"
+              isEmergency ? "text-error" : "text-muted"
             }`}
           >
             {label}
@@ -132,9 +130,7 @@ function ContactRow({
           <div className="flex items-center justify-between gap-2">
             <p
               className={`text-xs font-bold truncate ${
-                isEmergency
-                  ? "text-error"
-                  : "text-heading"
+                isEmergency ? "text-error" : "text-heading"
               }`}
             >
               {value}
@@ -142,9 +138,7 @@ function ContactRow({
             <ArrowRight
               size={12}
               className={`opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all ${
-                isEmergency
-                  ? "text-error"
-                  : "text-accent"
+                isEmergency ? "text-error" : "text-accent"
               }`}
             />
           </div>

@@ -52,7 +52,7 @@ export function ServicesTab({ services, specialties }: Props) {
 
   return (
     <div className="space-y-12 animate-in fade-in duration-700">
-      {/* ── Services Section ── */}
+      {}
       {hasServices && (
         <div className="space-y-6">
           <div className="flex items-center gap-3 px-1">
@@ -83,7 +83,7 @@ export function ServicesTab({ services, specialties }: Props) {
         </div>
       )}
 
-      {/* ── Specialties Section ── */}
+      {}
       {hasSpecialties && (
         <div className="space-y-6 pt-4">
           <div className="flex items-center gap-3 px-1">
@@ -111,7 +111,7 @@ export function ServicesTab({ services, specialties }: Props) {
         </div>
       )}
 
-      {/* ── Mobile Friendly Footer ── */}
+      {}
       <div className="mt-8 p-6 rounded-2xl border border-dashed border-border bg-slate-50/50">
         <p className="text-[9px] font-bold text-muted uppercase tracking-widest text-center leading-relaxed">
           The above services and specialties are verified based on current

@@ -79,7 +79,8 @@ export default function LocationTable({
       okType: "danger",
       cancelText: "Cancel",
       okButtonProps: {
-        className: "!bg-red-600 !border-red-600 hover:!bg-red-700 !font-bold !text-white",
+        className:
+          "!bg-red-600 !border-red-600 hover:!bg-red-700 !font-bold !text-white",
       },
       icon: null,
       centered: true,
@@ -99,7 +100,7 @@ export default function LocationTable({
 
   return (
     <div className="flex flex-col">
-      {/* ── Search bar ── */}
+      {}
       <div className="px-5 py-4 border-b border-border">
         <div className="relative max-w-sm">
           <Search
@@ -124,7 +125,7 @@ export default function LocationTable({
         </div>
       </div>
 
-      {/* Empty state */}
+      {}
       {filteredData.length === 0 && (
         <div className="flex flex-col items-center justify-center py-16 text-center px-6">
           <div className="w-12 h-12 rounded-2xl bg-badge-bg border border-border flex items-center justify-center mb-3">
@@ -143,7 +144,7 @@ export default function LocationTable({
 
       {filteredData.length > 0 && (
         <>
-          {/* ── Desktop table ── */}
+          {}
           <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-left">
               <thead>
@@ -167,7 +168,7 @@ export default function LocationTable({
                       key={loc.id}
                       className="hover:bg-badge-bg/40 transition-colors group"
                     >
-                      {/* City */}
+                      {}
                       <td className="px-5 py-4">
                         {isEditing ? (
                           <input
@@ -184,10 +185,7 @@ export default function LocationTable({
                         ) : (
                           <div className="flex items-center gap-2.5">
                             <div className="w-7 h-7 rounded-lg bg-badge-bg border border-border flex items-center justify-center flex-shrink-0">
-                              <MapPin
-                                size={12}
-                                className="text-accent"
-                              />
+                              <MapPin size={12} className="text-accent" />
                             </div>
                             <span className="font-bold text-sm text-heading">
                               {loc.city}
@@ -196,7 +194,7 @@ export default function LocationTable({
                         )}
                       </td>
 
-                      {/* State */}
+                      {}
                       <td className="px-5 py-4">
                         {isEditing ? (
                           <input
@@ -216,7 +214,7 @@ export default function LocationTable({
                         )}
                       </td>
 
-                      {/* Actions */}
+                      {}
                       <td className="px-5 py-4">
                         <div className="flex items-center justify-end gap-2">
                           {isEditing ? (
@@ -268,14 +266,13 @@ export default function LocationTable({
             </table>
           </div>
 
-          {/* ── Mobile cards ── */}
+          {}
           <div className="md:hidden divide-y divide-border/60">
             {filteredData.map((loc) => {
               const isEditing = editingId === loc.id;
               return (
                 <div key={loc.id} className="p-5">
                   {isEditing ? (
-                    /* Edit mode on mobile */
                     <div className="space-y-3">
                       <div>
                         <label className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1.5 block">
@@ -330,22 +327,16 @@ export default function LocationTable({
                       </div>
                     </div>
                   ) : (
-                    /* View mode on mobile */
                     <div className="flex items-center justify-between gap-3">
                       <div className="flex items-center gap-3 min-w-0">
                         <div className="w-9 h-9 rounded-xl bg-badge-bg border border-border flex items-center justify-center flex-shrink-0">
-                          <MapPin
-                            size={15}
-                            className="text-accent"
-                          />
+                          <MapPin size={15} className="text-accent" />
                         </div>
                         <div className="min-w-0">
                           <p className="text-sm font-bold text-heading truncate">
                             {loc.city}
                           </p>
-                          <p className="text-xs text-muted">
-                            {loc.state}
-                          </p>
+                          <p className="text-xs text-muted">{loc.state}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2 flex-shrink-0">
@@ -369,7 +360,7 @@ export default function LocationTable({
             })}
           </div>
 
-          {/* Row count footer */}
+          {}
           <div className="px-5 py-3.5 border-t border-border bg-badge-bg/40">
             <p className="text-xs font-semibold text-muted">
               {filteredData.length === data.length

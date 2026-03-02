@@ -68,7 +68,7 @@ export default function SuperadminReferralClient({
 
   return (
     <div className="space-y-4">
-      {/* ── Empty state ── */}
+      {}
       {initialReferrals.length === 0 && (
         <div className="bg-white rounded-2xl border border-border flex flex-col items-center justify-center py-20 text-center px-6">
           <div className="w-14 h-14 rounded-2xl bg-badge-bg border border-border flex items-center justify-center mb-4">
@@ -85,7 +85,7 @@ export default function SuperadminReferralClient({
 
       {initialReferrals.length > 0 && (
         <>
-          {/* ── Desktop table ── */}
+          {}
           <div className="hidden lg:block bg-white rounded-2xl border border-border overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left">
@@ -122,14 +122,11 @@ export default function SuperadminReferralClient({
                         key={ref.id}
                         className="hover:bg-badge-bg/40 transition-colors group"
                       >
-                        {/* Patient */}
+                        {}
                         <td className="px-5 py-4">
                           <div className="flex items-center gap-3">
                             <div className="w-9 h-9 rounded-xl bg-badge-bg border border-border flex items-center justify-center flex-shrink-0">
-                              <User
-                                size={15}
-                                className="text-accent"
-                              />
+                              <User size={15} className="text-accent" />
                             </div>
                             <div>
                               <p className="text-sm font-bold text-heading">
@@ -142,7 +139,7 @@ export default function SuperadminReferralClient({
                           </div>
                         </td>
 
-                        {/* Route */}
+                        {}
                         <td className="px-5 py-4">
                           <div className="flex items-center gap-3">
                             <div className="min-w-0">
@@ -170,7 +167,7 @@ export default function SuperadminReferralClient({
                           </div>
                         </td>
 
-                        {/* Status */}
+                        {}
                         <td className="px-5 py-4">
                           <span
                             className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest ${statusStyle.pill}`}
@@ -182,7 +179,7 @@ export default function SuperadminReferralClient({
                           </span>
                         </td>
 
-                        {/* Priority */}
+                        {}
                         <td className="px-5 py-4">
                           <span
                             className={`inline-flex items-center gap-1.5 text-xs font-bold ${priorityStyle.text}`}
@@ -194,7 +191,7 @@ export default function SuperadminReferralClient({
                           </span>
                         </td>
 
-                        {/* Details link */}
+                        {}
                         <td className="px-5 py-4 text-right">
                           <Link
                             href={`/shared/referral/${ref.id}`}
@@ -211,7 +208,7 @@ export default function SuperadminReferralClient({
             </div>
           </div>
 
-          {/* ── Mobile / tablet cards ── */}
+          {}
           <div className="lg:hidden space-y-3">
             {initialReferrals.map((ref) => {
               const status = ref.status ?? "Pending";
@@ -226,14 +223,11 @@ export default function SuperadminReferralClient({
                   key={ref.id}
                   className="bg-white rounded-2xl border border-border overflow-hidden"
                 >
-                  {/* Card header */}
+                  {}
                   <div className="px-5 py-4 flex items-start justify-between gap-3 border-b border-border/60">
                     <div className="flex items-center gap-3 min-w-0">
                       <div className="w-9 h-9 rounded-xl bg-badge-bg border border-border flex items-center justify-center flex-shrink-0">
-                        <User
-                          size={15}
-                          className="text-accent"
-                        />
+                        <User size={15} className="text-accent" />
                       </div>
                       <div className="min-w-0">
                         <p className="text-sm font-bold text-heading truncate">
@@ -256,7 +250,7 @@ export default function SuperadminReferralClient({
                     </div>
                   </div>
 
-                  {/* Route */}
+                  {}
                   <div className="px-5 py-3.5 bg-badge-bg/40">
                     <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-2">
                       Route
@@ -287,7 +281,7 @@ export default function SuperadminReferralClient({
                     </div>
                   </div>
 
-                  {/* Footer */}
+                  {}
                   <div className="px-5 py-3.5 flex items-center justify-between gap-3">
                     <span
                       className={`inline-flex items-center gap-1.5 text-xs font-bold ${priorityStyle.text}`}
@@ -309,21 +303,12 @@ export default function SuperadminReferralClient({
             })}
           </div>
 
-          {/* ── Pagination ── */}
+          {}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white rounded-2xl border border-border px-5 py-4">
             <p className="text-sm font-semibold text-muted">
-              Showing{" "}
-              <span className="font-black text-heading">
-                {from}
-              </span>{" "}
-              –{" "}
-              <span className="font-black text-heading">
-                {to}
-              </span>{" "}
-              of{" "}
-              <span className="font-black text-heading">
-                {totalCount}
-              </span>{" "}
+              Showing <span className="font-black text-heading">{from}</span> –{" "}
+              <span className="font-black text-heading">{to}</span> of{" "}
+              <span className="font-black text-heading">{totalCount}</span>{" "}
               referrals
             </p>
 

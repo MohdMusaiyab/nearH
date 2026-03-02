@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -18,8 +17,6 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { logoutAction } from "@/actions/auth";
-
-/* ─── Nav config ─────────────────────────────────────────── */
 const navGroups = [
   {
     group: "Operations",
@@ -38,10 +35,7 @@ const navGroups = [
     ],
   },
 ];
-
-/* ─── Single nav link ─────────────────────────────────────── */
 type NavItemDef = { name: string; href: string; icon: React.ElementType };
-
 function NavLink({
   item,
   index,
@@ -54,7 +48,6 @@ function NavLink({
   const pathname = usePathname();
   const isActive = pathname === item.href;
   const Icon = item.icon;
-
   return (
     <motion.div
       initial={{ opacity: 0, x: -10 }}
@@ -81,26 +74,19 @@ function NavLink({
             transition={{ type: "spring", damping: 30, stiffness: 350 }}
           />
         )}
-
         <div
           className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors duration-200 ${
-            isActive
-              ? "bg-white/20"
-              : "bg-badge-bg group-hover:bg-border"
+            isActive ? "bg-white/20" : "bg-badge-bg group-hover:bg-border"
           }`}
         >
           <Icon
             size={16}
             className={
-              isActive
-                ? "text-white"
-                : "text-accent group-hover:text-heading"
+              isActive ? "text-white" : "text-accent group-hover:text-heading"
             }
           />
         </div>
-
         <span className="font-semibold text-sm flex-1">{item.name}</span>
-
         {isActive && (
           <ChevronRight size={13} className="text-white/70 flex-shrink-0" />
         )}
@@ -108,13 +94,11 @@ function NavLink({
     </motion.div>
   );
 }
-
-/* ─── Shared sidebar body ─────────────────────────────────── */
 function SidebarContent({ onClose }: { onClose?: () => void }) {
   let idx = 0;
   return (
     <div className="flex flex-col h-full">
-      {/* Brand block */}
+      {}
       <div className="px-5 pt-6 pb-5">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-accent rounded-xl flex items-center justify-center shadow-lg shadow-accent/30 flex-shrink-0">
@@ -130,11 +114,9 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
           </div>
         </div>
       </div>
-
-      {/* Divider */}
+      {}
       <div className="mx-5 h-px bg-border mb-4" />
-
-      {/* Navigation */}
+      {}
       <nav className="flex-1 px-3 space-y-5 overflow-y-auto">
         {navGroups.map((group) => (
           <div key={group.group}>
@@ -154,12 +136,10 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
           </div>
         ))}
       </nav>
-
-      {/* Footer */}
+      {}
       <div className="p-3 mt-auto">
         <div className="mx-2 h-px bg-border mb-3" />
-
-        {/* Sign out */}
+        {}
         <form action={logoutAction}>
           <button
             type="submit"
@@ -178,14 +158,11 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
     </div>
   );
 }
-
-/* ─── Main export ─────────────────────────────────────────── */
 const AdminSidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
-
   return (
     <>
-      {/* ── Mobile sub-header — sits below global nav (top-20) ── */}
+      {}
       <div className="lg:hidden flex items-center gap-3 px-4 py-3 bg-white border-b border-border sticky top-20 z-40">
         <button
           onClick={() => setIsOpen(true)}
@@ -198,13 +175,10 @@ const AdminSidebar = () => {
           <div className="w-6 h-6 bg-accent rounded-md flex items-center justify-center">
             <Building2 size={13} className="text-white" />
           </div>
-          <span className="font-bold text-heading text-sm">
-            Hospital Admin
-          </span>
+          <span className="font-bold text-heading text-sm">Hospital Admin</span>
         </div>
       </div>
-
-      {/* ── Mobile drawer ── */}
+      {}
       <AnimatePresence>
         {isOpen && (
           <>
@@ -216,7 +190,6 @@ const AdminSidebar = () => {
               className="fixed inset-0 bg-heading/30 backdrop-blur-sm z-[90] lg:hidden"
               onClick={() => setIsOpen(false)}
             />
-
             <motion.aside
               initial={{ x: "-100%" }}
               animate={{ x: 0 }}
@@ -231,19 +204,16 @@ const AdminSidebar = () => {
               >
                 <X size={15} />
               </button>
-
               <SidebarContent onClose={() => setIsOpen(false)} />
             </motion.aside>
           </>
         )}
       </AnimatePresence>
-
-      {/* ── Desktop sidebar ── */}
+      {}
       <aside className="hidden lg:flex flex-col w-64 flex-shrink-0 bg-white border-r border-border sticky top-24 h-[calc(100vh-6rem)] overflow-hidden">
         <SidebarContent />
       </aside>
     </>
   );
 };
-
 export default AdminSidebar;

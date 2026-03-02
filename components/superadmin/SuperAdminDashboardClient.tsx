@@ -11,10 +11,6 @@ import {
 } from "@/actions/superadmin/dashboard";
 import { SortAscIcon } from "lucide-react";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Helpers
-// ─────────────────────────────────────────────────────────────────────────────
-
 function formatRelativeTime(iso: string | null): string {
   if (!iso) return "—";
   const diff = Date.now() - new Date(iso).getTime();
@@ -40,10 +36,6 @@ function formatDate(iso: string | null): string {
     year: "numeric",
   });
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Stat Card
-// ─────────────────────────────────────────────────────────────────────────────
 
 interface StatCardProps {
   label: string;
@@ -111,19 +103,11 @@ function StatCard({ label, value, sub, color, icon }: StatCardProps) {
         >
           {value}
         </p>
-        {sub && (
-          <p className="text-xs text-muted mt-1.5 truncate">
-            {sub}
-          </p>
-        )}
+        {sub && <p className="text-xs text-muted mt-1.5 truncate">{sub}</p>}
       </div>
     </div>
   );
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Section wrapper
-// ─────────────────────────────────────────────────────────────────────────────
 
 function Section({
   title,
@@ -146,10 +130,6 @@ function Section({
     </div>
   );
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Badge
-// ─────────────────────────────────────────────────────────────────────────────
 
 type PriorityLevel = "Routine" | "Urgent" | "Critical";
 type ReferralStatus = "Pending" | "Accepted" | "Rejected" | "Completed";
@@ -187,10 +167,6 @@ function Badge({
     </span>
   );
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Growth Chart
-// ─────────────────────────────────────────────────────────────────────────────
 
 function GrowthChart({ data }: { data: MonthlyGrowthPoint[] }) {
   const max = Math.max(...data.map((d) => d.count), 1);
@@ -232,10 +208,6 @@ function GrowthChart({ data }: { data: MonthlyGrowthPoint[] }) {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Occupancy Chart
-// ─────────────────────────────────────────────────────────────────────────────
-
 function OccupancyChart({ data }: { data: BedOccupancyPoint[] }) {
   if (!data.length) return <EmptyState message="No occupancy data available" />;
   return (
@@ -270,15 +242,11 @@ function OccupancyChart({ data }: { data: BedOccupancyPoint[] }) {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Referrals Table — mobile-first card layout on small screens
-// ─────────────────────────────────────────────────────────────────────────────
-
 function ReferralsTable({ referrals }: { referrals: RecentReferralItem[] }) {
   if (!referrals.length) return <EmptyState message="No referrals yet" />;
   return (
     <>
-      {/* Mobile: cards */}
+      {}
       <div className="divide-y divide-border md:hidden">
         {referrals.map((r) => (
           <div key={r.id} className="px-5 py-4 space-y-2">
@@ -303,7 +271,7 @@ function ReferralsTable({ referrals }: { referrals: RecentReferralItem[] }) {
         ))}
       </div>
 
-      {/* Desktop: table */}
+      {}
       <div className="hidden md:block overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
@@ -322,10 +290,7 @@ function ReferralsTable({ referrals }: { referrals: RecentReferralItem[] }) {
           </thead>
           <tbody className="divide-y divide-border/50">
             {referrals.map((r) => (
-              <tr
-                key={r.id}
-                className="hover:bg-badge-bg/40 transition-colors"
-              >
+              <tr key={r.id} className="hover:bg-badge-bg/40 transition-colors">
                 <td className="px-5 py-3.5 font-semibold text-heading">
                   {r.patientName}
                 </td>
@@ -360,10 +325,6 @@ function ReferralsTable({ referrals }: { referrals: RecentReferralItem[] }) {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Pending Admins
-// ─────────────────────────────────────────────────────────────────────────────
-
 function PendingAdminsList({ admins }: { admins: PendingAdminItem[] }) {
   if (!admins.length)
     return <EmptyState message="No pending admin approvals" />;
@@ -383,9 +344,7 @@ function PendingAdminsList({ admins }: { admins: PendingAdminItem[] }) {
             <p className="text-sm font-semibold text-heading truncate">
               {admin.name ?? "Unnamed"}
             </p>
-            <p className="text-xs text-muted truncate">
-              {admin.email}
-            </p>
+            <p className="text-xs text-muted truncate">{admin.email}</p>
             {admin.hospitalName && (
               <p className="text-xs text-accent font-medium truncate mt-0.5">
                 🏥 {admin.hospitalName}
@@ -400,10 +359,6 @@ function PendingAdminsList({ admins }: { admins: PendingAdminItem[] }) {
     </ul>
   );
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Hospitals Table
-// ─────────────────────────────────────────────────────────────────────────────
 
 type SortKey = "name" | "bedsAvailable" | "icuAvailable" | "adminCount";
 type SortDir = "asc" | "desc";
@@ -452,7 +407,7 @@ function HospitalsTable({ hospitals }: { hospitals: HospitalListItem[] }) {
 
   return (
     <div>
-      {/* Filter bar */}
+      {}
       <div className="px-5 py-4 border-b border-border flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
           <svg
@@ -496,7 +451,7 @@ function HospitalsTable({ hospitals }: { hospitals: HospitalListItem[] }) {
         </div>
       </div>
 
-      {/* Mobile: cards */}
+      {}
       {filtered.length === 0 ? (
         <EmptyState message="No hospitals match your filters" />
       ) : (
@@ -506,12 +461,8 @@ function HospitalsTable({ hospitals }: { hospitals: HospitalListItem[] }) {
               <div key={h.id} className="px-5 py-4 space-y-2">
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <p className="font-bold text-sm text-heading">
-                      {h.name}
-                    </p>
-                    <p className="text-xs text-muted mt-0.5">
-                      {h.location}
-                    </p>
+                    <p className="font-bold text-sm text-heading">{h.name}</p>
+                    <p className="text-xs text-muted mt-0.5">{h.location}</p>
                   </div>
                   <div className="flex flex-col items-end gap-1">
                     <span
@@ -556,7 +507,7 @@ function HospitalsTable({ hospitals }: { hospitals: HospitalListItem[] }) {
             ))}
           </div>
 
-          {/* Desktop: table */}
+          {}
           <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
@@ -629,9 +580,7 @@ function HospitalsTable({ hospitals }: { hospitals: HospitalListItem[] }) {
                             ✓ Verified
                           </span>
                         ) : (
-                          <span className="text-xs text-muted">
-                            Unverified
-                          </span>
+                          <span className="text-xs text-muted">Unverified</span>
                         )}
                       </div>
                     </td>
@@ -639,19 +588,13 @@ function HospitalsTable({ hospitals }: { hospitals: HospitalListItem[] }) {
                       <span className="font-bold text-heading">
                         {h.metrics.bedsAvailable}
                       </span>
-                      <span className="text-muted text-xs">
-                        {" "}
-                        avail
-                      </span>
+                      <span className="text-muted text-xs"> avail</span>
                     </td>
                     <td className="px-5 py-4 text-center hidden lg:table-cell">
                       <span className="font-bold text-heading">
                         {h.metrics.icuAvailable}
                       </span>
-                      <span className="text-muted text-xs">
-                        {" "}
-                        avail
-                      </span>
+                      <span className="text-muted text-xs"> avail</span>
                     </td>
                     <td className="px-5 py-4 text-center hidden xl:table-cell">
                       <span className="font-bold text-heading">
@@ -671,10 +614,6 @@ function HospitalsTable({ hospitals }: { hospitals: HospitalListItem[] }) {
     </div>
   );
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Empty state
-// ─────────────────────────────────────────────────────────────────────────────
 
 function EmptyState({ message }: { message: string }) {
   return (
@@ -698,10 +637,6 @@ function EmptyState({ message }: { message: string }) {
     </div>
   );
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Root Component
-// ─────────────────────────────────────────────────────────────────────────────
 
 type TabId = "overview" | "hospitals" | "referrals" | "admins";
 
@@ -736,7 +671,7 @@ export default function SuperAdminDashboardClient({
 
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* ── Page header — no sticky, just a clean title block ── */}
+      {}
       <div className="mb-6">
         <div className="flex items-center justify-between gap-4 mb-5">
           <div>
@@ -753,7 +688,7 @@ export default function SuperAdminDashboardClient({
           </div>
         </div>
 
-        {/* Tabs */}
+        {}
         <div className="flex gap-1 border-b border-border overflow-x-auto scrollbar-none">
           {tabs.map((tab) => (
             <button
@@ -782,12 +717,12 @@ export default function SuperAdminDashboardClient({
         </div>
       </div>
 
-      {/* ── Tab content ── */}
+      {}
       <div className="space-y-6">
-        {/* OVERVIEW */}
+        {}
         {activeTab === "overview" && (
           <>
-            {/* Stats grid */}
+            {}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
               <StatCard
                 label="Total Hospitals"
@@ -959,7 +894,7 @@ export default function SuperAdminDashboardClient({
               />
             </div>
 
-            {/* Charts */}
+            {}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
               <Section title="Hospital Registrations (Last 6 Months)">
                 <GrowthChart data={charts.hospitalGrowth} />
@@ -969,7 +904,7 @@ export default function SuperAdminDashboardClient({
               </Section>
             </div>
 
-            {/* Activity */}
+            {}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
               <Section title="Recently Registered Hospitals">
                 {recentActivity.newHospitals.length === 0 ? (
@@ -1016,14 +951,14 @@ export default function SuperAdminDashboardClient({
           </>
         )}
 
-        {/* HOSPITALS */}
+        {}
         {activeTab === "hospitals" && (
           <Section title="All Hospitals">
             <HospitalsTable hospitals={hospitals} />
           </Section>
         )}
 
-        {/* REFERRALS */}
+        {}
         {activeTab === "referrals" && (
           <Section
             title="All Recent Referrals"
@@ -1039,7 +974,7 @@ export default function SuperAdminDashboardClient({
           </Section>
         )}
 
-        {/* ADMINS */}
+        {}
         {activeTab === "admins" && (
           <Section
             title="Pending Admin Approvals"

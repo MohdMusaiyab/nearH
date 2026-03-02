@@ -32,10 +32,6 @@ interface Props {
   hospitalId: string;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Themed Components
-// ─────────────────────────────────────────────────────────────────────────────
-
 function SectionHeader({
   title,
   icon: Icon,
@@ -147,10 +143,6 @@ function EditableField({
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Bed Card
-// ─────────────────────────────────────────────────────────────────────────────
-
 interface BedCardProps {
   title: string;
   description: string;
@@ -229,10 +221,6 @@ function BedCard({
     </div>
   );
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Root Dashboard
-// ─────────────────────────────────────────────────────────────────────────────
 
 export default function RealtimeDashboard({
   initialInventory,
@@ -363,7 +351,7 @@ export default function RealtimeDashboard({
 
   return (
     <div className="max-w-7xl mx-auto space-y-6 pb-12">
-      {/* Header Info Bar */}
+      {}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-border shadow-sm">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
@@ -391,7 +379,7 @@ export default function RealtimeDashboard({
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* Left: Bed Management */}
+        {}
         <div className="lg:col-span-8 space-y-4">
           <SectionHeader title="Bed Availability" icon={Bed} />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -424,7 +412,7 @@ export default function RealtimeDashboard({
           </div>
         </div>
 
-        {/* Right: Blood Bank Management */}
+        {}
         <div className="lg:col-span-4 space-y-4">
           <SectionHeader title="Blood Bank" icon={Droplets} />
           <div className="bg-white rounded-2xl border border-border overflow-hidden shadow-sm">
@@ -484,7 +472,7 @@ export default function RealtimeDashboard({
                         </button>
                       </div>
                     </div>
-                    {/* Visual Progress Bar for Blood */}
+                    {}
                     <div className="h-1 w-full bg-slate-100 rounded-full overflow-hidden">
                       <div
                         className={`h-full transition-all duration-500 ${isLow ? "bg-error" : "bg-success"}`}

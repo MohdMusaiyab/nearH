@@ -43,7 +43,11 @@ export default function ApprovalsTable({
     router.push(`?${params.toString()}`);
   };
 
-  const handleApprove = async (profileId: string, hospitalId: string, hospitalName: string) => {
+  const handleApprove = async (
+    profileId: string,
+    hospitalId: string,
+    hospitalName: string,
+  ) => {
     setLoadingId(profileId);
     const res = await approveHospital(profileId, hospitalId);
     if (res.success) {
@@ -57,7 +61,11 @@ export default function ApprovalsTable({
     setLoadingId(null);
   };
 
-  const handleReject = (profileId: string, hospitalId: string, hospitalName: string) => {
+  const handleReject = (
+    profileId: string,
+    hospitalId: string,
+    hospitalName: string,
+  ) => {
     Modal.confirm({
       title: "Reject & Delete Hospital?",
       content: (
@@ -76,7 +84,8 @@ export default function ApprovalsTable({
       okType: "danger",
       cancelText: "Cancel",
       okButtonProps: {
-        className: "!bg-red-600 !border-red-600 hover:!bg-red-700 !font-bold !text-white",
+        className:
+          "!bg-red-600 !border-red-600 hover:!bg-red-700 !font-bold !text-white",
       },
       icon: null,
       centered: true,
@@ -96,11 +105,13 @@ export default function ApprovalsTable({
 
   return (
     <div className="space-y-4">
-
-      {/* ── Filter bar ── */}
+      {}
       <div className="bg-white rounded-2xl border border-border p-4 flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
-          <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted" />
+          <Search
+            size={15}
+            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted"
+          />
           <input
             type="text"
             onChange={(e) => updateFilters("search", e.target.value)}
@@ -136,11 +147,9 @@ export default function ApprovalsTable({
         )}
       </div>
 
-      {/* ── Table / Cards ── */}
+      {}
       <div className="bg-white rounded-2xl border border-border overflow-hidden">
-
         {data.length === 0 ? (
-          /* Empty state */
           <div className="flex flex-col items-center justify-center py-20 px-6 text-center">
             <div className="w-14 h-14 rounded-2xl bg-badge-bg border border-border flex items-center justify-center mb-4">
               <UserCheck size={24} className="text-muted" />
@@ -154,7 +163,7 @@ export default function ApprovalsTable({
           </div>
         ) : (
           <>
-            {/* Desktop table */}
+            {}
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left">
                 <thead>
@@ -179,7 +188,7 @@ export default function ApprovalsTable({
                       key={item.id}
                       className="hover:bg-badge-bg/40 transition-colors group"
                     >
-                      {/* Admin */}
+                      {}
                       <td className="px-5 py-4">
                         <div className="flex items-center gap-3">
                           <div className="w-9 h-9 rounded-xl bg-badge-bg border border-border flex items-center justify-center flex-shrink-0">
@@ -198,20 +207,26 @@ export default function ApprovalsTable({
                         </div>
                       </td>
 
-                      {/* Hospital */}
+                      {}
                       <td className="px-5 py-4">
                         <div className="flex items-center gap-2">
-                          <Building2 size={14} className="text-accent flex-shrink-0" />
+                          <Building2
+                            size={14}
+                            className="text-accent flex-shrink-0"
+                          />
                           <span className="text-sm font-semibold text-heading">
                             {item.hospitals?.name}
                           </span>
                         </div>
                       </td>
 
-                      {/* Location */}
+                      {}
                       <td className="px-5 py-4">
                         <div className="flex items-center gap-1.5">
-                          <MapPin size={13} className="text-accent flex-shrink-0" />
+                          <MapPin
+                            size={13}
+                            className="text-accent flex-shrink-0"
+                          />
                           <span className="text-sm text-body">
                             {item.hospitals?.locations
                               ? `${item.hospitals.locations.city}, ${item.hospitals.locations.state}`
@@ -220,13 +235,17 @@ export default function ApprovalsTable({
                         </div>
                       </td>
 
-                      {/* Actions */}
+                      {}
                       <td className="px-5 py-4">
                         <div className="flex items-center justify-end gap-2">
                           <button
                             onClick={() =>
                               item.hospitals &&
-                              handleApprove(item.id, item.hospitals.id, item.hospitals.name)
+                              handleApprove(
+                                item.id,
+                                item.hospitals.id,
+                                item.hospitals.name,
+                              )
                             }
                             disabled={!!loadingId}
                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
@@ -241,7 +260,11 @@ export default function ApprovalsTable({
                           <button
                             onClick={() =>
                               item.hospitals &&
-                              handleReject(item.id, item.hospitals.id, item.hospitals.name)
+                              handleReject(
+                                item.id,
+                                item.hospitals.id,
+                                item.hospitals.name,
+                              )
                             }
                             disabled={!!loadingId}
                             className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-red-50 text-error border border-red-200 hover:bg-error hover:text-white hover:border-error disabled:opacity-40 disabled:cursor-not-allowed transition-all"
@@ -257,11 +280,11 @@ export default function ApprovalsTable({
               </table>
             </div>
 
-            {/* Mobile cards */}
+            {}
             <div className="md:hidden divide-y divide-border/60">
               {data.map((item) => (
                 <div key={item.id} className="p-5 space-y-4">
-                  {/* Admin + hospital row */}
+                  {}
                   <div className="flex items-start gap-3">
                     <div className="w-10 h-10 rounded-xl bg-badge-bg border border-border flex items-center justify-center flex-shrink-0">
                       <span className="text-base font-black text-accent">
@@ -278,10 +301,13 @@ export default function ApprovalsTable({
                     </div>
                   </div>
 
-                  {/* Hospital + location */}
+                  {}
                   <div className="flex flex-col gap-1.5 px-3 py-3 bg-badge-bg rounded-xl border border-border">
                     <div className="flex items-center gap-2">
-                      <Building2 size={13} className="text-accent flex-shrink-0" />
+                      <Building2
+                        size={13}
+                        className="text-accent flex-shrink-0"
+                      />
                       <span className="text-sm font-semibold text-heading truncate">
                         {item.hospitals?.name}
                       </span>
@@ -296,12 +322,16 @@ export default function ApprovalsTable({
                     </div>
                   </div>
 
-                  {/* Action buttons */}
+                  {}
                   <div className="flex gap-2">
                     <button
                       onClick={() =>
                         item.hospitals &&
-                        handleApprove(item.id, item.hospitals.id, item.hospitals.name)
+                        handleApprove(
+                          item.id,
+                          item.hospitals.id,
+                          item.hospitals.name,
+                        )
                       }
                       disabled={!!loadingId}
                       className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 disabled:opacity-40 transition-all"
@@ -316,7 +346,11 @@ export default function ApprovalsTable({
                     <button
                       onClick={() =>
                         item.hospitals &&
-                        handleReject(item.id, item.hospitals.id, item.hospitals.name)
+                        handleReject(
+                          item.id,
+                          item.hospitals.id,
+                          item.hospitals.name,
+                        )
                       }
                       disabled={!!loadingId}
                       className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold bg-red-50 text-error border border-red-200 hover:bg-error hover:text-white hover:border-error disabled:opacity-40 transition-all"
@@ -332,13 +366,12 @@ export default function ApprovalsTable({
         )}
       </div>
 
-      {/* ── Pagination ── */}
+      {}
       {totalCount > 0 && (
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white rounded-2xl border border-border px-5 py-4">
           <p className="text-sm font-semibold text-muted">
             Showing{" "}
-            <span className="font-black text-heading">{data.length}</span>{" "}
-            of{" "}
+            <span className="font-black text-heading">{data.length}</span> of{" "}
             <span className="font-black text-heading">{totalCount}</span>{" "}
             applications
           </p>

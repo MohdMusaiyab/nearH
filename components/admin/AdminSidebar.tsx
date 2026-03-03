@@ -24,7 +24,6 @@ const navGroups = [
       { name: "Overview", href: "/admin/dashboard", icon: LayoutDashboard },
       { name: "Doctors & OPD", href: "/admin/doctors", icon: Stethoscope },
       { name: "Beds & ICU", href: "/admin/inventory", icon: BedDouble },
-      { name: "Blood Bank", href: "/admin/blood-bank", icon: Droplets },
       { name: "Referrals", href: "/admin/referrals", icon: ArrowLeftRight },
     ],
   },

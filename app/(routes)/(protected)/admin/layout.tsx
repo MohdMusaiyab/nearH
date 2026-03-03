@@ -1,11 +1,19 @@
 import React from "react";
 import AdminSidebar from "@/components/admin/AdminSidebar";
+import { getAuthenticatedProfile } from "@/utils/authCache";
+import { redirect } from "next/navigation";
 
-export default function AdminLayout({
+export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const profile = await getAuthenticatedProfile();
+
+  if (!profile || profile.role !== "admin" || profile.status !== "approved") {
+    redirect("/");
+  }
+
   return (
     <div className="flex flex-col lg:flex-row min-h-screen bg-slate-50 pt-20 lg:pt-24">
       <AdminSidebar />

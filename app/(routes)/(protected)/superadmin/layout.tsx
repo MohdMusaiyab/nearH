@@ -1,16 +1,20 @@
 import React from "react";
 import SuperAdminSidebar from "@/components/superadmin/SuperAdminSidebar";
+import { getAuthenticatedProfile } from "@/utils/authCache";
+import { redirect } from "next/navigation";
 
-export default function SuperAdminLayout({
+export default async function SuperAdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const profile = await getAuthenticatedProfile();
+
+  if (!profile || profile.role !== "superadmin") {
+    redirect("/");
+  }
+
   return (
-    /*
-      pt-20 lg:pt-24 — pushes the entire layout body below the fixed global Navigation.
-      The sidebar uses sticky top-24 so it also starts cleanly below the nav on desktop.
-    */
     <div className="flex flex-col lg:flex-row min-h-screen bg-slate-50 pt-20 lg:pt-24">
       <SuperAdminSidebar />
 

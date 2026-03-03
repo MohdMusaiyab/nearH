@@ -22,6 +22,8 @@ interface ExtendedProfile extends Profile {
   hospitalName?: string;
 }
 
+let profileFetchPromise: Promise<any> | null = null;
+
 export function Navigation() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
@@ -45,47 +47,70 @@ export function Navigation() {
   }, [profile, isLoading]);
 
   useEffect(() => {
-    const supabase = createClient();
+    let mounted = true;
+    let hasFetched = false;
 
     const fetchProfile = async () => {
+      if (!mounted || hasFetched) return;
+      hasFetched = true;
       setIsLoading(true);
+
       try {
-        const res = await fetch("/api/auth/me", { cache: "no-store" });
-        if (res.ok) {
-          const data = await res.json();
+        if (!profileFetchPromise) {
+          profileFetchPromise = fetch("/api/auth/me", { cache: "no-store" })
+            .then((res) => (res.ok ? res.json() : null))
+            .finally(() => {
+              profileFetchPromise = null;
+            });
+        }
+
+        const data = await profileFetchPromise;
+        if (data && mounted) {
           setProfile(data);
         }
       } catch (e) {
-        console.error("Error:", e);
+        if (mounted) console.error("Error fetching profile:", e);
       } finally {
+        if (mounted) setIsLoading(false);
+      }
+    };
+
+    const initializeAuth = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (session && mounted) {
+        setUser(session.user);
+        await fetchProfile();
+      } else if (mounted) {
         setIsLoading(false);
       }
     };
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        setUser(session.user);
-        fetchProfile();
-      } else {
-        setIsLoading(false);
-      }
-    });
+    initializeAuth();
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (session) {
+      if (!mounted) return;
+
+      if (event === "SIGNED_IN" && session) {
         setUser(session.user);
+        hasFetched = false; // Reset so we fetch the new user's profile
         await fetchProfile();
-      } else {
+      } else if (event === "SIGNED_OUT") {
         setUser(null);
         setProfile(null);
         setIsLoading(false);
+        hasFetched = false;
       }
     });
 
-    return () => subscription.unsubscribe();
-  }, [pathname]);
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 40);
@@ -147,7 +172,7 @@ export function Navigation() {
   return (
     <>
       <nav
-        className={`fixed top-0 left-0 w-full z-[100] transition-all duration-500 h-20 lg:h-24 flex items-center ${navBg}`}
+        className={`fixed top-0 left-0 w-full z-100 transition-all duration-500 h-20 lg:h-24 flex items-center ${navBg}`}
       >
         <div className="w-full px-4 lg:px-0">
           <div className="flex justify-between items-center">
@@ -155,7 +180,7 @@ export function Navigation() {
             <div className="flex items-center ">
               <Link
                 href="/"
-                className="flex items-center gap-3 group lg:w-64 lg:pl-5 lg:flex-shrink-0"
+                className="flex items-center gap-3 group lg:w-64 lg:pl-5 lg:shrink-0"
               >
                 <div className="w-10 h-10 bg-heading rounded-xl flex items-center justify-center shadow-lg shadow-heading/20 group-hover:scale-105 transition-transform duration-200">
                   <Hospital size={20} className="text-white" />
@@ -297,7 +322,7 @@ export function Navigation() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[105] lg:hidden"
+              className="fixed inset-0 bg-black/20 backdrop-blur-sm z-105 lg:hidden"
               onClick={() => setIsOpen(false)}
             />
             <motion.div
@@ -305,7 +330,7 @@ export function Navigation() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 28, stiffness: 300 }}
-              className="fixed top-0 right-0 h-full w-[min(320px,90vw)] bg-white z-[110] lg:hidden flex flex-col shadow-2xl"
+              className="fixed top-0 right-0 h-full w-[min(320px,90vw)] bg-white z-110 lg:hidden flex flex-col shadow-2xl"
             >
               <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
                 <div className="flex items-center gap-2.5">

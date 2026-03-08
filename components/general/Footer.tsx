@@ -1,14 +1,6 @@
-"use client";
-
 import React from "react";
 import Link from "next/link";
-import {
-  Activity,
-  MapPin,
-  Mail,
-  ArrowUpRight,
-  Database,
-} from "lucide-react";
+import { Activity, MapPin, Mail, ArrowUpRight, Database } from "lucide-react";
 
 export const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -107,9 +99,7 @@ export const Footer = () => {
                   <p className="text-[9px] font-black text-muted uppercase tracking-widest leading-none mb-1.5">
                     HQ Operations
                   </p>
-                  <p className="text-xs font-bold text-heading">
-                    India
-                  </p>
+                  <p className="text-xs font-bold text-heading">India</p>
                 </div>
               </div>
             </div>

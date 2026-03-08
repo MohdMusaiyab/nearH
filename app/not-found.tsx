@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 export default function NotFound() {
   return (
     <div className="min-h-screen bg-white flex items-center justify-center p-6 relative overflow-hidden">
-      {/* 40px Branding Grid */}
+      {}
       <div
         className="absolute inset-0 opacity-[0.2] pointer-events-none"
         style={{
@@ -16,12 +16,12 @@ export default function NotFound() {
         }}
       />
 
-      {/* Decorative Blur Blobs */}
+      {}
       <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-accent/5 blur-[100px] rounded-full pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-emerald-500/5 blur-[100px] rounded-full pointer-events-none" />
 
       <div className="max-w-lg w-full text-center relative z-10">
-        {/* Visual Identity Block */}
+        {}
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -35,7 +35,7 @@ export default function NotFound() {
           </div>
         </motion.div>
 
-        {/* High-Contrast Error Message */}
+        {}
         <div className="space-y-4 mb-12">
           <h1 className="text-[120px] font-black text-slate-100 leading-none tracking-tighter select-none">
             404
@@ -54,7 +54,7 @@ export default function NotFound() {
           </p>
         </div>
 
-        {/* System Action Buttons */}
+        {}
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             href="/"
@@ -73,7 +73,7 @@ export default function NotFound() {
           </Link>
         </div>
 
-        {/* Footer Support Meta */}
+        {}
         <div className="mt-16 pt-8 border-t border-slate-50">
           <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
             If this persistence continues, contact the <br />

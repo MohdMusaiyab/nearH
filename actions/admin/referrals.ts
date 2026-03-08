@@ -191,9 +191,24 @@ export type SharedReferralDetail =
 export async function getReferralById(
   id: string,
 ): Promise<ActionResponse<SharedReferralDetail>> {
+  const profile = await getAuthenticatedProfile();
+
+  if (!profile || (profile.role !== "admin" && profile.role !== "superadmin")) {
+    return { success: false, message: "Unauthorized", data: null };
+  }
+
+  const isSuperadmin = profile.role === "superadmin";
+
+  if (
+    !isSuperadmin &&
+    (!profile.associated_hospital_id || profile.status !== "approved")
+  ) {
+    return { success: false, message: "Unauthorized", data: null };
+  }
+
   const supabase = await createClient();
 
-  const { data, error } = await supabase
+  let query = supabase
     .from("referrals")
     .select(
       `
@@ -211,11 +226,21 @@ export async function getReferralById(
       specialty:specialties_list(specialty_name)
     `,
     )
-    .eq("id", id)
-    .single();
+    .eq("id", id);
+
+  if (!isSuperadmin) {
+    const hid = profile.associated_hospital_id;
+    query = query.or(`from_hospital_id.eq.${hid},to_hospital_id.eq.${hid}`);
+  }
+
+  const { data, error } = await query.single();
 
   if (error)
-    return { success: false, message: "Referral not found", data: null };
+    return {
+      success: false,
+      message: "Referral not found or unauthorized",
+      data: null,
+    };
 
   return {
     success: true,

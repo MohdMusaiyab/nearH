@@ -53,7 +53,7 @@ export default function ResetPasswordPage() {
 
   return (
     <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* ── Background Photo (Consistent with Brand) ── */}
+      {}
       <img
         src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1800&q=85"
         alt="Hospital"
@@ -61,7 +61,7 @@ export default function ResetPasswordPage() {
       />
       <div className="absolute inset-0 bg-[#0a1628]/75" />
 
-      {/* ── Top-left logo ── */}
+      {}
       <div className="absolute top-8 left-10 flex items-center gap-2.5 z-20">
         <div className="w-9 h-9 rounded-xl bg-accent flex items-center justify-center shadow-lg shadow-accent/40">
           <Activity size={18} className="text-white" />
@@ -74,7 +74,7 @@ export default function ResetPasswordPage() {
         </Link>
       </div>
 
-      {/* ── Reset Card ── */}
+      {}
       <div className="relative z-20 w-full flex justify-center px-5">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
@@ -98,7 +98,7 @@ export default function ResetPasswordPage() {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              {/* New Password */}
+              {}
               <div className="space-y-1.5">
                 <label className="text-[10px] font-bold text-heading uppercase tracking-widest ml-1">
                   New Password
@@ -128,7 +128,7 @@ export default function ResetPasswordPage() {
                 </div>
               </div>
 
-              {/* Confirm Password */}
+              {}
               <div className="space-y-1.5">
                 <label className="text-[10px] font-bold text-heading uppercase tracking-widest ml-1">
                   Confirm Password

@@ -10,7 +10,7 @@ const TTL_MASTER = 86400;
 
 const CACHE_VERSION = "v1";
 
-const REDIS_TIMEOUT = 2000;
+const REDIS_TIMEOUT = 500;
 
 class CacheError extends Error {
   constructor(

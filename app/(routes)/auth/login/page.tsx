@@ -24,8 +24,7 @@ export default function LoginPage() {
   const [serverError, setServerError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const router=useRouter();
-  
+  const router = useRouter();
 
   const {
     register,
@@ -36,25 +35,25 @@ export default function LoginPage() {
   });
 
   const onSubmit = async (data: LoginInput) => {
-  setIsLoading(true);
-  setServerError(null);
+    setIsLoading(true);
+    setServerError(null);
 
-  const result = await login(data);
+    const result = await login(data);
 
-  if (result.success) {
-    router.push("/admin/dashboard"); // just push, no refresh
-  } else {
-    setServerError(result.message);
-    setIsLoading(false);
-  }
-};
+    if (result.success) {
+      router.push("/admin/dashboard");
+    } else {
+      setServerError(result.message);
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* ── Full-bleed background photo ── */}
+      {}
       <div className="absolute inset-0 w-full h-full">
         <Image
-          src="https://images.unsplash.com/photo-1538108149393-fbbd81895907"
+          src="/login.webp"
           alt="Modern Hospital Building"
           fill
           priority
@@ -64,10 +63,10 @@ export default function LoginPage() {
         />
       </div>
 
-      {/* Deep dark overlay — ensures ALL text over photo is white-readable */}
+      {}
       <div className="absolute inset-0 bg-[#0a1628]/55" />
 
-      {/* Subtle vignette */}
+      {}
       <div
         className="absolute inset-0 bg-radial-gradient"
         style={{
@@ -76,7 +75,7 @@ export default function LoginPage() {
         }}
       />
 
-      {/* ── Top-left logo ── */}
+      {}
       <motion.div
         initial={{ opacity: 0, y: -16 }}
         animate={{ opacity: 1, y: 0 }}
@@ -94,7 +93,7 @@ export default function LoginPage() {
         </Link>
       </motion.div>
 
-      {/* ── Bottom-left brand copy — only on lg ── */}
+      {}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -128,7 +127,7 @@ export default function LoginPage() {
         </div>
       </motion.div>
 
-      {/* ── Floating form card — right side on lg, centered on mobile ── */}
+      {}
       <div className="relative z-20 w-full flex justify-center lg:justify-end lg:pr-20 xl:pr-28 px-5">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
@@ -136,11 +135,11 @@ export default function LoginPage() {
           transition={{ duration: 0.55, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
           className="w-full max-w-sm bg-white rounded-3xl shadow-2xl shadow-black/30 overflow-hidden"
         >
-          {/* Card top accent */}
+          {}
           <div className="h-1.5 w-full bg-gradient-to-r from-accent to-link" />
 
           <div className="p-8">
-            {/* Header */}
+            {}
             <div className="mb-7">
               <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-badge-bg border border-border text-accent text-[10px] font-bold uppercase tracking-widest mb-4">
                 <ShieldCheck size={11} />
@@ -154,26 +153,21 @@ export default function LoginPage() {
               </p>
             </div>
 
-            {/* Server error */}
+            {}
             {serverError && (
               <motion.div
                 initial={{ opacity: 0, y: -8 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="flex items-start gap-3 px-4 py-3 bg-red-50 border border-red-200 rounded-2xl mb-5"
               >
-                <Heart
-                  size={14}
-                  className="text-error flex-shrink-0 mt-0.5"
-                />
-                <p className="text-sm text-error font-medium">
-                  {serverError}
-                </p>
+                <Heart size={14} className="text-error flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-error font-medium">{serverError}</p>
               </motion.div>
             )}
 
-            {/* Form */}
+            {}
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              {/* Email */}
+              {}
               <div className="space-y-1.5">
                 <label
                   htmlFor="email"
@@ -201,7 +195,7 @@ export default function LoginPage() {
                 )}
               </div>
 
-              {/* Password */}
+              {}
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
                   <label
@@ -244,7 +238,7 @@ export default function LoginPage() {
                 )}
               </div>
 
-              {/* Submit */}
+              {}
               <button
                 type="submit"
                 disabled={isLoading}
@@ -264,7 +258,7 @@ export default function LoginPage() {
               </button>
             </form>
 
-            {/* Footer */}
+            {}
             <p className="text-sm text-center text-muted mt-6">
               New hospital?{" "}
               <Link
@@ -275,7 +269,7 @@ export default function LoginPage() {
               </Link>
             </p>
 
-            {/* Trust */}
+            {}
             <div className="flex items-center justify-center gap-2 mt-5 pt-5 border-t border-border">
               <ShieldCheck size={12} className="text-muted" />
               <p className="text-[9px] text-muted font-bold uppercase tracking-widest">

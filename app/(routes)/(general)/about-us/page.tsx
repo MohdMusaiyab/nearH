@@ -127,7 +127,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Narrative Carousel */}
       <section className="py-24 bg-slate-50 overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="relative">
@@ -197,7 +196,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Values Section */}
       <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -226,7 +224,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Stats Bar */}
       <section className="py-24 relative overflow-hidden bg-heading">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:20px_20px]" />
@@ -262,7 +259,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* CTA Section */}
       <section className="py-24 bg-white">
         <div className="max-w-5xl mx-auto px-6 lg:px-8">
           <div className="bg-accent rounded-[3rem] p-12 lg:p-20 text-center relative overflow-hidden">
@@ -295,7 +291,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Implementation Modal */}
       <AnimatePresence>
         {showModal && (
           <>

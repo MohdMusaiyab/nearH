@@ -43,13 +43,12 @@ export const Hero = () => {
       {}
       <div className="absolute inset-0 z-0">
         <Image
-          src="https://wallpapercave.com/wp/wp2968489.jpg"
-          alt="Healthcare background"
+          src="/hero.webp"
+          alt="NearH - India's Real-time Healthcare Network displaying emergency care and hospital bed availability"
           fill
           priority
-          quality={100}
-          className="object-cover"
           sizes="100vw"
+          className="object-cover"
         />
         {}
         {}
@@ -65,44 +64,26 @@ export const Hero = () => {
       <div className="max-w-7xl mx-auto px-6 lg:px-8 w-full relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {}
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={{ visible: { transition: { staggerChildren: 0.2 } } }}
-            className="text-center lg:text-left"
-          >
-            <motion.div
-              variants={fadeInUp}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 text-accent font-bold text-sm mb-6"
-            >
+          <div className="text-center lg:text-left">
+            <div className="animate-fade-in-up inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 text-accent font-bold text-sm mb-6">
               <span className="relative flex h-3 w-3">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-3 w-3 bg-accent"></span>
               </span>
               Live Healthcare Network
-            </motion.div>
+            </div>
 
-            <motion.h1
-              variants={fadeInUp}
-              className="text-5xl md:text-7xl lg:text-8xl font-bold text-heading leading-[1] tracking-tighter mb-6"
-            >
+            <h1 className="animate-fade-in-up delay-100 text-5xl md:text-7xl lg:text-8xl font-bold text-heading leading-[1] tracking-tighter mb-6">
               Health <br />
               <span className="text-accent">Simplified.</span>
-            </motion.h1>
+            </h1>
 
-            <motion.p
-              variants={fadeInUp}
-              className="text-lg md:text-xl text-body font-medium max-w-xl mx-auto lg:mx-0 leading-relaxed mb-10"
-            >
+            <p className="animate-fade-in-up delay-200 text-lg md:text-xl text-body font-medium max-w-xl mx-auto lg:mx-0 leading-relaxed mb-10">
               Access real-time insights into hospital beds, ICU availability,
               and blood banks. We bridge the gap between emergency and care.
-            </motion.p>
+            </p>
 
-            <motion.div
-              variants={fadeInUp}
-              className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
-            >
+            <div className="animate-fade-in-up delay-300 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <Link
                 href="/explore"
                 className="group flex items-center justify-center gap-3 px-8 py-4 bg-accent text-white rounded-xl font-bold shadow-xl shadow-blue-600/20 hover:bg-accent-hover transition-all active:scale-95"
@@ -120,36 +101,38 @@ export const Hero = () => {
               >
                 About Us
               </Link>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
 
           {}
-          <motion.div
-            initial={{ opacity: 0, x: 40 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1 }}
-            className="grid grid-cols-2 gap-4 md:gap-6"
-          >
-            {stats.map((stat, idx) => (
-              <div
-                key={idx}
-                className={`p-6 md:p-8 rounded-[2rem] bg-white/10 backdrop-blur-md border border-white shadow-xl flex flex-col items-center lg:items-start text-center lg:text-left ${idx % 2 !== 0 ? "lg:translate-y-8" : ""}`}
-              >
-                <div className={`p-3 rounded-2xl bg-white shadow-inner mb-4`}>
-                  <stat.icon size={28} className={stat.color} />
-                </div>
-                <h4 className="text-2xl md:text-3xl font-bold text-heading mb-1">
-                  {stat.value}
-                </h4>
-                <p className="text-muted text-sm md:text-base font-medium">
-                  {stat.label}
-                </p>
-              </div>
-            ))}
-
+          <div className="relative">
             {}
-            <div className="absolute -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-accent/5 blur-[120px] rounded-full" />
-          </motion.div>
+            <div className="absolute -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-accent/5 blur-[120px] rounded-full pointer-events-none" />
+
+            <motion.div
+              initial={{ opacity: 0, x: 40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 1 }}
+              className="grid grid-cols-2 gap-4 md:gap-6"
+            >
+              {stats.map((stat, idx) => (
+                <div
+                  key={idx}
+                  className={`p-6 md:p-8 rounded-[2rem] bg-white/60 border border-white shadow-xl flex flex-col items-center lg:items-start text-center lg:text-left ${idx % 2 !== 0 ? "lg:translate-y-8" : ""}`}
+                >
+                  <div className={`p-3 rounded-2xl bg-white shadow-inner mb-4`}>
+                    <stat.icon size={28} className={stat.color} />
+                  </div>
+                  <h3 className="text-2xl md:text-3xl font-bold text-heading mb-1">
+                    {stat.value}
+                  </h3>
+                  <p className="text-muted text-sm md:text-base font-medium">
+                    {stat.label}
+                  </p>
+                </div>
+              ))}
+            </motion.div>
+          </div>
         </div>
       </div>
     </section>

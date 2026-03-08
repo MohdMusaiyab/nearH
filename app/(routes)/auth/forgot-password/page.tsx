@@ -37,15 +37,14 @@ export default function ForgotPasswordPage() {
 
   return (
     <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* ── Background Photo (Same as Login) ── */}
       <img
-        src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1800&q=85"
+        src="/forgot-password.avif"
         alt="Hospital"
         className="absolute inset-0 w-full h-full object-cover"
       />
       <div className="absolute inset-0 bg-[#0a1628]/75" />
 
-      {/* ── Top-left logo ── */}
+      {}
       <div className="absolute top-8 left-10 flex items-center gap-2.5 z-20">
         <div className="w-9 h-9 rounded-xl bg-accent flex items-center justify-center shadow-lg shadow-accent/40">
           <Activity size={18} className="text-white" />
@@ -58,7 +57,7 @@ export default function ForgotPasswordPage() {
         </Link>
       </div>
 
-      {/* ── Card Container ── */}
+      {}
       <div className="relative z-20 w-full flex justify-center px-5">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
@@ -66,11 +65,11 @@ export default function ForgotPasswordPage() {
           transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
           className="w-full max-w-sm bg-white rounded-3xl shadow-2xl shadow-black/30 overflow-hidden"
         >
-          {/* Card top accent */}
+          {}
           <div className="h-1.5 w-full bg-gradient-to-r from-accent to-link" />
 
           <div className="p-8">
-            {/* Header */}
+            {}
             <div className="mb-7">
               <Link
                 href="/auth/login"
@@ -79,8 +78,7 @@ export default function ForgotPasswordPage() {
                 <ArrowLeft size={12} /> Back to Login
               </Link>
               <h2 className="text-2xl font-black text-heading tracking-tight leading-tight">
-                Recover{" "}
-                <span className="text-accent">Access.</span>
+                Recover <span className="text-accent">Access.</span>
               </h2>
               <p className="text-sm text-muted mt-1">
                 Enter your email to receive a secure reset link.
@@ -153,7 +151,7 @@ export default function ForgotPasswordPage() {
               </form>
             )}
 
-            {/* Security Note */}
+            {}
             <div className="flex items-center justify-center gap-2 mt-8 pt-5 border-t border-border">
               <ShieldCheck size={12} className="text-muted" />
               <p className="text-[9px] text-muted font-bold uppercase tracking-widest">

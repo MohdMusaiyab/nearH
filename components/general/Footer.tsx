@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { Activity, MapPin, Mail, ArrowUpRight, Database } from "lucide-react";
+import { NearHIconMark } from "@/components/general/Logo";
 
 export const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -20,13 +21,13 @@ export const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-16">
           {}
           <div className="lg:col-span-1 space-y-8">
-            <Link href="/" className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-heading rounded-2xl flex items-center justify-center text-white shadow-lg shadow-slate-200">
-                <Activity size={24} strokeWidth={2.5} />
+            <Link href="/" className="flex items-center gap-3 group">
+              <div className="w-12 h-12 overflow-hidden rounded-2xl shadow-lg shadow-slate-200 group-hover:scale-105 transition-transform duration-200">
+                <NearHIconMark />
               </div>
               <div>
                 <span className="text-2xl font-black text-heading tracking-tighter uppercase leading-none block">
-                  NearH
+                  Near<span className="text-accent">H</span>
                 </span>
                 <span className="text-[9px] font-black text-accent uppercase tracking-[0.3em]">
                   Healthcare Grid

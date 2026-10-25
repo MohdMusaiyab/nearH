@@ -16,6 +16,7 @@ import {
   User as UserIcon,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Logo } from "@/components/general/Logo";
 
 export interface NavUser {
   id: string;
@@ -219,20 +220,11 @@ export function Navigation({
           <div className="flex justify-between items-center">
             {}
             <div className="flex items-center ">
-              <Link
+              <Logo
                 href="/"
-                className="flex items-center gap-3 group lg:w-64 lg:pl-5 lg:shrink-0"
-              >
-                <div className="w-10 h-10 bg-heading rounded-xl flex items-center justify-center shadow-lg shadow-heading/20 group-hover:scale-105 transition-transform duration-200">
-                  <Hospital size={20} className="text-white" />
-                </div>
-                <span className="text-2xl font-black tracking-tighter text-heading">
-                  Near
-                  <span className="text-accent underline decoration-heading decoration-[3px] underline-offset-4">
-                    H
-                  </span>
-                </span>
-              </Link>
+                size="md"
+                className="lg:w-64 lg:pl-5 lg:shrink-0"
+              />
 
               <div className="hidden lg:flex items-center gap-8">
                 {navLinks.map((link) => {
@@ -374,12 +366,7 @@ export function Navigation({
               className="fixed top-0 right-0 h-full w-[min(320px,90vw)] bg-white z-110 lg:hidden flex flex-col shadow-2xl"
             >
               <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 bg-heading rounded-lg flex items-center justify-center">
-                    <Hospital size={16} className="text-white" />
-                  </div>
-                  <span className="text-xl font-black text-heading">NearH</span>
-                </div>
+                <Logo size="sm" href="/" />
                 <button
                   onClick={() => setIsOpen(false)}
                   className="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center text-heading hover:bg-slate-200 transition-colors"

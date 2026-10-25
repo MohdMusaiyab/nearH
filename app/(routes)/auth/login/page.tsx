@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { Logo } from "@/components/general/Logo";
 
 export default function LoginPage() {
   const [serverError, setServerError] = useState<string | null>(null);
@@ -80,17 +81,9 @@ export default function LoginPage() {
         initial={{ opacity: 0, y: -16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        className="absolute top-8 left-10 flex items-center gap-2.5 z-20"
+        className="absolute top-8 left-10 z-20"
       >
-        <div className="w-9 h-9 rounded-xl bg-accent flex items-center justify-center shadow-lg shadow-accent/40">
-          <Activity size={18} className="text-white" />
-        </div>
-        <Link
-          href={"/"}
-          className="text-2xl font-black text-white tracking-tight"
-        >
-          NearH
-        </Link>
+        <Logo href="/" variant="light" size="md" />
       </motion.div>
 
       {}

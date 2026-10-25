@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { requestPasswordReset } from "@/actions/auth";
 import { motion } from "framer-motion";
+import { Logo } from "@/components/general/Logo";
 
 export default function ForgotPasswordPage() {
   const [isPending, startTransition] = useTransition();
@@ -45,16 +46,8 @@ export default function ForgotPasswordPage() {
       <div className="absolute inset-0 bg-[#0a1628]/75" />
 
       {}
-      <div className="absolute top-8 left-10 flex items-center gap-2.5 z-20">
-        <div className="w-9 h-9 rounded-xl bg-accent flex items-center justify-center shadow-lg shadow-accent/40">
-          <Activity size={18} className="text-white" />
-        </div>
-        <Link
-          href="/"
-          className="text-2xl font-black text-white tracking-tight"
-        >
-          NearH
-        </Link>
+      <div className="absolute top-8 left-10 z-20">
+        <Logo href="/" variant="light" size="md" />
       </div>
 
       {}

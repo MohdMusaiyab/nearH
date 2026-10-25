@@ -1,84 +1,156 @@
-<div align="center">
-  <h1>NearH — The Zero-Latency Healthcare Grid 🏥</h1>
-  <p><strong>A high-performance, real-time medical infrastructure platform bridging the gap between emergency sirens and hospital entry gates.</strong></p>
-  
-  [![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
-  [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?logo=typescript)](https://www.typescriptlang.org/)
-  [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.0-38B2AC?logo=tailwind-css)](https://tailwindcss.com/)
-  [![Supabase](https://img.shields.io/badge/Supabase-DB_%26_Auth-3ECF8E?logo=supabase)](https://supabase.com/)
-  [![Redis](https://img.shields.io/badge/Redis-Upstash-DC382D?logo=redis)](https://upstash.com/)
-</div>
+# NearH
 
-<hr/>
+NearH is a real-time healthcare network platform designed to coordinate hospital bed availability, ICU capacity, blood bank inventories, and inter-hospital emergency referrals.
 
-## 📖 Overview
+Live Demo: [https://nearh-beta.vercel.app](https://nearh-beta.vercel.app)
 
-Built specifically to serve the dynamic Indian healthcare ecosystem, **NearH** synchronizes disparate clinical nodes into a single, instantly searchable grid. By providing real-time visibility into infrastructure capacity, it eliminates "Ghost Bed" data and maximizes the critical **Golden Hour** during medical emergencies.
+---
 
-With a focus on sovereign hospital data control and zero-trust security architecture, NearH connects patients to life-saving infrastructure—from ICU ventilators to rare blood availability—before they even reach the hospital doors.
+## Overview
 
-<br/>
+In emergency medical care, delays in finding specialized care or available beds can be critical. NearH provides a synchronized network across healthcare facilities:
+- **Emergency Bed & ICU Tracking**: Live monitoring of available general beds, ICU units, and ventilators.
+- **Blood Bank Availability**: Real-time tracking of blood groups across verified clinical centers.
+- **Inter-Hospital Referrals**: Secure transfer dispatch between hospitals with status tracking and medical history.
+- **Doctor Directory**: Searchable directory matching specialists by hospital location and clinical status.
+- **Administrative Governance**: Multi-tier access control separating public patients, hospital administrators, and platform superadmins.
 
-## ✨ Core Capabilities
+---
 
-- **⚡ Live Inventory Sync Engine**
-  A proprietary synchronization module that provides real-time, zero-latency availability updates for General Beds, ICU Units, and Ventilators across the network.
+## System Architecture
 
-- **🩸 Decentralized Blood Registry**
-  Comprehensive, live monitoring of critical blood reserves (including rare groups like O- and AB+) tracked individually across all verified clinical nodes.
+NearH is built on Next.js 16 App Router, Supabase (PostgreSQL with Row Level Security), and Upstash Redis.
 
-- **👨‍⚕️ Dynamic Clinical Staffing Matrix**
-  Live clinical status tracking (e.g., `Available`, `In_Surgery`, `Emergency_Only`) operating on highly-optimized PostgreSQL custom Enums. Ensures patients know exactly when specialized care is accessible.
+```mermaid
+flowchart TD
+    Client["Client Browser"] -->|HTTP Requests| Proxy["Next.js 16 Request Interceptor (proxy.ts)"]
+    Proxy -->|Session Verification| App["Next.js 16 App Router"]
 
-- **🔐 Zero-Trust Network Architecture**
-  Strict role-based access controls (RBAC) powered by Supabase Auth with granular routing middleware.
+    subgraph Application["Application Layer"]
+        App --> Layout["Root Layout (Auth Server Hydration)"]
+        App --> Actions["Server Actions (Zod Runtime Validation)"]
+        Actions --> Guards["Centralized Guards (guards.ts)"]
+    end
 
-- **🏛️ Sovereign Data Ownership**
-  Verified hospital nodes retain exclusive autonomy and control over their own data pipelines and administrative dashboards, ensuring highly accurate reporting.
+    subgraph DataAccess["Data & Cache Layer"]
+        Layout --> MasterCache["Next.js Tagged Cache (unstable_cache)"]
+        Guards --> Redis["Upstash Redis (Atomic Rate Limiter)"]
+        Guards --> SupabaseAnon["Supabase Client (RLS Protected)"]
+        Guards --> SupabaseAdmin["Supabase Admin Client (Service Role)"]
+    end
 
-<br/>
+    subgraph Database["PostgreSQL Storage"]
+        SupabaseAnon --> AppTables["Application Tables (hospitals, inventory, referrals)"]
+        SupabaseAdmin --> AuthTable["Auth Schema (auth.users)"]
+        AppTables --> Triggers["Database Triggers (Auto Inventory)"]
+    end
 
-## 🛠️ Technology Stack
+    Client -.->|Tenant-Scoped WebSocket| Realtime["Supabase Realtime Engine"]
+    AppTables -.->|Postgres Changes| Realtime
+```
 
-NearH leverages a modern, highly-scalable stack built for maximum concurrency and sub-second data delivery:
+### Architectural Highlights
 
-| Domain                 | Technology              | Purpose                                         |
-| :--------------------- | :---------------------- | :---------------------------------------------- |
-| **Frontend Framework** | Next.js 15 (App Router) | Server-Side Rendering (SSR) & optimized routing |
-| **Language**           | TypeScript              | End-to-end type safety                          |
-| **Styling & UI**       | Tailwind CSS v4         | High-performance atomic CSS utilities           |
-| **Animations**         | Framer Motion           | Smooth, "Clinical Aesthetic" micro-interactions |
-| **Primary Database**   | Supabase (PostgreSQL)   | Relational logic, Custom Enums, Triggers        |
-| **Authentication**     | Supabase Auth API       | Secure, encrypted user & role management        |
-| **Caching Layer**      | Redis (via Upstash)     | Sub-second API response times & caching         |
-| **Iconography**        | Lucide React            | Clean, scalable vector graphic integration      |
+- **Edge Interception**: `proxy.ts` operates on the Node.js runtime as the request interceptor in Next.js 16, refreshing Supabase session tokens and enforcing authentication route boundaries.
+- **Zero-Flicker Layout Hydration**: The root layout (`app/layout.tsx`) pre-hydrates the authenticated user session and cached profile directly from the server, eliminating client layout shifts and removing redundant `/api/auth/me` client waterfalls.
+- **Multi-Tier Authorization Guards**: Centralized security guards (`lib/auth/guards.ts`) enforce role-based access control (`user`, `admin`, `superadmin`) across all server actions.
+- **PostgreSQL Inner Join Filtering**: Explore queries utilize PostgREST inner joins (`doctors!inner(...)`, `hospital_services!inner(...)`) to guarantee that hospital results match active doctor specialties and services at the database level.
+- **Native Tagged Caching**: Static master data (locations, specialties, services) uses Next.js `unstable_cache` with granular cache tags and automated revalidation on mutations.
+- **Tenant-Scoped Realtime**: WebSockets are isolated by hospital ID (`referrals-hospital-{id}`) to prevent cross-tenant notification storms and protect patient transfer privacy.
+- **Defense in Depth**: Runtime Zod validation schemas (`lib/validations/actions.ts`) sanitize all server action inputs. Hospital profile updates enforce strict field whitelisting to prevent unauthorized privilege escalation.
 
-<br/>
+---
 
-## 📂 Core Architecture & Schema
+## Referral Workflow
 
-The system is underpinned by a highly relational, efficiently indexed PostgreSQL architecture designed to minimize query response latency:
+The following sequence outlines how an emergency patient transfer is dispatched and processed between facilities:
 
-- **`Hospitals`**: The central entity modeling trauma levels, operational authorization (`is_verified` / `is_active`), and geographic location data.
-- **`Profiles`**: Custom RBAC enforcement matrix (`user`, `admin`, `superadmin`) intrinsically bonded to Supabase Auth instances.
-- **`Inventory`**: High-frequency transactional tables tracking beds and oxygen facilities.
-- **`Doctors`**: Clinical personnel tracking featuring `JSONB` implementation for flexible weekly availability schedules.
-- **`Blood Bank`**: Unique-constrained inventory logic mapped specifically for vital blood group unit tracking.
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Admin as Referring Admin
+    participant Client as Web App
+    participant Action as Server Action (sendReferral)
+    participant Guard as Auth Guard
+    participant Zod as Zod Validation
+    participant DB as PostgreSQL (Supabase)
+    participant Realtime as Realtime Engine
+    actor TargetAdmin as Receiving Hospital
 
-<br/>
+    Admin->>Client: Submit patient referral details
+    Client->>Action: sendReferral(payload)
+    Action->>Guard: getValidatedAdminContext()
+    Guard-->>Action: Authorized hospitalId & userId
+    Action->>Zod: SendReferralSchema.safeParse(payload)
+    Zod-->>Action: Validated DTO
+    Action->>DB: INSERT into referrals
+    DB-->>Action: Referral record created
+    DB--)Realtime: postgres_changes event
+    Realtime--)TargetAdmin: WebSocket update on hospital channel
+    Action-->>Client: ActionResponse success
+```
 
-## 🚀 Quick Start Guide
+---
 
-Want to run the grid locally? Follow these steps to initialize the environment:
+## Technology Stack
+
+| Layer | Technology | Purpose |
+| :--- | :--- | :--- |
+| **Framework** | Next.js 16 (App Router, Turbopack) | Server Components, Server Actions, SSR routing |
+| **Frontend Library** | React 19 | UI rendering and component architecture |
+| **Language** | TypeScript | End-to-end type safety |
+| **Styling** | Tailwind CSS v4 | Utility-first responsive design |
+| **Database** | Supabase (PostgreSQL 15+) | Relational schema, custom enums, RLS policies |
+| **Authentication** | Supabase Auth API & SSR | Encrypted session cookies, role-based profiles |
+| **Caching & Rate Limiting** | Upstash Redis | Pipelined atomic rate limiting, profile caching |
+| **Schema Validation** | Zod | Runtime input validation on client forms and server actions |
+| **Icons** | Lucide React | Consistent UI vector icons |
+| **Notifications** | Sonner | Toast feedback for asynchronous operations |
+
+---
+
+## Project Structure
+
+```
+nearh/
+├── actions/                  # Next.js Server Actions
+│   ├── admin/                # Hospital admin operations (doctors, inventory, referrals, profile)
+│   ├── shared/               # Shared hospital queries and explore filters
+│   └── superadmin/           # Platform governance (approvals, master catalogs, dashboards)
+├── app/                      # Next.js App Router
+│   ├── (routes)/
+│   │   ├── (general)/        # Public routes (home, explore, hospital profiles, mission)
+│   │   ├── (protected)/      # Authenticated dashboards (admin, superadmin)
+│   │   └── auth/             # Login, signup, password reset, waiting room
+│   ├── api/                  # API endpoints (health, auth callbacks)
+│   ├── layout.tsx            # Root layout with server auth pre-hydration
+│   └── globals.css           # Global stylesheet and Tailwind utilities
+├── components/               # React UI Components
+│   ├── admin/                # Admin dashboard cards, forms, and referral clients
+│   ├── general/              # Navigation bar, footer, hero, feature sections
+│   ├── hospital/             # Hospital profile tabs and detail clients
+│   ├── shared/               # Explore directory, doctor cards, inventory tabs
+│   └── superadmin/           # Approval tables, KPI summaries, catalog forms
+├── lib/                      # Core Shared Utilities
+│   ├── auth/                 # Centralized authorization guards (guards.ts)
+│   ├── supabase/             # Supabase clients (client, server, and service-role admin)
+│   └── validations/          # Zod validation schemas (forms and action DTOs)
+├── types/                    # TypeScript interfaces and generated database types
+├── utils/                    # Caching mechanics and pipelined rate limiters
+├── proxy.ts                  # Next.js 16 Node runtime request interceptor
+```
+
+---
+
+## Local Setup
 
 ### Prerequisites
 
-Before you begin, ensure you have the following installed:
-
-- Node.js (v18.0 or newer)
-- npm or yarn
-- A [Supabase](https://supabase.com/) Account (for Database & Auth)
-- An [Upstash Redis](https://upstash.com/) Instance
+Ensure you have the following installed locally:
+- Node.js (v18.18.0 or newer)
+- npm (v9.0.0 or newer)
+- A Supabase project with database migrations applied
+- An Upstash Redis database (REST-based)
 
 ### 1. Clone the Repository
 
@@ -87,36 +159,51 @@ git clone https://github.com/MohdMusaiyab/nearH.git
 cd nearH
 ```
 
-### 2. Install Package Dependencies
+### 2. Install Dependencies
 
 ```bash
 npm install
 ```
 
-### 3. Environment Configuration
+### 3. Configure Environment Variables
 
-Create a `.env.local` file in the root of the project. You will need to populate it with your specific database keys:
+Create a `.env` file in the project root:
 
 ```env
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+# Supabase Configuration
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 
-UPSTASH_REDIS_REST_URL=your_upstash_redis_url
-UPSTASH_REDIS_REST_TOKEN=your_upstash_redis_token
+# Upstash Redis Configuration
+UPSTASH_REDIS_REST_URL=https://your-upstash-redis.upstash.io
+UPSTASH_REDIS_REST_TOKEN=your-upstash-redis-token
 
+# Application URL
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
 
-### 4. Initialize the Application
+> **Note on Service Role Key**: `SUPABASE_SERVICE_ROLE_KEY` is strictly required on the server for superadmin operations (such as resolving admin registration emails and purging rejected applicant identities). It is never sent to the browser.
+
+### 4. Run Development Server
 
 ```bash
 npm run dev
 ```
 
-The application will now compile and start. Access the live grid at [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+### 5. Verify Build and Types
+
+To verify that the project compiles with zero type errors:
+
+```bash
+npx tsc --noEmit
+npm run build
+```
 
 ---
 
-<div align="center">
-  <p>Designed and built for instantaneous response.</p>
-</div>
+## Live Deployment
+
+The application is deployed on Vercel at [https://nearh-beta.vercel.app](https://nearh-beta.vercel.app).

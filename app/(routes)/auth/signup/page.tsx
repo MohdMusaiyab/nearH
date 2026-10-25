@@ -3,6 +3,7 @@ import RegistrationForm from "@/components/auth/RegistrationForm";
 import Link from "next/link";
 import { Activity, ShieldCheck } from "lucide-react";
 import Image from "next/image";
+import { Logo } from "@/components/general/Logo";
 
 export default async function SignupPage() {
   const supabase = await createClient();
@@ -35,16 +36,8 @@ export default async function SignupPage() {
       />
 
       {/* Top-left logo */}
-      <div className="absolute top-8 left-6 sm:left-10 flex items-center gap-2.5 z-20">
-        <div className="w-9 h-9 rounded-xl bg-accent flex items-center justify-center shadow-lg shadow-accent/40">
-          <Activity size={18} className="text-white" />
-        </div>
-        <Link
-          href="/"
-          className="text-2xl font-black text-white tracking-tight"
-        >
-          NearH
-        </Link>
+      <div className="absolute top-8 left-6 sm:left-10 z-20">
+        <Logo href="/" variant="light" size="md" />
       </div>
 
       {/* Bottom-left brand copy — lg only */}

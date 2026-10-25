@@ -18,18 +18,38 @@ export default function ReferralClientPage({ initialData, hospitalId }: Props) {
     useState<ReferralWithDetails[]>(initialData);
   const searchParams = useSearchParams();
   const router = useRouter();
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
 
   const activeTab = searchParams.get("type") || "inbound";
   const currentPage = parseInt(searchParams.get("page") || "1");
   const pageSize = 5;
 
   useEffect(() => {
+    if (!hospitalId) return;
+
+    // Scope realtime subscriptions strictly to this hospital's inbound and outbound referrals
     const channel = supabase
-      .channel("referral-updates")
+      .channel(`referrals-hospital-${hospitalId}`)
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "referrals" },
+        {
+          event: "*",
+          schema: "public",
+          table: "referrals",
+          filter: `to_hospital_id=eq.${hospitalId}`,
+        },
+        () => {
+          router.refresh();
+        },
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "referrals",
+          filter: `from_hospital_id=eq.${hospitalId}`,
+        },
         () => {
           router.refresh();
         },

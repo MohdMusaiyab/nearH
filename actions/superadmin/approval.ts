@@ -1,5 +1,6 @@
 "use server";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { ActionResponse } from "@/types/response";
 import { revalidatePath } from "next/cache";
 import { invalidateUserCache } from "@/utils/authCache";
@@ -58,9 +59,9 @@ export async function rejectAndPurgeUser(
   profileId: string,
   hospitalId: string,
 ): Promise<ActionResponse<null>> {
-  const { isSuperAdmin } = await validateSuperAdmin();
+  const { isSuperAdmin, error: authError } = await validateSuperAdmin();
   if (!isSuperAdmin)
-    return { success: false, message: "Unauthorized", data: null };
+    return { success: false, message: authError || "Unauthorized", data: null };
   const supabase = await createClient();
   try {
     const { data: hospital } = await supabase
@@ -85,6 +86,19 @@ export async function rejectAndPurgeUser(
       .delete()
       .eq("id", profileId);
     if (profileDeleteError) throw new Error("Failed to delete user profile.");
+
+    // Cleanly purge auth identity from auth.users so the applicant email is freed
+    const adminClient = createAdminClient();
+    if (adminClient) {
+      const { error: authDeleteError } =
+        await adminClient.auth.admin.deleteUser(profileId);
+      if (authDeleteError) {
+        console.warn(
+          `[rejectAndPurgeUser] Auth user purge warning for ${profileId}: ${authDeleteError.message}`,
+        );
+      }
+    }
+
     await invalidateUserCache(profileId);
     revalidatePath("/superadmin/approvals");
     return {

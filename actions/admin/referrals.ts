@@ -7,6 +7,10 @@ import { Database } from "@/types/database.types";
 import { Hospital } from "@/types";
 import { getAuthenticatedProfile } from "@/utils/authCache";
 import { getValidatedAdminContext } from "@/lib/auth/guards";
+import {
+  SendReferralSchema,
+  UpdateReferralStatusSchema,
+} from "@/lib/validations/actions";
 
 type ReferralRow = Database["public"]["Tables"]["referrals"]["Row"];
 type ReferralInsert = Database["public"]["Tables"]["referrals"]["Insert"];
@@ -29,13 +33,22 @@ export async function sendReferral(
   if (!hospitalId || !userId)
     return { success: false, message: authError || "Unauthorized", data: null };
 
+  const parsed = SendReferralSchema.safeParse(payload);
+  if (!parsed.success) {
+    return {
+      success: false,
+      message: parsed.error.issues[0]?.message || "Validation failed",
+      data: null,
+    };
+  }
+
   const supabase = await createClient();
 
   const { data, error } = await supabase
     .from("referrals")
     .insert([
       {
-        ...payload,
+        ...parsed.data,
         from_hospital_id: hospitalId,
         referred_by_admin_id: userId,
       },
@@ -90,16 +103,29 @@ export async function updateReferralStatus(
   if (!hospitalId)
     return { success: false, message: authError || "Unauthorized", data: null };
 
+  const parsed = UpdateReferralStatusSchema.safeParse({
+    referralId,
+    status,
+    rejectionReason,
+  });
+  if (!parsed.success) {
+    return {
+      success: false,
+      message: parsed.error.issues[0]?.message || "Validation failed",
+      data: null,
+    };
+  }
+
   const supabase = await createClient();
 
   const { data, error } = await supabase
     .from("referrals")
     .update({
-      status,
-      rejection_reason: rejectionReason || null,
+      status: parsed.data.status,
+      rejection_reason: parsed.data.rejectionReason || null,
       updated_at: new Date().toISOString(),
     })
-    .eq("id", referralId)
+    .eq("id", parsed.data.referralId)
     .eq("to_hospital_id", hospitalId)
     .select()
     .single();

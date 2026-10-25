@@ -5,6 +5,7 @@ import { ActionResponse } from "@/types/response";
 import { revalidatePath } from "next/cache";
 import { Database } from "@/types/database.types";
 import { getValidatedAdminHospitalId } from "@/lib/auth/guards";
+import { CreateDoctorSchema, UpdateDoctorSchema } from "@/lib/validations/actions";
 
 type DoctorRow = Database["public"]["Tables"]["doctors"]["Row"];
 type DoctorInsert = Database["public"]["Tables"]["doctors"]["Insert"];
@@ -67,11 +68,20 @@ export async function createDoctor(
   if (!hospitalId)
     return { success: false, message: authError || "Unauthorized", data: null };
 
+  const parsed = CreateDoctorSchema.safeParse(payload);
+  if (!parsed.success) {
+    return {
+      success: false,
+      message: parsed.error.issues[0]?.message || "Validation failed",
+      data: null,
+    };
+  }
+
   const supabase = await createClient();
 
   const { data, error } = await supabase
     .from("doctors")
-    .insert([{ ...payload, hospital_id: hospitalId }])
+    .insert([{ ...parsed.data, hospital_id: hospitalId }])
     .select()
     .single();
 
@@ -89,11 +99,20 @@ export async function updateDoctor(
   if (!hospitalId)
     return { success: false, message: authError || "Unauthorized", data: null };
 
+  const parsed = UpdateDoctorSchema.safeParse(payload);
+  if (!parsed.success) {
+    return {
+      success: false,
+      message: parsed.error.issues[0]?.message || "Validation failed",
+      data: null,
+    };
+  }
+
   const supabase = await createClient();
 
   const { data, error } = await supabase
     .from("doctors")
-    .update({ ...payload, updated_at: new Date().toISOString() })
+    .update({ ...parsed.data, updated_at: new Date().toISOString() })
     .match({ id, hospital_id: hospitalId })
     .select()
     .single();

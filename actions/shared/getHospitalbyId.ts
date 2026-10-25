@@ -1,5 +1,6 @@
 "use server";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { ActionResponse } from "@/types/response";
 import {
   HospitalWithRelations,
@@ -220,15 +221,24 @@ export async function getHospitalProfile(
             `from_hospital_id.eq.${hospitalId},to_hospital_id.eq.${hospitalId}`,
           ),
       ]);
+      const adminClient = createAdminClient();
       const adminsWithEmail = await Promise.all(
         (adminRes.data ?? []).map(async (admin) => {
-          const { data: userData } = await supabase.auth.admin.getUserById(
-            admin.id,
-          );
+          let email = "Email not available";
+          if (adminClient) {
+            try {
+              const { data: userData } = await adminClient.auth.admin.getUserById(
+                admin.id,
+              );
+              email = userData?.user?.email ?? "Email not available";
+            } catch {
+              email = "Email not available";
+            }
+          }
           return {
             id: admin.id,
             full_name: admin.full_name,
-            email: userData?.user?.email ?? "Email not available",
+            email,
             status: admin.status,
             created_at: admin.created_at,
           };

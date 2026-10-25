@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { Database } from "@/types/database.types";
 import { validateSuperAdmin } from "@/lib/auth/guards";
 import { invalidateAllMasterCaches } from "@/utils/masterCache";
+import { SpecialtySchema } from "@/lib/validations/actions";
 type SpecialtyRow = Database["public"]["Tables"]["specialties_list"]["Row"];
 type SpecialtyInsert =
   Database["public"]["Tables"]["specialties_list"]["Insert"];
@@ -26,11 +27,21 @@ export async function addSpecialty(
   const { isSuperAdmin, error: authError } = await validateSuperAdmin();
   if (!isSuperAdmin)
     return { success: false, message: authError || "Unauthorized", data: null };
+
+  const parsed = SpecialtySchema.safeParse(payload);
+  if (!parsed.success) {
+    return {
+      success: false,
+      message: parsed.error.issues[0]?.message || "Validation failed",
+      data: null,
+    };
+  }
+
   const supabase = await createClient();
   try {
     const { data, error } = await supabase
       .from("specialties_list")
-      .insert([payload])
+      .insert([parsed.data])
       .select()
       .single();
     if (error) {
@@ -57,14 +68,24 @@ export async function updateSpecialty(
   id: string,
   payload: Partial<SpecialtyInsert>,
 ): Promise<ActionResponse<SpecialtyRow>> {
-  const { isSuperAdmin } = await validateSuperAdmin();
+  const { isSuperAdmin, error: authError } = await validateSuperAdmin();
   if (!isSuperAdmin)
-    return { success: false, message: "Unauthorized", data: null };
+    return { success: false, message: authError || "Unauthorized", data: null };
+
+  const parsed = SpecialtySchema.partial().safeParse(payload);
+  if (!parsed.success) {
+    return {
+      success: false,
+      message: parsed.error.issues[0]?.message || "Validation failed",
+      data: null,
+    };
+  }
+
   const supabase = await createClient();
   try {
     const { data, error } = await supabase
       .from("specialties_list")
-      .update(payload)
+      .update(parsed.data)
       .eq("id", id)
       .select()
       .single();

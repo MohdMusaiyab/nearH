@@ -11,8 +11,18 @@ import { getValidatedAdminContext } from "@/lib/auth/guards";
 
 type HospitalUpdate = Database["public"]["Tables"]["hospitals"]["Update"];
 
+export interface HospitalEditableFields {
+  name?: string;
+  official_phone?: string;
+  location_id?: string | null;
+  website_url?: string | null;
+  emergency_contact?: string | null;
+  has_ayushman_bharat?: boolean | null;
+  trauma_level?: number | null;
+}
+
 export async function updateHospitalProfile(
-  payload: HospitalUpdate,
+  payload: HospitalEditableFields,
   serviceIds: string[],
 ): Promise<ActionResponse<null>> {
   const {
@@ -32,34 +42,74 @@ export async function updateHospitalProfile(
   const supabase = await createClient();
 
   try {
+    // Whitelist allowed updates to prevent mass assignment (e.g. self-verifying via is_verified)
+    const sanitizedUpdate: Partial<HospitalUpdate> = {
+      updated_at: new Date().toISOString(),
+    };
+
+    if (payload.name !== undefined) sanitizedUpdate.name = payload.name;
+    if (payload.official_phone !== undefined)
+      sanitizedUpdate.official_phone = payload.official_phone;
+    if (payload.location_id !== undefined)
+      sanitizedUpdate.location_id = payload.location_id;
+    if (payload.website_url !== undefined)
+      sanitizedUpdate.website_url = payload.website_url;
+    if (payload.emergency_contact !== undefined)
+      sanitizedUpdate.emergency_contact = payload.emergency_contact;
+    if (payload.has_ayushman_bharat !== undefined)
+      sanitizedUpdate.has_ayushman_bharat = payload.has_ayushman_bharat;
+    if (payload.trauma_level !== undefined)
+      sanitizedUpdate.trauma_level = payload.trauma_level;
+
     const { error: hospitalError } = await supabase
       .from("hospitals")
-      .update({
-        ...payload,
-        updated_at: new Date().toISOString(),
-      })
+      .update(sanitizedUpdate)
       .eq("id", authorizedHospitalId);
 
     if (hospitalError) throw new Error(hospitalError.message);
 
-    const { error: deleteError } = await supabase
+    // Non-destructive diff-based synchronization: only insert additions and delete removals
+    const { data: currentServices, error: fetchServicesError } = await supabase
       .from("hospital_services")
-      .delete()
+      .select("service_id")
       .eq("hospital_id", authorizedHospitalId);
 
-    if (deleteError) throw new Error(deleteError.message);
+    if (fetchServicesError) throw new Error(fetchServicesError.message);
 
-    if (serviceIds.length > 0) {
-      const serviceRows = serviceIds.map((sId) => ({
+    const currentServiceIds = new Set(
+      (currentServices ?? [])
+        .map((s) => s.service_id)
+        .filter(Boolean) as string[],
+    );
+    const targetServiceIds = new Set(serviceIds.filter(Boolean));
+
+    const toAdd = [...targetServiceIds].filter(
+      (id) => !currentServiceIds.has(id),
+    );
+    const toRemove = [...currentServiceIds].filter(
+      (id) => !targetServiceIds.has(id),
+    );
+
+    // Insert new services first
+    if (toAdd.length > 0) {
+      const addRows = toAdd.map((sId) => ({
         hospital_id: authorizedHospitalId,
         service_id: sId,
       }));
-
       const { error: insertError } = await supabase
         .from("hospital_services")
-        .insert(serviceRows);
-
+        .insert(addRows);
       if (insertError) throw new Error(insertError.message);
+    }
+
+    // Delete only explicitly removed services
+    if (toRemove.length > 0) {
+      const { error: deleteError } = await supabase
+        .from("hospital_services")
+        .delete()
+        .eq("hospital_id", authorizedHospitalId)
+        .in("service_id", toRemove);
+      if (deleteError) throw new Error(deleteError.message);
     }
 
     await invalidateUserCache(userId);

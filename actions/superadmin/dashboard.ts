@@ -1,5 +1,6 @@
 "use server";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { ActionResponse } from "@/types/response";
 import { validateSuperAdmin } from "@/lib/auth/guards";
 import { Database } from "@/types/database.types";
@@ -292,16 +293,21 @@ export async function getSuperAdminDashboard(): Promise<
     if (pendingAdminsRes.error) throw pendingAdminsRes.error;
     if (hospitalListRes.error) throw hospitalListRes.error;
     if (recentReferralsRes.error) throw recentReferralsRes.error;
+    const adminClient = createAdminClient();
     const pendingAdmins: PendingAdminItem[] = await Promise.all(
       (pendingAdminsRes.data ?? []).map(
         async (admin): Promise<PendingAdminItem> => {
           let email = "N/A";
-          try {
-            const { data: authUser } = await supabase.auth.admin.getUserById(
-              admin.id,
-            );
-            email = authUser?.user?.email ?? "N/A";
-          } catch {}
+          if (adminClient) {
+            try {
+              const { data: authUser } = await adminClient.auth.admin.getUserById(
+                admin.id,
+              );
+              email = authUser?.user?.email ?? "N/A";
+            } catch {
+              email = "N/A";
+            }
+          }
           return {
             id: admin.id,
             name: admin.full_name,

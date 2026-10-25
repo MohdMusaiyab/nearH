@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { Database } from "@/types/database.types";
 import { validateSuperAdmin } from "@/lib/auth/guards";
 import { invalidateAllMasterCaches } from "@/utils/masterCache";
+import { ServiceSchema } from "@/lib/validations/actions";
 type ServiceRow = Database["public"]["Tables"]["services_list"]["Row"];
 type ServiceInsert = Database["public"]["Tables"]["services_list"]["Insert"];
 
@@ -29,11 +30,21 @@ export async function addMasterService(
   const { isSuperAdmin, error: authError } = await validateSuperAdmin();
   if (!isSuperAdmin)
     return { success: false, message: authError || "Unauthorized", data: null };
+
+  const parsed = ServiceSchema.safeParse(payload);
+  if (!parsed.success) {
+    return {
+      success: false,
+      message: parsed.error.issues[0]?.message || "Validation failed",
+      data: null,
+    };
+  }
+
   const supabase = await createClient();
   try {
     const { data, error } = await supabase
       .from("services_list")
-      .insert([payload])
+      .insert([parsed.data])
       .select()
       .single();
     if (error) {
@@ -60,14 +71,24 @@ export async function updateMasterService(
   id: string,
   payload: Partial<ServiceInsert>,
 ): Promise<ActionResponse<ServiceRow>> {
-  const { isSuperAdmin } = await validateSuperAdmin();
+  const { isSuperAdmin, error: authError } = await validateSuperAdmin();
   if (!isSuperAdmin)
-    return { success: false, message: "Unauthorized", data: null };
+    return { success: false, message: authError || "Unauthorized", data: null };
+
+  const parsed = ServiceSchema.partial().safeParse(payload);
+  if (!parsed.success) {
+    return {
+      success: false,
+      message: parsed.error.issues[0]?.message || "Validation failed",
+      data: null,
+    };
+  }
+
   const supabase = await createClient();
   try {
     const { data, error } = await supabase
       .from("services_list")
-      .update(payload)
+      .update(parsed.data)
       .eq("id", id)
       .select()
       .single();

@@ -1,5 +1,6 @@
 "use server";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { ActionResponse } from "@/types/response";
 import { revalidatePath } from "next/cache";
 import { Database } from "@/types/database.types";
@@ -79,28 +80,27 @@ export async function getHospitalAdmins(
       .select(`id, full_name, status, created_at`)
       .eq("associated_hospital_id", hospitalId);
     if (error) throw new Error(error.message);
+    const adminClient = createAdminClient();
     const admins: AdminProfile[] = await Promise.all(
       (profiles ?? []).map(async (profile) => {
-        try {
-          const { data: userData } = await supabase.auth.admin.getUserById(
-            profile.id,
-          );
-          return {
-            id: profile.id,
-            full_name: profile.full_name,
-            email: userData?.user?.email ?? "N/A",
-            status: profile.status,
-            created_at: profile.created_at,
-          };
-        } catch {
-          return {
-            id: profile.id,
-            full_name: profile.full_name,
-            email: "Error fetching email",
-            status: profile.status,
-            created_at: profile.created_at,
-          };
+        let email = "N/A";
+        if (adminClient) {
+          try {
+            const { data: userData } = await adminClient.auth.admin.getUserById(
+              profile.id,
+            );
+            email = userData?.user?.email ?? "N/A";
+          } catch {
+            email = "N/A";
+          }
         }
+        return {
+          id: profile.id,
+          full_name: profile.full_name,
+          email,
+          status: profile.status,
+          created_at: profile.created_at,
+        };
       }),
     );
     return {

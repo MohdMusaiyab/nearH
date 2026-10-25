@@ -24,18 +24,20 @@ export async function rateLimit(
   const key = `rate-limit:${namespace}:${ip}`;
 
   try {
-    const redisPromise = redis.incr(key);
-    const timeoutPromise = new Promise<number>((_, reject) => {
+    const pipe = redis.pipeline();
+    pipe.incr(key);
+    pipe.expire(key, windowInSeconds, "NX");
+
+    const timeoutPromise = new Promise<never>((_, reject) => {
       setTimeout(() => reject(new Error("Redis Rate Limit Timeout")), 500);
     });
 
-    const currentRequests = await Promise.race([redisPromise, timeoutPromise]);
+    const results = await Promise.race([
+      pipe.exec<[number, 0 | 1]>(),
+      timeoutPromise,
+    ]);
 
-    if (currentRequests === 1) {
-      await redis.expire(key, windowInSeconds).catch(() => {
-        console.warn(`[RateLimit] Failed to set expire for ${key}`);
-      });
-    }
+    const currentRequests = (results?.[0] as number) ?? 1;
 
     const remaining = Math.max(0, limit - currentRequests);
     const success = currentRequests <= limit;

@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { Database } from "@/types/database.types";
 import { validateSuperAdmin } from "@/lib/auth/guards";
 import { invalidateAllMasterCaches } from "@/utils/masterCache";
+import { LocationSchema } from "@/lib/validations/actions";
 type LocationRow = Database["public"]["Tables"]["locations"]["Row"];
 type LocationInsert = Database["public"]["Tables"]["locations"]["Insert"];
 
@@ -25,11 +26,21 @@ export async function addLocation(
   const { isSuperAdmin, error: authError } = await validateSuperAdmin();
   if (!isSuperAdmin)
     return { success: false, message: authError || "Unauthorized", data: null };
+
+  const parsed = LocationSchema.safeParse(payload);
+  if (!parsed.success) {
+    return {
+      success: false,
+      message: parsed.error.issues[0]?.message || "Validation failed",
+      data: null,
+    };
+  }
+
   const supabase = await createClient();
   try {
     const { data, error } = await supabase
       .from("locations")
-      .insert([payload])
+      .insert([parsed.data])
       .select()
       .single();
     if (error) {
@@ -66,11 +77,21 @@ export async function updateLocation(
   const { isSuperAdmin, error: authError } = await validateSuperAdmin();
   if (!isSuperAdmin)
     return { success: false, message: authError || "Unauthorized", data: null };
+
+  const parsed = LocationSchema.partial().safeParse(payload);
+  if (!parsed.success) {
+    return {
+      success: false,
+      message: parsed.error.issues[0]?.message || "Validation failed",
+      data: null,
+    };
+  }
+
   const supabase = await createClient();
   try {
     const { data, error } = await supabase
       .from("locations")
-      .update(payload)
+      .update(parsed.data)
       .eq("id", id)
       .select()
       .single();

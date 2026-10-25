@@ -1,7 +1,7 @@
 "use server";
 import { createClient } from "@/lib/supabase/server";
 import { ActionResponse } from "@/types/response";
-import { getAuthenticatedProfile } from "@/utils/authCache";
+import { validateSuperAdmin } from "@/lib/auth/guards";
 import { Database } from "@/types/database.types";
 type PriorityLevel = Database["public"]["Enums"]["priority_level"];
 type ReferralStatus = Database["public"]["Enums"]["referral_status"];
@@ -45,7 +45,7 @@ interface DBHospitalRow {
   is_verified: boolean | null;
   updated_at: string | null;
   location: DBLocation | null;
-  hospital_inventory: DBInventoryPartial[] | null;
+  hospital_inventory: DBInventoryPartial | DBInventoryPartial[] | null;
   blood_bank: DBCountRow[] | null;
   profiles: DBCountRow[] | null;
 }
@@ -164,14 +164,24 @@ function processMonthlyGrowth(
     count,
   }));
 }
+function extractInventory(
+  inventory: DBInventoryPartial | DBInventoryPartial[] | null | undefined,
+): DBInventoryPartial | null {
+  if (!inventory) return null;
+  if (Array.isArray(inventory)) {
+    return inventory.length > 0 ? inventory[0] : null;
+  }
+  return inventory;
+}
+
 function calculateOccupancyPercent(
-  inventory: DBInventoryPartial[] | DBInventoryPartial | null,
+  inventory: DBInventoryPartial | DBInventoryPartial[] | null | undefined,
 ): number | null {
-  const inv = Array.isArray(inventory) ? inventory[0] : inventory;
-  if (!inv || typeof inv.total_beds !== "number" || inv.total_beds === 0)
+  const inv = extractInventory(inventory);
+  if (!inv || typeof inv.total_beds !== "number" || inv.total_beds <= 0)
     return null;
   const available = inv.available_beds ?? 0;
-  const occupied = inv.total_beds - available;
+  const occupied = Math.max(0, inv.total_beds - available);
   return Math.round((occupied / inv.total_beds) * 100);
 }
 export async function getSuperAdminDashboard(): Promise<
@@ -179,34 +189,48 @@ export async function getSuperAdminDashboard(): Promise<
 > {
   const supabase = await createClient();
   try {
-    const profile = await getAuthenticatedProfile();
-    if (!profile || profile.role !== "superadmin") {
-      return { success: false, message: "Unauthorized", data: null };
+    const { isSuperAdmin, error: authError } = await validateSuperAdmin();
+    if (!isSuperAdmin) {
+      return { success: false, message: authError || "Unauthorized", data: null };
     }
     const sixMonthsAgo = new Date();
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
     sixMonthsAgo.setDate(1);
     const sixMonthsAgoISO = sixMonthsAgo.toISOString();
     const [
-      hospitalFlagsRes,
+      totalHospitalsRes,
+      activeHospitalsRes,
+      verifiedHospitalsRes,
       pendingAdminCountRes,
+      totalReferralsRes,
+      pendingReferralsRes,
       recentHospitalsRes,
       pendingAdminsRes,
-      referralStatusesRes,
       recentReferralsRes,
       hospitalListRes,
       inventorySummaryRes,
       growthDataRes,
     ] = await Promise.all([
+      // Database-level exact counts via PostgREST (no row data transferred across the network)
+      supabase.from("hospitals").select("*", { count: "exact", head: true }),
       supabase
         .from("hospitals")
-        .select("is_active, is_verified")
-        .returns<DBHospitalFlags[]>(),
+        .select("*", { count: "exact", head: true })
+        .eq("is_active", true),
+      supabase
+        .from("hospitals")
+        .select("*", { count: "exact", head: true })
+        .eq("is_verified", true),
       supabase
         .from("profiles")
         .select("id", { count: "exact", head: true })
         .eq("status", "pending")
         .eq("role", "admin"),
+      supabase.from("referrals").select("*", { count: "exact", head: true }),
+      supabase
+        .from("referrals")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "Pending"),
       supabase
         .from("hospitals")
         .select("id, name, created_at, location:locations(city, state)")
@@ -221,7 +245,6 @@ export async function getSuperAdminDashboard(): Promise<
         .order("created_at", { ascending: false })
         .limit(10)
         .returns<DBPendingAdmin[]>(),
-      supabase.from("referrals").select("status").returns<DBReferralStatus[]>(),
       supabase
         .from("referrals")
         .select(
@@ -265,11 +288,10 @@ export async function getSuperAdminDashboard(): Promise<
         .gte("created_at", sixMonthsAgoISO)
         .returns<Array<{ created_at: string | null }>>(),
     ]);
-    if (hospitalFlagsRes.error) throw hospitalFlagsRes.error;
     if (recentHospitalsRes.error) throw recentHospitalsRes.error;
     if (pendingAdminsRes.error) throw pendingAdminsRes.error;
     if (hospitalListRes.error) throw hospitalListRes.error;
-    if (referralStatusesRes.error) throw referralStatusesRes.error;
+    if (recentReferralsRes.error) throw recentReferralsRes.error;
     const pendingAdmins: PendingAdminItem[] = await Promise.all(
       (pendingAdminsRes.data ?? []).map(
         async (admin): Promise<PendingAdminItem> => {
@@ -290,32 +312,45 @@ export async function getSuperAdminDashboard(): Promise<
         },
       ),
     );
-    const hospitalFlags = hospitalFlagsRes.data ?? [];
-    const referralStatuses = referralStatusesRes.data ?? [];
-    const inventorySummary = inventorySummaryRes.data ?? [];
     const hospitalList = hospitalListRes.data ?? [];
     const totalAdmins = hospitalList.reduce(
       (sum, h) => sum + (h.profiles?.[0]?.count ?? 0),
       0,
     );
-    const totalBedsAvailable = inventorySummary.reduce(
+
+    // Calculate beds and ICU from hospital list (extracting 1:1 object or array)
+    let listBeds = 0;
+    let listIcu = 0;
+    for (const h of hospitalList) {
+      const inv = extractInventory(h.hospital_inventory);
+      if (inv) {
+        listBeds += inv.available_beds ?? 0;
+        listIcu += inv.icu_beds_available ?? 0;
+      }
+    }
+
+    const inventorySummary = inventorySummaryRes.data ?? [];
+    const summaryBeds = inventorySummary.reduce(
       (sum, i) => sum + (i.available_beds ?? 0),
       0,
     );
-    const totalIcuAvailable = inventorySummary.reduce(
+    const summaryIcu = inventorySummary.reduce(
       (sum, i) => sum + (i.icu_beds_available ?? 0),
       0,
     );
+
+    const totalBedsAvailable = Math.max(listBeds, summaryBeds);
+    const totalIcuAvailable = Math.max(listIcu, summaryIcu);
+
     const dashboardData: SuperAdminDashboardData = {
       overview: {
-        totalHospitals: hospitalFlags.length,
-        activeHospitals: hospitalFlags.filter((h) => h.is_active).length,
-        verifiedHospitals: hospitalFlags.filter((h) => h.is_verified).length,
+        totalHospitals: totalHospitalsRes.count ?? 0,
+        activeHospitals: activeHospitalsRes.count ?? 0,
+        verifiedHospitals: verifiedHospitalsRes.count ?? 0,
         pendingAdminApprovals: pendingAdminCountRes.count ?? 0,
         totalAdmins,
-        totalReferrals: referralStatuses.length,
-        pendingReferrals: referralStatuses.filter((r) => r.status === "Pending")
-          .length,
+        totalReferrals: totalReferralsRes.count ?? 0,
+        pendingReferrals: pendingReferralsRes.count ?? 0,
         totalBedsAvailable,
         totalIcuAvailable,
       },
@@ -349,20 +384,23 @@ export async function getSuperAdminDashboard(): Promise<
           .sort((a, b) => b.occupancyPercent - a.occupancyPercent)
           .slice(0, 10),
       },
-      hospitals: hospitalList.map((h) => ({
-        id: h.id,
-        name: h.name,
-        location: formatLocation(h.location),
-        isActive: h.is_active,
-        isVerified: !!h.is_verified,
-        adminCount: h.profiles?.[0]?.count ?? 0,
-        lastUpdated: h.updated_at,
-        metrics: {
-          bedsAvailable: h.hospital_inventory?.[0]?.available_beds ?? 0,
-          icuAvailable: h.hospital_inventory?.[0]?.icu_beds_available ?? 0,
-          bloodGroupsOnFile: h.blood_bank?.[0]?.count ?? 0,
-        },
-      })),
+      hospitals: hospitalList.map((h) => {
+        const inv = extractInventory(h.hospital_inventory);
+        return {
+          id: h.id,
+          name: h.name,
+          location: formatLocation(h.location),
+          isActive: h.is_active,
+          isVerified: !!h.is_verified,
+          adminCount: h.profiles?.[0]?.count ?? 0,
+          lastUpdated: h.updated_at,
+          metrics: {
+            bedsAvailable: inv?.available_beds ?? 0,
+            icuAvailable: inv?.icu_beds_available ?? 0,
+            bloodGroupsOnFile: h.blood_bank?.[0]?.count ?? 0,
+          },
+        };
+      }),
     };
     console.log("📊 Growth Points:", dashboardData.charts.hospitalGrowth);
     console.log("🏥 Occupancy Points:", dashboardData.charts.bedOccupancy);

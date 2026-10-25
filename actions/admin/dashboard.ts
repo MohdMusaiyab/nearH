@@ -3,30 +3,12 @@ import { createClient } from "@/lib/supabase/server";
 import { ActionResponse } from "@/types/response";
 import { revalidatePath } from "next/cache";
 import { Database } from "@/types/database.types";
-import { getAuthenticatedProfile } from "@/utils/authCache";
+import { getValidatedAdminHospitalId } from "@/lib/auth/guards";
 type InventoryRow = Database["public"]["Tables"]["hospital_inventory"]["Row"];
 type InventoryUpdate =
   Database["public"]["Tables"]["hospital_inventory"]["Update"];
 type BloodBankRow = Database["public"]["Tables"]["blood_bank"]["Row"];
-async function getValidatedAdminHospitalId(): Promise<{
-  hospitalId: string | null;
-  error?: string;
-}> {
-  const profile = await getAuthenticatedProfile();
-  if (!profile)
-    return { hospitalId: null, error: "Unauthorized - Not logged in" };
-  if (profile.role !== "admin")
-    return { hospitalId: null, error: "Unauthorized - Admin only" };
-  if (profile.status !== "approved")
-    return { hospitalId: null, error: "Account pending approval" };
-  if (!profile.associated_hospital_id) {
-    return {
-      hospitalId: null,
-      error: "No hospital associated with this account. Contact Superadmin.",
-    };
-  }
-  return { hospitalId: profile.associated_hospital_id };
-}
+
 export async function getDashboardData(): Promise<
   ActionResponse<{
     inventory: InventoryRow | null;

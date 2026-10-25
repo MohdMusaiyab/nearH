@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 import { Database } from "@/types/database.types";
 import { Hospital } from "@/types";
 import { getAuthenticatedProfile } from "@/utils/authCache";
+import { getValidatedAdminContext } from "@/lib/auth/guards";
 
 type ReferralRow = Database["public"]["Tables"]["referrals"]["Row"];
 type ReferralInsert = Database["public"]["Tables"]["referrals"]["Insert"];
@@ -15,28 +16,6 @@ export interface ReferralWithDetails extends ReferralRow {
   to_hospital: { name: string; official_phone: string } | null;
   specialty: { specialty_name: string } | null;
   direction: "inbound" | "outbound";
-}
-
-async function getValidatedAdminContext(): Promise<{
-  hospitalId: string | null;
-  userId: string | null;
-  error?: string;
-}> {
-  const profile = await getAuthenticatedProfile();
-  if (!profile)
-    return {
-      hospitalId: null,
-      userId: null,
-      error: "Unauthorized - Please log in",
-    };
-  if (profile.role !== "admin" || profile.status !== "approved") {
-    return {
-      hospitalId: null,
-      userId: null,
-      error: "Unauthorized - Approved Admin access only",
-    };
-  }
-  return { hospitalId: profile.associated_hospital_id, userId: profile.id };
 }
 
 export async function sendReferral(

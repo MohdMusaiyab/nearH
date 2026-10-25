@@ -3,28 +3,15 @@ import { createClient } from "@/lib/supabase/server";
 import { ActionResponse } from "@/types/response";
 import { revalidatePath } from "next/cache";
 import { Database } from "@/types/database.types";
-import {
-  getAuthenticatedProfile,
-  invalidateUserCache,
-} from "@/utils/authCache";
+import { invalidateUserCache } from "@/utils/authCache";
+import { validateSuperAdmin } from "@/lib/auth/guards";
+
 interface UpdateHospitalStatusParams {
   hospitalId: string;
   is_active: boolean;
   is_verified?: boolean;
 }
-async function validateSuperAdmin(): Promise<{
-  isSuperAdmin: boolean;
-  error?: string;
-}> {
-  const profile = await getAuthenticatedProfile();
-  if (!profile || profile.role !== "superadmin") {
-    return {
-      isSuperAdmin: false,
-      error: "Unauthorized: Superadmin access required.",
-    };
-  }
-  return { isSuperAdmin: true };
-}
+
 export async function updateHospitalStatus({
   hospitalId,
   is_active,

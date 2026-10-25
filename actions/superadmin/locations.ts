@@ -3,23 +3,11 @@ import { createClient } from "@/lib/supabase/server";
 import { ActionResponse } from "@/types/response";
 import { revalidatePath } from "next/cache";
 import { Database } from "@/types/database.types";
-import { getAuthenticatedProfile } from "@/utils/authCache";
+import { validateSuperAdmin } from "@/lib/auth/guards";
 import { invalidateAllMasterCaches } from "@/utils/masterCache";
 type LocationRow = Database["public"]["Tables"]["locations"]["Row"];
 type LocationInsert = Database["public"]["Tables"]["locations"]["Insert"];
-async function validateSuperAdmin(): Promise<{
-  isSuperAdmin: boolean;
-  error?: string;
-}> {
-  const profile = await getAuthenticatedProfile();
-  if (!profile || profile.role !== "superadmin") {
-    return {
-      isSuperAdmin: false,
-      error: "Unauthorized: Superadmin access required.",
-    };
-  }
-  return { isSuperAdmin: true };
-}
+
 export async function getLocations(): Promise<ActionResponse<LocationRow[]>> {
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -61,6 +49,7 @@ export async function addLocation(
     await invalidateAllMasterCaches();
     revalidatePath("/superadmin/locations");
     revalidatePath("/auth/signup");
+    revalidatePath("/explore");
     return { success: true, message: "Location added successfully", data };
   } catch (error) {
     const errorMessage =
@@ -90,6 +79,8 @@ export async function updateLocation(
     }
     await invalidateAllMasterCaches();
     revalidatePath("/superadmin/locations");
+    revalidatePath("/auth/signup");
+    revalidatePath("/explore");
     return { success: true, message: "Location updated successfully", data };
   } catch (error) {
     const errorMessage =
@@ -122,6 +113,7 @@ export async function deleteLocation(
     await invalidateAllMasterCaches();
     revalidatePath("/superadmin/locations");
     revalidatePath("/auth/signup");
+    revalidatePath("/explore");
     return {
       success: true,
       message: "Location removed successfully",

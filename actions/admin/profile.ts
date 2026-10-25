@@ -5,9 +5,9 @@ import { ActionResponse } from "@/types/response";
 import { revalidatePath } from "next/cache";
 import { Database } from "@/types/database.types";
 import {
-  getAuthenticatedProfile,
   invalidateUserCache,
 } from "@/utils/authCache";
+import { getValidatedAdminContext } from "@/lib/auth/guards";
 
 type HospitalUpdate = Database["public"]["Tables"]["hospitals"]["Update"];
 
@@ -15,22 +15,16 @@ export async function updateHospitalProfile(
   payload: HospitalUpdate,
   serviceIds: string[],
 ): Promise<ActionResponse<null>> {
-  const profile = await getAuthenticatedProfile();
+  const {
+    hospitalId: authorizedHospitalId,
+    userId,
+    error: authError,
+  } = await getValidatedAdminContext();
 
-  if (!profile || profile.role !== "admin" || profile.status !== "approved") {
+  if (!authorizedHospitalId || !userId) {
     return {
       success: false,
-      message: "Unauthorized: Admin access only.",
-      data: null,
-    };
-  }
-
-  const authorizedHospitalId = profile.associated_hospital_id;
-
-  if (!authorizedHospitalId) {
-    return {
-      success: false,
-      message: "No hospital associated with your profile.",
+      message: authError || "Unauthorized",
       data: null,
     };
   }
@@ -68,7 +62,7 @@ export async function updateHospitalProfile(
       if (insertError) throw new Error(insertError.message);
     }
 
-    await invalidateUserCache(profile.id);
+    await invalidateUserCache(userId);
 
     revalidatePath("/admin/profile");
     return {

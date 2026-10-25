@@ -3,24 +3,12 @@ import { createClient } from "@/lib/supabase/server";
 import { ActionResponse } from "@/types/response";
 import { revalidatePath } from "next/cache";
 import { Database } from "@/types/database.types";
-import { getAuthenticatedProfile } from "@/utils/authCache";
+import { validateSuperAdmin } from "@/lib/auth/guards";
 import { invalidateAllMasterCaches } from "@/utils/masterCache";
 type SpecialtyRow = Database["public"]["Tables"]["specialties_list"]["Row"];
 type SpecialtyInsert =
   Database["public"]["Tables"]["specialties_list"]["Insert"];
-async function validateSuperAdmin(): Promise<{
-  isSuperAdmin: boolean;
-  error?: string;
-}> {
-  const profile = await getAuthenticatedProfile();
-  if (!profile || profile.role !== "superadmin") {
-    return {
-      isSuperAdmin: false,
-      error: "Unauthorized: Superadmin access required.",
-    };
-  }
-  return { isSuperAdmin: true };
-}
+
 export async function getSpecialties(): Promise<
   ActionResponse<SpecialtyRow[]>
 > {
@@ -57,6 +45,8 @@ export async function addSpecialty(
     }
     await invalidateAllMasterCaches();
     revalidatePath("/superadmin/specialties");
+    revalidatePath("/explore");
+    revalidatePath("/admin/doctors");
     return { success: true, message: "Specialty added successfully", data };
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : "Failed to add specialty";
@@ -81,6 +71,8 @@ export async function updateSpecialty(
     if (error) throw error;
     await invalidateAllMasterCaches();
     revalidatePath("/superadmin/specialties");
+    revalidatePath("/explore");
+    revalidatePath("/admin/doctors");
     return { success: true, message: "Specialty updated", data };
   } catch (err: unknown) {
     const msg =
@@ -113,6 +105,8 @@ export async function deleteSpecialty(
     }
     await invalidateAllMasterCaches();
     revalidatePath("/superadmin/specialties");
+    revalidatePath("/explore");
+    revalidatePath("/admin/doctors");
     return { success: true, message: "Specialty removed", data: null };
   } catch (err: unknown) {
     const msg =

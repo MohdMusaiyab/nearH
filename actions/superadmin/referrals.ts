@@ -2,7 +2,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { ActionResponse } from "@/types/response";
 import { Database } from "@/types/database.types";
-import { getAuthenticatedProfile } from "@/utils/authCache";
+import { validateSuperAdmin } from "@/lib/auth/guards";
+
 export type SuperadminReferral =
   Database["public"]["Tables"]["referrals"]["Row"] & {
     from_hospital: {
@@ -21,19 +22,7 @@ interface GetReferralsParams {
   status?: Database["public"]["Enums"]["referral_status"];
   priority?: Database["public"]["Enums"]["priority_level"];
 }
-async function validateSuperAdmin(): Promise<{
-  isSuperAdmin: boolean;
-  error?: string;
-}> {
-  const profile = await getAuthenticatedProfile();
-  if (!profile || profile.role !== "superadmin") {
-    return {
-      isSuperAdmin: false,
-      error: "Unauthorized: Superadmin access required.",
-    };
-  }
-  return { isSuperAdmin: true };
-}
+
 export async function getNetworkReferrals({
   page,
   pageSize,

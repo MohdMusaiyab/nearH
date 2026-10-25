@@ -4,6 +4,8 @@ import { Navigation } from "@/components/general/NavigationBar";
 import "./globals.css";
 import { Footer } from "@/components/general/Footer";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
+import { createClient } from "@/lib/supabase/server";
+import { getAuthenticatedProfile } from "@/utils/authCache";
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
@@ -48,11 +50,31 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  let initialUser = null;
+  let profile = null;
+
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (user) {
+      initialUser = {
+        id: user.id,
+        email: user.email,
+      };
+      profile = await getAuthenticatedProfile();
+    }
+  } catch (error) {
+    console.error("Error hydrating navigation auth state:", error);
+  }
+
   return (
     <>
       <html lang="en">
@@ -60,7 +82,7 @@ export default function RootLayout({
           className={`${inter.variable} ${plusJakarta.variable} antialiased min-h-screen flex flex-col`}
         >
           <Toaster />
-          <Navigation />
+          <Navigation initialUser={initialUser} initialProfile={profile} />
           <main className="flex-1">{children}</main>
           <Footer />
         </body>

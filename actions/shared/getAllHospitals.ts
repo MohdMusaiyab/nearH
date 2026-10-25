@@ -18,7 +18,7 @@ type InventoryData = {
 type RawJoinResult = Database["public"]["Tables"]["hospitals"]["Row"] & {
   location: { city: string; state: string } | null;
   hospital_inventory: InventoryData | InventoryData[] | null;
-  hospital_images: { image_url: string }[] | null;
+  hospital_images: { image_url: string; is_primary?: boolean | null }[] | null;
   doctors: {
     specialty_id: string;
     specialties_list: { specialty_name: string } | null;
@@ -40,7 +40,8 @@ export async function getExploreHospitals({
   ActionResponse<{ hospitals: ExploreHospital[]; totalCount: number }>
 > {
   const headersList = await headers();
-  const ip = headersList.get("x-forwarded-for") || "127.0.0.1";
+  const rawIp = headersList.get("x-forwarded-for") || "127.0.0.1";
+  const ip = rawIp.split(",")[0].trim();
   const { success: isRateLimitOk } = await rateLimit(ip, {
     limit: 30,
     windowInSeconds: 60,
@@ -57,45 +58,61 @@ export async function getExploreHospitals({
   const pageSize = 20;
   const from = (page - 1) * pageSize;
   const to = from + pageSize - 1;
+
+  const trimmedQuery = query?.trim();
+  const trimmedLocation = locationId?.trim();
+  const trimmedSpecialty = specialtyId?.trim();
+  const trimmedService = serviceId?.trim();
+
   try {
+    // Dynamically use !inner join to enforce parent-level hospital filtering
+    const doctorRelation = trimmedSpecialty
+      ? `doctors!inner(
+          specialty_id,
+          specialties_list(specialty_name)
+        )`
+      : `doctors(
+          specialty_id,
+          specialties_list(specialty_name)
+        )`;
+
+    const serviceRelation = trimmedService
+      ? `hospital_services!inner(
+          service_id,
+          services_list(service_name)
+        )`
+      : `hospital_services(
+          service_id,
+          services_list(service_name)
+        )`;
+
     let supabaseQuery = supabase.from("hospitals").select(
       `
         *,
         location:locations(city, state),
         hospital_inventory(available_beds, icu_beds_available, ventilators_available),
-        hospital_images(image_url),
-        doctors(
-          specialty_id,
-          specialties_list(specialty_name)
-        ),
-        hospital_services(
-          service_id,
-          services_list(service_name)
-        )
+        hospital_images(image_url, is_primary),
+        ${doctorRelation},
+        ${serviceRelation}
       `,
       { count: "exact" },
     );
-    if (query) supabaseQuery = supabaseQuery.ilike("name", `%${query}%`);
-    if (locationId) supabaseQuery = supabaseQuery.eq("location_id", locationId);
-    if (specialtyId) {
-      supabaseQuery = supabaseQuery.filter(
-        "doctors.specialty_id",
-        "eq",
-        specialtyId,
-      );
+
+    if (trimmedQuery) supabaseQuery = supabaseQuery.ilike("name", `%${trimmedQuery}%`);
+    if (trimmedLocation) supabaseQuery = supabaseQuery.eq("location_id", trimmedLocation);
+    if (trimmedSpecialty) {
+      supabaseQuery = supabaseQuery.eq("doctors.specialty_id", trimmedSpecialty);
     }
-    if (serviceId) {
-      supabaseQuery = supabaseQuery.filter(
-        "hospital_services.service_id",
-        "eq",
-        serviceId,
-      );
+    if (trimmedService) {
+      supabaseQuery = supabaseQuery.eq("hospital_services.service_id", trimmedService);
     }
+
     const { data, error, count } = await supabaseQuery
       .eq("is_active", true)
       .order("is_verified", { ascending: false })
       .order("name", { ascending: true })
       .range(from, to);
+
     if (error) throw new Error(error.message);
     const rawData = (data ?? []) as unknown as RawJoinResult[];
     const hospitals: ExploreHospital[] = rawData.map((h) => {
@@ -103,7 +120,9 @@ export async function getExploreHospitals({
         ? h.hospital_inventory[0]
         : h.hospital_inventory;
       const img =
-        h.hospital_images?.find((i) => i.image_url)?.image_url ?? null;
+        h.hospital_images?.find((i) => i.is_primary)?.image_url ??
+        h.hospital_images?.[0]?.image_url ??
+        null;
       const specialties = Array.from(
         new Set(
           h.doctors

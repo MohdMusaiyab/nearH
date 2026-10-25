@@ -3,23 +3,11 @@ import { createClient } from "@/lib/supabase/server";
 import { ActionResponse } from "@/types/response";
 import { revalidatePath } from "next/cache";
 import { Database } from "@/types/database.types";
-import { getAuthenticatedProfile } from "@/utils/authCache";
+import { validateSuperAdmin } from "@/lib/auth/guards";
 import { invalidateAllMasterCaches } from "@/utils/masterCache";
 type ServiceRow = Database["public"]["Tables"]["services_list"]["Row"];
 type ServiceInsert = Database["public"]["Tables"]["services_list"]["Insert"];
-async function validateSuperAdmin(): Promise<{
-  isSuperAdmin: boolean;
-  error?: string;
-}> {
-  const profile = await getAuthenticatedProfile();
-  if (!profile || profile.role !== "superadmin") {
-    return {
-      isSuperAdmin: false,
-      error: "Unauthorized: Superadmin access required.",
-    };
-  }
-  return { isSuperAdmin: true };
-}
+
 export async function getMasterServices(): Promise<
   ActionResponse<ServiceRow[]>
 > {
@@ -60,6 +48,8 @@ export async function addMasterService(
     }
     await invalidateAllMasterCaches();
     revalidatePath("/superadmin/services");
+    revalidatePath("/explore");
+    revalidatePath("/admin/profile");
     return { success: true, message: "Service added to master catalog", data };
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : "Failed to add service";
@@ -84,6 +74,8 @@ export async function updateMasterService(
     if (error) throw error;
     await invalidateAllMasterCaches();
     revalidatePath("/superadmin/services");
+    revalidatePath("/explore");
+    revalidatePath("/admin/profile");
     return { success: true, message: "Service updated successfully", data };
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : "Failed to update service";
@@ -115,6 +107,8 @@ export async function deleteMasterService(
     }
     await invalidateAllMasterCaches();
     revalidatePath("/superadmin/services");
+    revalidatePath("/explore");
+    revalidatePath("/admin/profile");
     return {
       success: true,
       message: "Service removed from catalog",

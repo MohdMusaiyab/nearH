@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { User } from "@supabase/supabase-js";
-import { Database } from "@/types/database.types";
+import { ExtendedProfile } from "@/types/auth";
 import {
   Hospital,
   LogOut,
@@ -17,25 +17,53 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-type Profile = Database["public"]["Tables"]["profiles"]["Row"];
-interface ExtendedProfile extends Profile {
-  hospitalName?: string;
+export interface NavUser {
+  id: string;
+  email?: string | null;
 }
 
-let profileFetchPromise: Promise<any> | null = null;
+export interface NavigationProps {
+  initialUser?: NavUser | null;
+  initialProfile?: ExtendedProfile | null;
+}
 
-export function Navigation() {
+let profileFetchPromise: Promise<ExtendedProfile | null> | null = null;
+
+export function Navigation({
+  initialUser,
+  initialProfile,
+}: NavigationProps = {}) {
+  const hasHydratedProps =
+    initialUser !== undefined || initialProfile !== undefined;
+
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
-  const [user, setUser] = useState<User | null>(null);
-  const [profile, setProfile] = useState<ExtendedProfile | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [user, setUser] = useState<NavUser | User | null>(
+    initialUser ?? null,
+  );
+  const [profile, setProfile] = useState<ExtendedProfile | null>(
+    initialProfile ?? null,
+  );
+  const [isLoading, setIsLoading] = useState<boolean>(!hasHydratedProps);
 
   const pathname = usePathname();
   const router = useRouter();
   const supabase = createClient();
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Sync state if server revalidates props
+  useEffect(() => {
+    if (initialUser !== undefined) {
+      setUser(initialUser);
+    }
+  }, [initialUser]);
+
+  useEffect(() => {
+    if (initialProfile !== undefined) {
+      setProfile(initialProfile);
+    }
+  }, [initialProfile]);
 
   const dashboardHref = useMemo(() => {
     if (isLoading) return "#";
@@ -79,10 +107,23 @@ export function Navigation() {
       const {
         data: { session },
       } = await supabase.auth.getSession();
-      if (session && mounted) {
+
+      if (!mounted) return;
+
+      if (session) {
         setUser(session.user);
-        await fetchProfile();
-      } else if (mounted) {
+        // Avoid redundant client fetch if profile was already hydrated from server
+        if (!initialProfile) {
+          await fetchProfile();
+        } else {
+          setIsLoading(false);
+        }
+      } else {
+        // If client session is confirmed null and not hydrated with user
+        if (!hasHydratedProps) {
+          setUser(null);
+          setProfile(null);
+        }
         setIsLoading(false);
       }
     };
@@ -110,7 +151,7 @@ export function Navigation() {
       mounted = false;
       subscription.unsubscribe();
     };
-  }, []);
+  }, [initialProfile, hasHydratedProps, supabase.auth]);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 40);
